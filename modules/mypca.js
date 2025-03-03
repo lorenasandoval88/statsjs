@@ -1,4 +1,14 @@
 
+import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
+import {getNumbers} from 'https://cdn.jsdelivr.net/npm/ml-dataset-iris@1.2.1/+esm'
+
+const numbers = getNumbers();
+console.log('numbers',numbers) // [5.1, 3.5, 1.4, 0.2]
+
+const pca = new PCA(numbers);
+
+console.log(pca.getExplainedVariance());
+
 // const iris = (await FileAttachment("iris.csv").csv({ typed: true })).map(
 //     (row,i) => {
 //       // add row names column
@@ -12,19 +22,32 @@
 
 // Add an event listener to handle file selection
 fileInput.addEventListener('change', (event) => {
+  console.log('event')
+
     const file = event.target.files[0]
     if (file) {
         const reader = new FileReader();
 
         reader.onload = function(e) {
             const csv = e.target.result;
-            const json = csvToJson(csv);
-            console.log('json',json)
+            console.log('csv',csv)
+
+            console.log('csvToJson(csv)',csvToJson(csv))
+            const json = csvToJson(csv)
+            const matrix = (json.map( Object.values ))
+            matrix['headers'] = json['headers']
+            console.log('json[headers]',json['headers'])
+            console.log('matrix',matrix)
+            console.log('pca',PCA)
+
+    
             // displayJson(json);
             const scores = CalculatePca(json)
-            const groups = [...new Set(scores.map( d => d.group))]//.values()//.sort())
-            const results = plotPCA(scores, groups)
-            console.log('results',results)
+            // console.log('scores',scores)
+
+            // const groups = [...new Set(scores.map( d => d.group))]//.values()//.sort())
+            // const results = plotPCA(scores, groups)
+            // console.log('results',results)
         };
 
         reader.onerror = function() {
@@ -39,15 +62,20 @@ fileInput.addEventListener('change', (event) => {
 
   function csvToJson(csv) {
     const lines = csv.split('\n');
+    console.log('lines',lines)
     const headers = lines[0].split(',');
+    console.log('headers',headers)
     const result = [];
+    result.headers = headers;
 
-    for (let i = 1; i < lines.length; i++) {
+    for (let i = 1; i < lines.length-1; i++) {
         const obj = {};
         const currentLine = lines[i].split(',');
 
+
         for (let j = 0; j < headers.length; j++) {
             obj[headers[j]] = currentLine[j];
+            obj['id'] = 'id'+i
         }
         result.push(obj);
     }
@@ -61,7 +89,53 @@ function displayJson(json) {
     document.getElementById('jsonOutput').textContent = JSON.stringify(json, null, 2);
 }
 
-// PCA /////////////////////////////////////////////////////////
+// PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
+function asDataFrame(value) {
+  // check if value is array of objects (aoo)
+  if (value === undefined || value === null)
+    throw new Error("No data passed to function.");
+  if (
+    !Array.isArray(value) ||
+    typeof value[0] !== "object" ||
+    value[0] === null
+  ) {
+    throw new Error("First argument must be an array of objects");
+  }
+
+  const aoo = value;
+  // columns: if parsed using d3, the aoo will already have a columns prop
+  // -> create it otherwise
+  if (!value.columns) {
+    const set = new Set();
+    for (const row of aoo) {
+      for (const key of Object.keys(row)) set.add(key);
+    }
+    aoo.columns = [...set];
+  }
+  // create getters and setters for columns
+  aoo.columns.forEach((column) => {
+    if (!Object.getOwnPropertyDescriptor(aoo, column)) {
+      Object.defineProperty(aoo, column, {
+        get: function () {
+          return this.map((row) => row[column]);
+        },
+        set: function (array) {
+          if (!array) {
+            throw new Error(`No data passed to set ${column} column.`);
+          }
+          if (array.length !== this.length) {
+            throw new Error(
+              `Data length (${array.length}) different from column ${column} length (${this.length}).`
+            );
+          }
+          this.forEach((row, index) => (row[column] = array[index]));
+        }
+      });
+    }
+  });
+  return aoo;
+}
+
 function scale(value) {
     const clone = JSON.parse(JSON.stringify(value));
     const df = asDataFrame(clone);
@@ -79,12 +153,18 @@ function scale(value) {
     return df;
   }
 const CalculatePca = function (data) {
-    // scale numeric values
-    const idx =  Object.keys(data[0]).filter(key => typeof(data[0][key])=='number')
-    const dt = scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))
-    const pca = new PCA(asMatrix(dt), { center: true, scale: true })
+
+    const headers =  Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
+
+    const dt = (scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> headers.includes(key)))))).map( Object.values )
+    // console.log('(scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key))))))',(scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))))
+    dt['headers'] = headers
+    console.log('dt',dt)
+
+    const pca = new PCA(dt)//, { center: true, scale: true })
+    console.log('pca',pca)  
     const scores = pca
-    .predict(asMatrix(scale(data.map((row) => _.omit(row, ['species','Name'])))))
+    .predict((scale(data.map((row) => _.omit(row, ['species','Name'])))).map( Object.values ))
     .toJSON()
     .map((row, rowIndex) => {
       const columns = Object.keys(data[rowIndex]);
@@ -101,52 +181,7 @@ const CalculatePca = function (data) {
 return scores
  }
 
- function asDataFrame(value) {
-    // check if value is array of objects (aoo)
-    if (value === undefined || value === null)
-      throw new Error("No data passed to function.");
-    if (
-      !Array.isArray(value) ||
-      typeof value[0] !== "object" ||
-      value[0] === null
-    ) {
-      throw new Error("First argument must be an array of objects");
-    }
-  
-    const aoo = value;
-    // columns: if parsed using d3, the aoo will already have a columns prop
-    // -> create it otherwise
-    if (!value.columns) {
-      const set = new Set();
-      for (const row of aoo) {
-        for (const key of Object.keys(row)) set.add(key);
-      }
-      aoo.columns = [...set];
-    }
-    // create getters and setters for columns
-    aoo.columns.forEach((column) => {
-      if (!Object.getOwnPropertyDescriptor(aoo, column)) {
-        Object.defineProperty(aoo, column, {
-          get: function () {
-            return this.map((row) => row[column]);
-          },
-          set: function (array) {
-            if (!array) {
-              throw new Error(`No data passed to set ${column} column.`);
-            }
-            if (array.length !== this.length) {
-              throw new Error(
-                `Data length (${array.length}) different from column ${column} length (${this.length}).`
-              );
-            }
-            this.forEach((row, index) => (row[column] = array[index]));
-          }
-        });
-      }
-    });
-    return aoo;
-  }
-
+ 
 const plotPCA = function(scores,groups){
     const width = 300
     const height = width/1.5
