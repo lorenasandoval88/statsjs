@@ -3,7 +3,7 @@ import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
 import {getNumbers} from 'https://cdn.jsdelivr.net/npm/ml-dataset-iris@1.2.1/+esm'
 
 const numbers = getNumbers();
-console.log('numbers',numbers) // [5.1, 3.5, 1.4, 0.2]
+console.log('numbiris data from https://cdn.jsdelivr.net/npm/ml-dataset-iris@1.2.1/+esm',numbers) // [5.1, 3.5, 1.4, 0.2]
 
 const pca = new PCA(numbers);
 
