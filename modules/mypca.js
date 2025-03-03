@@ -4,7 +4,7 @@ import {getNumbers} from 'https://cdn.jsdelivr.net/npm/ml-dataset-iris@1.2.1/+es
 
 const numbers = getNumbers();
 console.log('numbiris data from https://cdn.jsdelivr.net/npm/ml-dataset-iris@1.2.1/+esm',numbers) // [5.1, 3.5, 1.4, 0.2]
-
+console.log('const pca = new PCA(dataset);')
 const pca = new PCA(numbers);
 
 console.log(pca.getExplainedVariance());
