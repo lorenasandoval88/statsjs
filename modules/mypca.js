@@ -1,13 +1,16 @@
 
-import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
-import {getNumbers} from 'https://cdn.jsdelivr.net/npm/ml-dataset-iris@1.2.1/+esm'
+// import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
+// import {getNumbers} from 'https://cdn.jsdelivr.net/npm/ml-dataset-iris@1.2.1/+esm'
+// string to number 
+//https://stackoverflow.com/questions/61057507/how-to-convert-object-properties-string-to-integer-in-javascript
 
-const numbers = getNumbers();
-console.log('numbiris data from https://cdn.jsdelivr.net/npm/ml-dataset-iris@1.2.1/+esm',numbers) // [5.1, 3.5, 1.4, 0.2]
-console.log('const pca = new PCA(dataset);')
-const pca = new PCA(numbers);
+const { PCA } = await import("https://esm.sh/ml-pca");
+const dataset = (await import("https://esm.sh/ml-dataset-iris")).getNumbers();
+const d3tip  = await import("https://esm.sh/d3-tip");
+console.log("d3tip",d3tip)
+const pca = new PCA(dataset);
 
-console.log(pca.getExplainedVariance());
+console.log('pca.getExplainedVariance()',pca.getExplainedVariance());
 
 // const iris = (await FileAttachment("iris.csv").csv({ typed: true })).map(
 //     (row,i) => {
@@ -38,16 +41,16 @@ fileInput.addEventListener('change', (event) => {
             matrix['headers'] = json['headers']
             console.log('json[headers]',json['headers'])
             console.log('matrix',matrix)
-            console.log('pca',PCA)
+            // console.log('pca',PCA)
 
     
             // displayJson(json);
             const scores = CalculatePca(json)
-            // console.log('scores',scores)
+            console.log('scores',scores)
 
-            // const groups = [...new Set(scores.map( d => d.group))]//.values()//.sort())
-            // const results = plotPCA(scores, groups)
-            // console.log('results',results)
+            const groups = [...new Set(scores.map( d => d.group))]//.values()//.sort())
+            const results = plotPCA(scores, groups)
+            console.log('results',results)
         };
 
         reader.onerror = function() {
@@ -60,11 +63,17 @@ fileInput.addEventListener('change', (event) => {
 
 });
 
+function convertToNumber(str) {
+  if (isNaN(str)) {
+    return str; // It's a letter or other non-numeric character, return the original string
+  } else {
+    return Number(str); // It's a number (or can be converted to one), so convert it
+  }
+}
+
   function csvToJson(csv) {
     const lines = csv.split('\n');
-    console.log('lines',lines)
     const headers = lines[0].split(',');
-    console.log('headers',headers)
     const result = [];
     result.headers = headers;
 
@@ -74,7 +83,7 @@ fileInput.addEventListener('change', (event) => {
 
 
         for (let j = 0; j < headers.length; j++) {
-            obj[headers[j]] = currentLine[j];
+            obj[headers[j]] = convertToNumber(currentLine[j])
             obj['id'] = 'id'+i
         }
         result.push(obj);
@@ -156,27 +165,30 @@ const CalculatePca = function (data) {
 
     const headers =  Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
 
-    const dt = (scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> headers.includes(key)))))).map( Object.values )
+    const dt = (scale(data.map(obj => Object.fromEntries(Object.entries(obj)
+    .filter(([key])=> headers.includes(key)))))).map( Object.values )
+    console.log('dt1',dt)
+
+    // todo: add headers to dt
     // console.log('(scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key))))))',(scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))))
     dt['headers'] = headers
-    console.log('dt',dt)
-
-    const pca = new PCA(dt)//, { center: true, scale: true })
+   
+    const data2 = data.map(({ species,id, ...rest }) => rest)
+    const pca = new PCA(dt, { center: true, scale: true })
     console.log('pca',pca)  
-    const scores = pca
-    .predict((scale(data.map((row) => _.omit(row, ['species','Name'])))).map( Object.values ))
+    const scores = pca.predict((scale(data2)).map( Object.values ))
     .toJSON()
     .map((row, rowIndex) => {
       const columns = Object.keys(data[rowIndex]);
       const rowObj = {
         group: data[rowIndex]['species'],
-        Name: data[rowIndex]['Name']
+        id: data[rowIndex]['id']
       };
       columns.forEach((column, colIndex) => {
         rowObj[`PC${colIndex + 1}`] = row[colIndex];
       });
       return rowObj;
-    }).map(({PC1,PC2,group,Name}) => ({PC1,PC2,group,Name}))
+    }).map(({PC1,PC2,group,id}) => ({PC1,PC2,group,id}))
    const groups = [...new Set(scores.map( d => d.group))]
 return scores
  }
