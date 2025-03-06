@@ -1,18 +1,4 @@
 
-// const heatMap = document.createElement('div');
-// heatMap.textContent = 'This is the new first element.';
-// document.body.append(heatMap);
-
-// 1. Create the new div element
-const newDiv = document.createElement("div");
-
-// 2. Optionally, add content or attributes to the div
-newDiv.textContent = "Plot div";
-newDiv.id = "myNewDiv";
-newDiv.style.backgroundColor = "lightblue";
-
-// 3. Append the div to the body
-document.body.appendChild(newDiv);
 
 // Next: create a file input element
 const fileInput = document.createElement('input')
@@ -34,10 +20,10 @@ fileInput.addEventListener('change', (event) => {
 document.body.appendChild(fileInput);
 
 // Add an event listener to handle file selection
-fileInput.addEventListener('change', (event) => {
-    const files = event.target.files;
-    if (files.length > 0) {
-      // Handle the selected files
-      console.log('Selected files:', files);
-    }
-  });
+// fileInput.addEventListener('change', (event) => {
+//     const files = event.target.files;
+//     if (files.length > 0) {
+//       // Handle the selected files
+//       console.log('Selected files:', files);
+//     }
+//   });

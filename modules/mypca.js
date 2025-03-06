@@ -6,26 +6,19 @@
 
 const { PCA } = await import("https://esm.sh/ml-pca");
 const dataset = (await import("https://esm.sh/ml-dataset-iris")).getNumbers();
-const d3tip  = await import("https://esm.sh/d3-tip");
-console.log("d3tip",d3tip)
+import * as d3 from "https://cdn.skypack.dev/d3@7"
+import {default as d3tip} from 'https://esm.sh/d3-tip';
+
+console.log("d3Tip",d3tip())
+
 const pca = new PCA(dataset);
 
 console.log('pca.getExplainedVariance()',pca.getExplainedVariance());
 
-// const iris = (await FileAttachment("iris.csv").csv({ typed: true })).map(
-//     (row,i) => {
-//       // add row names column
-//       row.Name = row.species+i
-//       // and delete empty column
-//       delete row[""];
-//       return row;
-//     }
-//   )
-// console.log('iris',iris)
+
 
 // Add an event listener to handle file selection
 fileInput.addEventListener('change', (event) => {
-  console.log('event')
 
     const file = event.target.files[0]
     if (file) {
@@ -33,26 +26,19 @@ fileInput.addEventListener('change', (event) => {
 
         reader.onload = function(e) {
             const csv = e.target.result;
-            console.log('csv',csv)
-
-            console.log('csvToJson(csv)',csvToJson(csv))
             const json = csvToJson(csv)
             const matrix = (json.map( Object.values ))
             matrix['headers'] = json['headers']
-            console.log('json[headers]',json['headers'])
-            console.log('matrix',matrix)
+            // console.log('json[headers]',json['headers'])
+            // console.log('matrix',matrix)
             // console.log('pca',PCA)
 
     
             // displayJson(json);
             const scores = CalculatePca(json)
-            console.log('scores',scores)
-
             const groups = [...new Set(scores.map( d => d.group))]//.values()//.sort())
             const results = plotPCA(scores, groups)
-            console.log('results',results)
         };
-
         reader.onerror = function() {
             displayError('Error reading the file.');
         };
@@ -99,6 +85,7 @@ function displayJson(json) {
 }
 
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
+
 function asDataFrame(value) {
   // check if value is array of objects (aoo)
   if (value === undefined || value === null)
@@ -195,6 +182,9 @@ return scores
 
  
 const plotPCA = function(scores,groups){
+  const color = d3.scaleOrdinal( ["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
+  .domain(groups)
+
     const width = 300
     const height = width/1.5
     const fontFamily= 'monospace'
@@ -332,6 +322,11 @@ const plotPCA = function(scores,groups){
     //     .attr("dy", "0.9em")
     //     .attr("transform", "rotate(-90)")
     //     .text("PC2");
+    const pcaDiv = document.createElement("div")
+    pcaDiv.id = 'pcaDiv'
+    document.body.appendChild(pcaDiv);
+    pcaDiv.append(document.createElement('br'));
+    document.getElementById('pcaDiv').appendChild(svg.node());
       return svg.node();
     }
 
