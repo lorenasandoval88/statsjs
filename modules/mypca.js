@@ -9,81 +9,10 @@ const dataset = (await import("https://esm.sh/ml-dataset-iris")).getNumbers();
 import * as d3 from "https://cdn.skypack.dev/d3@7"
 import {default as d3tip} from 'https://esm.sh/d3-tip';
 
-console.log("d3Tip",d3tip())
+// const pca = new PCA(dataset);
+// console.log('pca.getExplainedVariance()',pca.getExplainedVariance());
 
-const pca = new PCA(dataset);
-
-console.log('pca.getExplainedVariance()',pca.getExplainedVariance());
-
-
-
-// Add an event listener to handle file selection
-fileInput.addEventListener('change', (event) => {
-
-    const file = event.target.files[0]
-    if (file) {
-        const reader = new FileReader();
-
-        reader.onload = function(e) {
-            const csv = e.target.result;
-            const json = csvToJson(csv)
-            const matrix = (json.map( Object.values ))
-            matrix['headers'] = json['headers']
-            // console.log('json[headers]',json['headers'])
-            // console.log('matrix',matrix)
-            // console.log('pca',PCA)
-
-    
-            // displayJson(json);
-            const scores = CalculatePca(json)
-            const groups = [...new Set(scores.map( d => d.group))]//.values()//.sort())
-            const results = plotPCA(scores, groups)
-        };
-        reader.onerror = function() {
-            displayError('Error reading the file.');
-        };
-
-        reader.readAsText(file);
-    }
-   
-
-});
-
-function convertToNumber(str) {
-  if (isNaN(str)) {
-    return str; // It's a letter or other non-numeric character, return the original string
-  } else {
-    return Number(str); // It's a number (or can be converted to one), so convert it
-  }
-}
-
-  function csvToJson(csv) {
-    const lines = csv.split('\n');
-    const headers = lines[0].split(',');
-    const result = [];
-    result.headers = headers;
-
-    for (let i = 1; i < lines.length-1; i++) {
-        const obj = {};
-        const currentLine = lines[i].split(',');
-
-
-        for (let j = 0; j < headers.length; j++) {
-            obj[headers[j]] = convertToNumber(currentLine[j])
-            obj['id'] = 'id'+i
-        }
-        result.push(obj);
-    }
-    return result;
-}
-
-function displayJson(json) {
-    const jsonOutput = document.createElement("div")
-    jsonOutput.id = 'jsonOutput'
-    document.body.appendChild(jsonDiv);
-    document.getElementById('jsonOutput').textContent = JSON.stringify(json, null, 2);
-}
-
+const pca = {}
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
 
 function asDataFrame(value) {
@@ -148,13 +77,12 @@ function scale(value) {
     });
     return df;
   }
-const CalculatePca = function (data) {
+pca.calculatePca = function (data) {
 
     const headers =  Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
 
     const dt = (scale(data.map(obj => Object.fromEntries(Object.entries(obj)
     .filter(([key])=> headers.includes(key)))))).map( Object.values )
-    console.log('dt1',dt)
 
     // todo: add headers to dt
     // console.log('(scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key))))))',(scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))))
@@ -181,7 +109,7 @@ return scores
  }
 
  
-const plotPCA = function(scores,groups){
+pca.plotPCA = function(scores,groups){
   const color = d3.scaleOrdinal( ["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
   .domain(groups)
 
@@ -330,4 +258,4 @@ const plotPCA = function(scores,groups){
       return svg.node();
     }
 
-    //plotPCA()
+export {pca}
