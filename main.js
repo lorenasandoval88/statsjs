@@ -100,6 +100,6 @@ function convertToNumber(str) {
     }
     return result;
 }
-plot()
+plotPca()
 
-export { plot}
+export { plotPca}
