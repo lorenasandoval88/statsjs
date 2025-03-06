@@ -1,4 +1,4 @@
 import { pca } from './modules/mypca.js'
-import { sdk } from './main.js'
+import { plotPca } from './main.js'
 
-export {pca, sdk}
+export {pca, plotPca}

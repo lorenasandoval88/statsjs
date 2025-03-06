@@ -1,8 +1,7 @@
 import { pca } from './modules/mypca.js'
 
-const sdk = {}
 // Next: create a file input element
-sdk.plot = () => {
+plotPca = () => {
 const fileInput = document.createElement('input')
 fileInput.setAttribute('type', 'file')
 fileInput.addEventListener('change', (event) => {
@@ -101,6 +100,6 @@ function convertToNumber(str) {
     }
     return result;
 }
-sdk.plot()
+plot()
 
-export { sdk}
+export { plot}
