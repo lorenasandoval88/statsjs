@@ -1,7 +1,7 @@
 import { pca } from './modules/mypca.js'
 
 // Next: create a file input element
-plotPca = () => {
+const plotPca = () => {
 const fileInput = document.createElement('input')
 fileInput.setAttribute('type', 'file')
 fileInput.addEventListener('change', (event) => {
