@@ -12,7 +12,7 @@ import {default as d3tip} from 'https://esm.sh/d3-tip';
 // const pca = new PCA(dataset);
 // console.log('pca.getExplainedVariance()',pca.getExplainedVariance());
 
-const pca = {}
+const pcaModules = {}
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
 
 function asDataFrame(value) {
@@ -77,7 +77,7 @@ function scale(value) {
     });
     return df;
   }
-pca.calculatePca = function (data) {
+  pcaModules.calculatePca = function (data) {
 
     const headers =  Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
 
@@ -90,11 +90,10 @@ pca.calculatePca = function (data) {
    
     const data2 = data.map(({ species,id, ...rest }) => rest)
     const pca = new PCA(dt, { center: true, scale: true })
-    console.log('pca',pca)  
-    console.log('dt',dt)  
-
-    console.log('data',data)  
-    console.log('data2',data2)  
+    // console.log('pca',pca)  
+    // console.log('dt',dt)  
+    // console.log('data',data)  
+    // console.log('data2',data2)  
 
     const scores = pca.predict((scale(data2)).map( Object.values ))
     .toJSON()
@@ -110,13 +109,13 @@ pca.calculatePca = function (data) {
       return rowObj;
     }).map(({PC1,PC2,group,id}) => ({PC1,PC2,group,id}))
    const groups = [...new Set(scores.map( d => d.group))]
-   console.log('scores',scores)  
+  //  console.log('scores',scores)  
 
 return scores
  }
 
  
-pca.plotPCA = function(scores,groups){
+ pcaModules.plotPCA = function(scores,groups){
   const color = d3.scaleOrdinal( ["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
   .domain(groups)
 
@@ -221,7 +220,7 @@ pca.plotPCA = function(scores,groups){
       const key = g.append("g")
         .selectAll("rect")
         .data(groups)
-      console.log("key",key)
+        // console.log("key",key)
         key.enter().append("rect")
           .attr("class", "keyRects")
           .attr("x", width - margin.left - 70)
@@ -265,4 +264,4 @@ pca.plotPCA = function(scores,groups){
       return svg.node();
     }
 
-export {pca}
+export {pcaModules}
