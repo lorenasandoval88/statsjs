@@ -91,6 +91,11 @@ pca.calculatePca = function (data) {
     const data2 = data.map(({ species,id, ...rest }) => rest)
     const pca = new PCA(dt, { center: true, scale: true })
     console.log('pca',pca)  
+    console.log('dt',dt)  
+
+    console.log('data',data)  
+    console.log('data2',data2)  
+
     const scores = pca.predict((scale(data2)).map( Object.values ))
     .toJSON()
     .map((row, rowIndex) => {
@@ -105,6 +110,8 @@ pca.calculatePca = function (data) {
       return rowObj;
     }).map(({PC1,PC2,group,id}) => ({PC1,PC2,group,id}))
    const groups = [...new Set(scores.map( d => d.group))]
+   console.log('scores',scores)  
+
 return scores
  }
 

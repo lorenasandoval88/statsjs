@@ -18,14 +18,16 @@ fileInput.addEventListener('change', (event) => {
               const json = csvToJson(csv)
               const matrix = (json.map( Object.values ))
               matrix['headers'] = json['headers']
-              // console.log('json[headers]',json['headers'])
-              // console.log('matrix',matrix)
-              // console.log('pca',PCA)
-  
+              console.log('main csv',csv)
+              console.log('json[headers]',json['headers'])
+              console.log("main json",json)
+              console.log('main matrix',matrix)
+
       
               // displayJson(json);
               const scores = pca.calculatePca(json)
               const groups = [...new Set(scores.map( d => d.group))]//.values()//.sort())
+              console.log("main scores",scores)
               pca.plotPCA(scores, groups)
           };
           reader.onerror = function() {
@@ -82,8 +84,10 @@ function convertToNumber(str) {
 }
 
   function csvToJson(csv) {
-    const lines = csv.split('\n');
+    const lines = csv.split(/\r?\n/);
+    console.log("lines",lines)
     const headers = lines[0].split(',');
+    console.log("headers",headers)
     const result = [];
     result.headers = headers;
 
@@ -98,6 +102,7 @@ function convertToNumber(str) {
         }
         result.push(obj);
     }
+    console.log("result",result)
     return result;
 }
 plotPca()
