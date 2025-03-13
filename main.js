@@ -1,9 +1,9 @@
 import {
   pcaModules
 } from './modules/mypca.js'
-
+const dataset = (await import("https://esm.sh/ml-dataset-iris"))
 const pcaData = {}// Declare global variable
-
+pcaData.iris = dataset.getDataset()
 
 // Next: create a file input element
 const pca = () => {
@@ -23,12 +23,12 @@ const pca = () => {
             const csv = e.target.result;
             const json = csvToJson(csv)
             const matrix = (json.map(Object.values))
-            matrix['headers'] = json['headers']
+            console.log("main json", json)
+            console.log('main matrix', matrix)
+            // matrix['headers'] = json['headers']
             pcaData.file = matrix
             // console.log('main csv', csv)
             // console.log('json[headers]', json['headers'])
-            // console.log("main json", json)
-            // console.log('main matrix', matrix)
             // displayJson(json);
 
             const scores = pcaModules.calculatePca(json)
@@ -65,7 +65,7 @@ function csvToJson(csv) {
   const headers = lines[0].split(',');
   // console.log("headers", headers)
   const result = [];
-  result.headers = headers;
+  // result.headers = headers;
 
   for (let i = 1; i < lines.length - 1; i++) {
     const obj = {};
@@ -74,7 +74,7 @@ function csvToJson(csv) {
 
     for (let j = 0; j < headers.length; j++) {
       obj[headers[j]] = convertToNumber(currentLine[j])
-      obj['id'] = 'id' + i
+      // obj['id'] = 'id' + i
     }
     result.push(obj);
   }
