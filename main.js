@@ -30,7 +30,6 @@ const pca = () => {
             // console.log("main json", json)
             // console.log('main matrix', matrix)
             // displayJson(json);
-            pcaData.push(matrix)
 
             const scores = pcaModules.calculatePca(json)
             const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
