@@ -1,12 +1,13 @@
 import {
   pcaModules
 } from './modules/mypca.js'
+
 const dataset = (await import("https://esm.sh/ml-dataset-iris"))
 const pcaData = {}// Declare global variable
 pcaData.iris = dataset.getDataset()
-
+pcaData.file = "none"
 // Next: create a file input element
-const pca = () => {
+const loadFile = () => {
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
@@ -23,10 +24,12 @@ const pca = () => {
             const csv = e.target.result;
             const json = csvToJson(csv)
             const matrix = (json.map(Object.values))
-            console.log("main json", json)
-            console.log('main matrix', matrix)
-            // matrix['headers'] = json['headers']
+            // console.log("main json", json)
+            // console.log('main matrix', matrix)
+            matrix['headers'] = json['headers']
             pcaData.file = matrix
+            console.log("pcaData",pcaData)
+
             // console.log('main csv', csv)
             // console.log('json[headers]', json['headers'])
             // displayJson(json);
@@ -65,25 +68,24 @@ function csvToJson(csv) {
   const headers = lines[0].split(',');
   // console.log("headers", headers)
   const result = [];
-  // result.headers = headers;
+  result.headers = headers;
 
   for (let i = 1; i < lines.length - 1; i++) {
     const obj = {};
     const currentLine = lines[i].split(',');
 
-
     for (let j = 0; j < headers.length; j++) {
       obj[headers[j]] = convertToNumber(currentLine[j])
-      // obj['id'] = 'id' + i
     }
     result.push(obj);
   }
   // console.log("result", result)
   return result;
 }
-pca()
+
+loadFile()
 
 export {
-  pca,
+  loadFile,
   pcaData
 }
