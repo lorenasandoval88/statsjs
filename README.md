@@ -1,9 +1,10 @@
 # statsJs
 
 Multivariate statistical visualization (clustering, correlation, heatmaps, etc) in JavaScript. 
+
 live at: https://episphere.github.io/statsjs
 
-Loading statsJs:
+** Loading statsJs: **
 
 `sdk = await import("https://episphere.github.io/statsJs/sdk.js")`
 
