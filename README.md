@@ -1,6 +1,6 @@
 # statsJs
 
-clustering, correlation, heatmaps etc. 
+clustering, correlation, heatmaps in JavaScript etc. 
 live at https://lorenasandoval88.github.io/statsJs/
 
 Load statsJs using:
