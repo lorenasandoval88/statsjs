@@ -3,7 +3,7 @@
 clustering, correlation, heatmaps in JavaScript etc. 
 live at https://lorenasandoval88.github.io/statsJs/
 
-Load statsJs using:
+Loading statsJs:
 
 `sdk = await import("https://lorenasandoval88.github.io/statsJs/sdk.js")`
 
