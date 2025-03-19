@@ -33,10 +33,10 @@ const loadFile = async () => {
             // console.log('json[headers]', json['headers'])
             // displayJson(json);
 
-            const scores = pcaModules.calculatePca(json)
+            const scores = modules.calculatePca(json)
             const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
             // console.log("main scores", scores)
-            pcaModules.plotPCA(scores, groups)
+            modules.plotPCA(scores, groups)
           };
           reader.onerror = function () {
             displayError('Error reading the file.');
