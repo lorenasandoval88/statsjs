@@ -1,16 +1,8 @@
-// import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
-// import {getNumbers} from 'https://cdn.jsdelivr.net/npm/ml-dataset-iris@1.2.1/+esm'
-// string to number 
-//https://stackoverflow.com/questions/61057507/how-to-convert-object-properties-string-to-integer-in-javascript
-
 const { PCA} = await import("https://esm.sh/ml-pca");
-const dataset = (await import("https://esm.sh/ml-dataset-iris")).getNumbers();
 import * as d3 from "https://cdn.skypack.dev/d3@7"
-import {
-  default as d3tip
-} from 'https://esm.sh/d3-tip';
+import { default as d3tip} from 'https://esm.sh/d3-tip';
 
-const pcaModules = {}
+const modules = {}
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
 
 function asDataFrame(value) {
@@ -59,7 +51,7 @@ function asDataFrame(value) {
   return aoo;
 }
 
-function scale(value) {
+modules.scale = async function (value) {
   const clone = JSON.parse(JSON.stringify(value));
   const df = asDataFrame(clone);
   df.columns.forEach((column) => {
@@ -96,7 +88,7 @@ function removeNumbers(arr) {
   return arr.filter(element => typeof element !== 'number');
 }
 
-pcaModules.calculatePca = function (data) {
+modules.calculatePca = async function (data) {
   console.log("data",data)
   console.log("removeNonNumberValues(data)", removeNonNumberValues(data))
   const dataNumbersOnly = removeNonNumberValues(data)
@@ -106,12 +98,12 @@ pcaModules.calculatePca = function (data) {
   const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
   const headers2 = matrix.headers
 
-  const dt = (scale(data.map(obj => Object.fromEntries(Object.entries(obj)
+  const dt = (modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj)
     .filter(([key]) => headers.includes(key)))))).map(Object.values)
   const dt22 = matrix.map(x => (removeNonNumbers(x)))
-  const dt3 = scale(dataNumbersOnly)
+  const dt3 = modules.scale(dataNumbersOnly)
   // todo: add headers to dt
-  // console.log('(scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key))))))',(scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))))
+  // console.log('(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key))))))',(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))))
   dt['headers'] = headers
   dt22['headers'] = headers2
 
@@ -134,25 +126,8 @@ pcaModules.calculatePca = function (data) {
     scale: true
   })
 
-  console.log('pca',pca)  
-  console.log('pca2',pca2)  
-  console.log('data',data)  
-  console.log('data2',data2)  
-  console.log("(scale(data2))",(scale(data2)))
-  console.log("(scale(dt22))",(scale(dt22)))
-  console.log("(scale(dt3))",(scale(dt3)))
-  console.log("(scale(dt3)).map(Object.values)",(scale(dt3)).map(Object.values))
-  console.log("(scale(dt3)).map(Object.keys)",(scale(dt3)).map(Object.keys))
 
-  console.log("pca2.predict((scale(data2)).map(Object.values))",pca2.predict((scale(data2)).map(Object.values)))
-
-  console.log("pca2.predict((scale(data2)).map(Object.values)).toJSON()",pca2.predict((scale(data2)).map(Object.values)).toJSON())
-  console.log("pca2.predict((scale(dt3)).map(Object.values))",pca2.predict((scale(dt3)).map(Object.values)))
-  console.log("pca2.predict((scale(dt3)))",pca2.predict((scale(dt3)).map(Object.values)))
-
-
-
-  const scores = pca2.predict((scale(data2)).map(Object.values))
+  const scores = pca2.predict((modules.scale(data2)).map(Object.values))
     .toJSON()
     .map((row, rowIndex) => {
       const columns = Object.keys(data[rowIndex]);
@@ -182,7 +157,7 @@ pcaModules.calculatePca = function (data) {
 }
 
 
-pcaModules.plotPCA = function (scores, groups) {
+modules.plotPCA = function (scores, groups) {
   const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
 
@@ -339,5 +314,5 @@ pcaModules.plotPCA = function (scores, groups) {
 }
 
 export {
-  pcaModules
+  modules
 }

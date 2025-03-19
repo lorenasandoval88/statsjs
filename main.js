@@ -1,13 +1,12 @@
-import {
-  pcaModules
-} from './modules/mypca.js'
+import { modules } from './modules/mypca.js'
 
 const dataset = (await import("https://esm.sh/ml-dataset-iris"))
+
 const pcaData = {}// Declare global variable
 pcaData.iris = dataset.getDataset()
 pcaData.file = "none"
 // Next: create a file input element
-const loadFile = () => {
+const loadFile = async () => {
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
@@ -83,7 +82,7 @@ function csvToJson(csv) {
   return result;
 }
 
-loadFile()
+//loadFile()
 
 export {
   loadFile,

@@ -1,6 +1,6 @@
-import { pcaModules } from './modules/mypca.js'
+import { modules } from './modules/mypca.js'
 import { loadFile, pcaData } from './main.js'
 
 
 
-export {pcaModules, loadFile, pcaData}
+export {modules, loadFile, pcaData}
