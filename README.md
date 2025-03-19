@@ -1,6 +1,6 @@
 # statsJs
 
-clustering, correlation, heatmaps in JavaScript etc. 
+Multivariate statistical visualization (clustering, correlation, heatmaps, etc) in JavaScript. 
 live at https://lorenasandoval88.github.io/statsJs/
 
 Loading statsJs:
