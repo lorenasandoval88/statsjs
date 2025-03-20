@@ -6,6 +6,7 @@ const modules = {}
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
 
 function asDataFrame(value) {
+  console.log("value",value)
   // check if value is array of objects (aoo)
   if (value === undefined || value === null)
     throw new Error("No data passed to function.");
@@ -52,6 +53,10 @@ function asDataFrame(value) {
 }
 
 modules.scale = async function (value) {
+  console.log("function info",exampleFunction.toString())
+  //Standardization (Z-score transformation)
+  //Subtract the mean (μ) from each data point (x)
+  //Divide each result by the standard deviation (σ)
   const clone = JSON.parse(JSON.stringify(value));
   const df = asDataFrame(clone);
   df.columns.forEach((column) => {
@@ -94,12 +99,17 @@ modules.calculatePca = async function (data) {
   const dataNumbersOnly = removeNonNumberValues(data)
   const matrix = (data.map(Object.values))
   const categories = matrix.map(x => (removeNumbers(x))).flat()
-  console.log('categories',categories)  
+  // console.log('categories',categories)  
   const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
   const headers2 = matrix.headers
+  
+  let scaledArr = await modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj)
+  .filter(([key]) => headers.includes(key)))))
+  console.log('(data.map(obj => Object.fromEntries(Object.entries(obj)...',scaledArr.map(Object.values))
 
-  const dt = (modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj)
-    .filter(([key]) => headers.includes(key)))))).map(Object.values)
+  const dt = scaledArr.map(Object.values)
+  console.log('dt1',dt)  
+
   const dt22 = matrix.map(x => (removeNonNumbers(x)))
   const dt3 = modules.scale(dataNumbersOnly)
   // todo: add headers to dt
@@ -127,7 +137,7 @@ modules.calculatePca = async function (data) {
   })
 
 
-  const scores = pca2.predict((modules.scale(data2)).map(Object.values))
+  const scores = pca2.predict((await (modules.scale(data2))).map(Object.values))
     .toJSON()
     .map((row, rowIndex) => {
       const columns = Object.keys(data[rowIndex]);

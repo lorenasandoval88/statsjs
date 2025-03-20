@@ -1,6 +1,13 @@
-import { modules } from './modules/mypca.js'
-
 const dataset = (await import("https://esm.sh/ml-dataset-iris"))
+import { modules } from './modules/mypca.js'
+console.log("dataset",dataset.getDataset())
+console.log("modules",modules, modules.scale([{
+  "sepal_length": 5.1,
+  "sepal_width": 3.5,
+  "petal_length": 1.4,
+  "petal_width": 0.2,
+  "species": "setosa"
+}]))
 
 const pcaData = {}// Declare global variable
 pcaData.iris = dataset.getDataset()
@@ -19,11 +26,11 @@ const loadFile = async () => {
         if (file) {
           const reader = new FileReader();
 
-          reader.onload = function (e) {
+          reader.onload = async function (e) {
             const csv = e.target.result;
             const json = csvToJson(csv)
             const matrix = (json.map(Object.values))
-            // console.log("main json", json)
+            console.log("main json", json)
             // console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
             pcaData.file = matrix
@@ -33,9 +40,9 @@ const loadFile = async () => {
             // console.log('json[headers]', json['headers'])
             // displayJson(json);
 
-            const scores = modules.calculatePca(json)
+            const scores = await modules.calculatePca(json)
+            console.log("main scores", scores)
             const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
-            // console.log("main scores", scores)
             modules.plotPCA(scores, groups)
           };
           reader.onerror = function () {
@@ -82,7 +89,7 @@ function csvToJson(csv) {
   return result;
 }
 
-//loadFile()
+loadFile()
 
 export {
   loadFile,
