@@ -53,7 +53,7 @@ function asDataFrame(value) {
 }
 
 modules.scale = async function (value) {
-  console.log("function info",exampleFunction.toString())
+  console.log("function info:",modules.scale.toString())
   //Standardization (Z-score transformation)
   //Subtract the mean (μ) from each data point (x)
   //Divide each result by the standard deviation (σ)
@@ -111,7 +111,7 @@ modules.calculatePca = async function (data) {
   console.log('dt1',dt)  
 
   const dt22 = matrix.map(x => (removeNonNumbers(x)))
-  const dt3 = modules.scale(dataNumbersOnly)
+  const dt3 = await modules.scale(dataNumbersOnly)
   // todo: add headers to dt
   // console.log('(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key))))))',(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))))
   dt['headers'] = headers
