@@ -10,7 +10,7 @@ live at https://lorenasandoval88.github.io/statsjs/
 
 `sdk = await import("https://lorenasandoval88.github.io/statsjs/sdk.js")`
 
-**Next, call the loadPca() module**
+**Next, call the loadPca() module to load input data and render the PCA plot**
 
 `sdk.loadPca()`
 
