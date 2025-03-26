@@ -1,13 +1,12 @@
 const dataset = (await import("https://esm.sh/ml-dataset-iris"))
+const { PCA} = await import("https://esm.sh/pca-js")
+import * as pcaJS from "https://esm.sh/pca-js"
+console.log("pcaJS",pcaJS)
+
+console.log("PCA",PCA)
+
 import { modules } from './modules/mypca.js'
-console.log("dataset",dataset.getDataset())
-console.log("modules",modules, modules.scale([{
-  "sepal_length": 5.1,
-  "sepal_width": 3.5,
-  "petal_length": 1.4,
-  "petal_width": 0.2,
-  "species": "setosa"
-}]))
+
 
 const pcaData = {}// Declare global variable
 pcaData.iris = dataset.getDataset()
@@ -89,7 +88,53 @@ function csvToJson(csv) {
   return result;
 }
 
+// Assume 'data' is your dataset and 'labels' are the corresponding labels
+// 'data' should be a 2D array where each row represents a sample and each column represents a feature
+// 'labels' should be an array with the same length as the number of rows in 'data'
+
+function pcaPlot(data, labels) {
+  // Perform PCA using a library like PCA-js or implement it manually
+  const pca = new PCA(data); // Assuming you are using PCA-js
+  console.log("pca",pca)
+  const components = pca.getComponents(2); // Get the first two principal components
+
+  // Prepare data for Plotly
+  const trace = {
+    x: components.map(c => c[0]),
+    y: components.map(c => c[1]),
+    mode: 'markers',
+    type: 'scatter',
+    text: labels, // Optional: Add labels to data points
+    marker: {
+      size: 8,
+      color: labels.map(label => (label === 'A' ? 'blue' : (label === 'B' ? 'red' : 'green'))) // Example coloring based on labels
+    }
+  };
+
+  const layout = {
+    title: 'PCA Plot',
+    xaxis: { title: 'Principal Component 1' },
+    yaxis: { title: 'Principal Component 2' }
+  };
+
+  // Create the plot
+
+  const pca_plot = document.createElement("div")
+  pcaDiv.id = 'pca_plot'
+  document.body.appendChild(pcaDiv);
+  pcaDiv.append(document.createElement('br'));
+
+  Plotly.newPlot('pca_plot', [trace], layout); // 'pca-plot' is the ID of the div where the plot will be rendered
+}
+
+// Example usage:
+const data = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [2, 3, 4], [5, 6, 7]];
+const labels = ['A', 'B', 'A', 'B', 'A'];
+
+pcaPlot(data, labels);
+
 loadFile()
+
 
 export {
   loadFile,
