@@ -1,4 +1,4 @@
-# Welcome to the statsJs!
+# Welcome to statsJs!
 
 Multivariate statistics plots in Javascript (clustering, correlation, heatmaps etc.) 
 live at https://lorenasandoval88.github.io/statsJs/
