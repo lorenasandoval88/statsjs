@@ -1,10 +1,17 @@
-# statsJs
+# Welcome to statsJs!
 
-clustering, correlation, heatmaps in JavaScript etc. 
-live at https://lorenasandoval88.github.io/statsJs/
+Multivariate statistics plots in Javascript (clustering, correlation, heatmaps etc.) 
+live at https://lorenasandoval88.github.io/statsjs/
 
-Loading statsJs:
+
+### Loading statsJs: 
+
+**Use the await keyword with the dynamic import() function to load statsJs modules asynchronously.**
 
 `sdk = await import("https://lorenasandoval88.github.io/statsjs/sdk.js")`
+
+**Next, call the loadPca() module to load input data and render the PCA plot**
+
+`sdk.loadPca()`
 
 Documentation can be found on the [wiki](https://github.com/episphere/statsJs/wiki).
