@@ -10,30 +10,55 @@ const localForage = (await import('https://cdn.jsdelivr.net/npm/localforage@1.10
 // import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
 
 // import * as PCA from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
-import {default as PCA} from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.2/+esm'
+import {  default as PCA } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.2/+esm'
 const PCA2 = (await import("https://esm.sh/pca-js")).default
 
 // Example usage:
-const data = [[40,50,60],[50,70,60],[80,70,90],[50,60,80]]
+const data = [
+  [40, 50, 60],
+  [50, 70, 60],
+  [80, 70, 90],
+  [50, 60, 80]
+]
 const labels = ['A', 'B', 'A', 'B', 'A'];
 
-console.log("PCA",PCA)
-console.log("PCA2",PCA2)
-console.log("Plotly",await Plotly)
+const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
+const irisData = dataset.getDataset()
+
+console.log("PCA", PCA)
+console.log("PCA2", PCA2)
+console.log("Plotly", await Plotly)
+console.log("dataset", dataset)
+
+console.log("dataset", dataset.getDataset())
+
+console.log("Plotly", await Plotly)
 
 // console.log("new PCA2",new PCA2())
 
 // console.log("PCA",new PCA(data))
 
-import { modules } from './modules/mypca.js'
+import {
+  modules
+} from './modules/mypca.js'
 
-
-const pcaData = {}// Declare global data variable
+// Declare global data variable 
+const pcaData = {} 
 pcaData.iris = dataset.getDataset()
 pcaData.file = "none"
 
 // load file and plot PCA
 const loadPca = async () => {
+  //sample data button element
+  const sampleData = document.createElement('button')
+  sampleData.id = 'sampleData'
+  sampleData.textContent = 'Load Sample Data'
+  // Add an event listener
+  sampleData.addEventListener('click', function () {
+    alert('Button clicked!');
+  });
+  document.body.appendChild(sampleData);
+
   // file input element
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
@@ -55,7 +80,7 @@ const loadPca = async () => {
             // console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
             pcaData.file = matrix
-            console.log("pcaData",pcaData)
+            console.log("pcaData", pcaData)
 
             // console.log('main load PCA csv', csv)
 
@@ -112,19 +137,19 @@ function csvToJson(csv) {
 // Assume 'data' is your dataset and 'labels' are the corresponding labels
 // 'data' should be a 2D array where each row represents a sample and each column represents a feature
 // 'labels' should be an array with the same length as the number of rows in 'data'
-async function pcaPlotlyPlot2(data,labels){
+async function pcaPlotlyPlot2(data, labels) {
 
   var eigenvectors = PCA.getEigenVectors(data);
   // var first = PCA.computePercentageExplained(vectors,vectors[0])
-  var topTwo = PCA.computePercentageExplained(eigenvectors,eigenvectors[0],eigenvectors[1])
+  var topTwo = PCA.computePercentageExplained(eigenvectors, eigenvectors[0], eigenvectors[1])
   // // const explainedVariance = PCA.getExplainedVariance();
 
   // console.log("vectors",vectors)
   // console.log("first",first)
-  console.log("topTwo",topTwo)
-  console.log("eigenvectors",eigenvectors)
-  console.log("eigenvectors.map(row => row[0])",eigenvectors[0].vector)
-  console.log("eigenvectors.map(row => row[1])",eigenvectors[1].vector)
+  console.log("topTwo", topTwo)
+  console.log("eigenvectors", eigenvectors)
+  console.log("eigenvectors.map(row => row[0])", eigenvectors[0].vector)
+  console.log("eigenvectors.map(row => row[1])", eigenvectors[1].vector)
 
   const numComponents = 2
   const pcScores = data.map(row => {
@@ -134,11 +159,11 @@ async function pcaPlotlyPlot2(data,labels){
     }
     return transformedRow;
   });
-  console.log("pcScores",pcScores)
-  const pc1 = eigenvectors[0].vector//eigenvectors.map(row => row[0]);
-  const pc2 = eigenvectors[1].vector//eigenvectors.map(row => row[1]);
+  console.log("pcScores", pcScores)
+  const pc1 = eigenvectors[0].vector //eigenvectors.map(row => row[0]);
+  const pc2 = eigenvectors[1].vector //eigenvectors.map(row => row[1]);
   // For 3D plot
-  const pc3 = eigenvectors[2].vector//pcScores.map(row => row[2]);
+  const pc3 = eigenvectors[2].vector //pcScores.map(row => row[2]);
 
   const trace3d = {
     x: pc1,
@@ -151,7 +176,7 @@ async function pcaPlotlyPlot2(data,labels){
       opacity: 0.8
     }
   };
-  
+
   const layout3d = {
     margin: {
       l: 20,
@@ -161,36 +186,42 @@ async function pcaPlotlyPlot2(data,labels){
     },
     title: '3D PCA Plot',
     scene: {
-      xaxis: { title: 'Principal Component 1' },
-      yaxis: { title: 'Principal Component 2' },
-      zaxis: { title: 'Principal Component 3' }
+      xaxis: {
+        title: 'Principal Component 1'
+      },
+      yaxis: {
+        title: 'Principal Component 2'
+      },
+      zaxis: {
+        title: 'Principal Component 3'
+      }
     }
   };
-    // Create the plot div
-    const pca_plot2 = document.createElement("div")
-    pca_plot2.id = 'pca_plot2'
-    pca_plot2.style.width = 400//"auto";
-    pca_plot2.style.height = 400//"auto";
+  // Create the plot div
+  const pca_plot2 = document.createElement("div")
+  pca_plot2.id = 'pca_plot2'
+  pca_plot2.style.width = 400 //"auto";
+  pca_plot2.style.height = 400 //"auto";
 
-    document.body.appendChild(pca_plot2);
-    // pca_plot2.append(document.createElement('br'));
-    console.log("Plotly", Plotly)
+  document.body.appendChild(pca_plot2);
+  // pca_plot2.append(document.createElement('br'));
+  console.log("Plotly", Plotly)
 
   await Plotly.newPlot('pca_plot2', [trace3d], layout3d);
 }
 
-async function pcaPlotlyPlot3(data,labels){
+async function pcaPlotlyPlot3(data, labels) {
   var eigenvectors = PCA.getEigenVectors(data);
   // var first = PCA.computePercentageExplained(vectors,vectors[0])
-  var topTwo = PCA.computePercentageExplained(eigenvectors,eigenvectors[0],eigenvectors[1])
+  var topTwo = PCA.computePercentageExplained(eigenvectors, eigenvectors[0], eigenvectors[1])
   // // const explainedVariance = PCA.getExplainedVariance();
 
   // console.log("vectors",vectors)
   // console.log("first",first)
-  console.log("topTwo",topTwo)
-  console.log("eigenvectors",eigenvectors)
-  console.log("eigenvectors.map(row => row[0])",eigenvectors[0].vector)
-  console.log("eigenvectors.map(row => row[1])",eigenvectors[1].vector)
+  console.log("topTwo", topTwo)
+  console.log("eigenvectors", eigenvectors)
+  console.log("eigenvectors.map(row => row[0])", eigenvectors[0].vector)
+  console.log("eigenvectors.map(row => row[1])", eigenvectors[1].vector)
 
   const numComponents = 2
   const pcScores = data.map(row => {
@@ -200,9 +231,9 @@ async function pcaPlotlyPlot3(data,labels){
     }
     return transformedRow;
   });
-  console.log("pcScores",pcScores)
-  const pc1 = eigenvectors[0].vector//eigenvectors.map(row => row[0]);
-  const pc2 = eigenvectors[1].vector//eigenvectors.map(row => row[1]);
+  console.log("pcScores", pcScores)
+  const pc1 = eigenvectors[0].vector //eigenvectors.map(row => row[0]);
+  const pc2 = eigenvectors[1].vector //eigenvectors.map(row => row[1]);
   // For 3D plot
   // const pc3 = eigenvectors[2].vector//pcScores.map(row => row[2]);
 
@@ -217,7 +248,7 @@ async function pcaPlotlyPlot3(data,labels){
       opacity: 0.8
     }
   };
-  
+
   const layout2d = {
     // margin: {
     //   l: 150,
@@ -231,34 +262,36 @@ async function pcaPlotlyPlot3(data,labels){
       xanchor: 'center'
     },
     scene: {
-      xaxis: { 
+      xaxis: {
         title: 'PC1',
         titlefont: {
           color: 'red',
           family: 'Arial, Open Sans',
           size: 12
-       } 
+        }
       },
-      yaxis: { title: 'PC2' },
+      yaxis: {
+        title: 'PC2'
+      },
       // zaxis: { title: 'Principal Component 3' }
     }
   };
-    // Create the plot div
-    const pca_plot3 = document.createElement("div")
-    pca_plot3.id = 'pca_plot3'
-    // pca_plot3.style.width = 400//"auto";
-    // pca_plot3.style.height = 400//"auto";
+  // Create the plot div
+  const pca_plot3 = document.createElement("div")
+  pca_plot3.id = 'pca_plot3'
+  // pca_plot3.style.width = 400//"auto";
+  // pca_plot3.style.height = 400//"auto";
 
-    document.body.appendChild(pca_plot3);
-    // pca_plot2.append(document.createElement('br'));
+  document.body.appendChild(pca_plot3);
+  // pca_plot2.append(document.createElement('br'));
   await Plotly.newPlot('pca_plot3', [trace3d], layout2d);
 }
 
 
 function pcaPlotlyPlot(data, labels) {
-  console.log("data",data)
+  console.log("data", data)
   // console.log("pca",pca)
-  console.log("pca",PCA.getComponents())
+  console.log("pca", PCA.getComponents())
 
   // Perform PCA using a library like PCA-js or implement it manually
   const pca = new PCA(); // Assuming you are using PCA-js
@@ -279,8 +312,12 @@ function pcaPlotlyPlot(data, labels) {
 
   const layout = {
     title: 'PCA Plot',
-    xaxis: { title: 'Principal Component 1' },
-    yaxis: { title: 'Principal Component 2' }
+    xaxis: {
+      title: 'Principal Component 1'
+    },
+    yaxis: {
+      title: 'Principal Component 2'
+    }
   };
 
   // Create the plot div
