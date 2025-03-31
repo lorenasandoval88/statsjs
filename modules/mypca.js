@@ -1,4 +1,5 @@
 const { PCA} = await import("https://esm.sh/ml-pca");
+// import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
 import * as d3 from "https://cdn.skypack.dev/d3@7"
 import { default as d3tip} from 'https://esm.sh/d3-tip';
 
@@ -73,8 +74,8 @@ modules.scale = async function (value) {
   return df;
 }
 
-function removeNonNumberValues(arr) {
-  return arr.map(obj => {
+function removeNonNumberValues(ob) {
+  return ob.map(obj => {
     const newObj = {};
     for (const key in obj) {
       if (typeof obj[key] === 'number') {
