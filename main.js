@@ -56,27 +56,43 @@ function formatSampleData(data,headers) {
 
 // load file and plot PCA
 const loadPca = async () => {
+  const pcaDiv1 = document.createElement("div")
+  pcaDiv1.id = 'pcaDiv1'
+  document.body.appendChild(pcaDiv1);
+  pcaDiv1.append(document.createElement('br'));
+
+  const pcaDiv2 = document.createElement("div")
+  pcaDiv2.id = 'pcaDiv2'
+  document.body.appendChild(pcaDiv2);
+  pcaDiv2.append(document.createElement('br'));
 
   //sample data button 
   const sampleDataButton = document.createElement('button')
   sampleDataButton.id = 'sampleData'
   sampleDataButton.textContent = 'Load Sample Data'
+  document.getElementById('pcaDiv1').appendChild(sampleDataButton);
+
   sampleDataButton.addEventListener('click', async function () {
+    document.getElementById('pcaDiv2').innerHTML = '';
 
     const data = formatSampleData(irisData, irisLabels)
     const scores = await modules.calculatePca( data )
     console.log("main scores", scores)
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
     // plot function
-    modules.plotPCA(scores, groups)
+    modules.plotPCA('pcaDiv2',scores, groups)
   });
-  document.body.appendChild(sampleDataButton);
+
 
   // file input Button
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
+  document.getElementById('pcaDiv1').appendChild(fileInput);
+
   fileInput.addEventListener('change', (event) => {
+  document.getElementById('pcaDiv2').innerHTML = '';
+
     const files = event.target.files;
     for (const file of files) {
       const reader = new FileReader();
@@ -100,7 +116,7 @@ const loadPca = async () => {
             console.log("main scores", scores)
             const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
             // plot function
-            modules.plotPCA(scores, groups)
+            modules.plotPCA('pcaDiv2',scores, groups)
           };
           reader.onerror = function () {
             displayError('Error reading the file.');
@@ -112,7 +128,7 @@ const loadPca = async () => {
     }
   });
   // Add the input element to the document body (or any other desired location)
-  document.body.appendChild(fileInput);
+  // myDiv.replaceWith(newDiv);
 }
 
 

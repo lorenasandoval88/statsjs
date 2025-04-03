@@ -94,6 +94,7 @@ function removeNumbers(arr) {
   return arr.filter(element => typeof element !== 'number');
 }
 
+
 modules.calculatePca = async function (data) {
   console.log("data",data)
   console.log("removeNonNumberValues(data)", removeNonNumberValues(data))
@@ -188,7 +189,7 @@ function selectGroup(ctx, group, maxOpacity) {
   activeGroup.transition().attr("opacity", maxOpacity);
 }
 
-modules.plotPCA = function (scores, groups) {
+modules.plotPCA = function (div, scores, groups) {
   const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
 
@@ -345,11 +346,14 @@ modules.plotPCA = function (scores, groups) {
   //     .attr("dy", "0.9em")
   //     .attr("transform", "rotate(-90)")
   //     .text("PC2");
-  const pcaDiv = document.createElement("div")
-  pcaDiv.id = 'pcaDiv'
-  document.body.appendChild(pcaDiv);
-  pcaDiv.append(document.createElement('br'));
-  document.getElementById('pcaDiv').appendChild(svg.node());
+
+
+  // const pcaDiv = document.createElement("div")
+  // pcaDiv.id = 'pcaDiv'
+  // document.body.appendChild(pcaDiv);
+  // pcaDiv.append(document.createElement('br'));
+  // document.getElementById('pcaDiv').appendChild(svg.node());
+  document.getElementById(div).appendChild(svg.node());
   return svg.node();
 }
 
