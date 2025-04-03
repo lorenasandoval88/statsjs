@@ -2,17 +2,19 @@
 // const plotly = (await import('https://cdn.jsdelivr.net/npm/plotly.js-dist@3.0.1/+esm')).default
 // import * as Plotly from 'https://cdn.jsdelivr.net/npm/plotly.js-dist@3.0.1/plotly.min.js'
 // const Plotly = (await import("https://cdn.plot.ly/plotly-latest.min.js"))
+// const PCA = await import("https://esm.sh/pca-js")
+// const PCA2 = (await import("https://esm.sh/pca-js")).default
+// import PCA from "https://esm.sh/pca-js"
+// import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
+// import * as PCA from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
 const Plotly = (await import('https://cdn.jsdelivr.net/npm/plotly.js-dist/+esm')).default
 const dataset = (await import("https://esm.sh/ml-dataset-iris"))
 const localForage = (await import('https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js'))
-// const PCA = await import("https://esm.sh/pca-js")
-// import PCA from "https://esm.sh/pca-js"
-// import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
-
-// import * as PCA from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
-import {  default as PCA } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.2/+esm'
-const PCA2 = (await import("https://esm.sh/pca-js")).default
-
+import { default as PCA } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.0/+esm'
+import {modules} from './modules/mypca.js'
+//https://observablehq.com/@saehrimnir/dimensionality-reduction-drawings
+//https://observablehq.com/@3e787c1af6c5a437/a-comparative-overview-of-dimension-reduction-methods
+//https://codesandbox.io/p/sandbox/eloquent-shtern-cj5vr6?file=%2Fsrc%2FpcaUtils.js%3A28%2C14-28%2C19
 // Example usage:
 const data = [
   [40, 50, 60],
@@ -24,42 +26,53 @@ const labels = ['A', 'B', 'A', 'B', 'A'];
 
 const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
 const irisData = dataset.getDataset()
+const irisDataNumbersOnly = irisData.map(x => (removeNonNumbers(x)))
 
 console.log("PCA", PCA)
-console.log("PCA2", PCA2)
 console.log("Plotly", await Plotly)
-console.log("dataset", dataset)
-
-console.log("dataset", dataset.getDataset())
-
-console.log("Plotly", await Plotly)
-
-// console.log("new PCA2",new PCA2())
-
-// console.log("PCA",new PCA(data))
-
-import {
-  modules
-} from './modules/mypca.js'
 
 // Declare global data variable 
 const pcaData = {} 
-pcaData.iris = dataset.getDataset()
-pcaData.file = "none"
+pcaData.sampleData = {iris:irisData,irisNumbersOnly:irisDataNumbersOnly}
+pcaData.file = "none loaded"
+console.log("pcaData", pcaData)
+
+
+function formatSampleData(data,headers) {
+  const result = [];
+  result.headers = headers;
+  for (let i = 0; i < data.length; i++) {
+    const obj = {};
+    const currentLine = data[i]
+    for (let j = 0; j < headers.length; j++) {
+      obj[headers[j]] = convertToNumber(currentLine[j])
+    }
+    result.push(obj);
+  }
+  return result;
+}
+
+
 
 // load file and plot PCA
 const loadPca = async () => {
-  //sample data button element
-  const sampleData = document.createElement('button')
-  sampleData.id = 'sampleData'
-  sampleData.textContent = 'Load Sample Data'
-  // Add an event listener
-  sampleData.addEventListener('click', function () {
-    alert('Button clicked!');
-  });
-  document.body.appendChild(sampleData);
 
-  // file input element
+  //sample data button 
+  const sampleDataButton = document.createElement('button')
+  sampleDataButton.id = 'sampleData'
+  sampleDataButton.textContent = 'Load Sample Data'
+  sampleDataButton.addEventListener('click', async function () {
+
+    const data = formatSampleData(irisData, irisLabels)
+    const scores = await modules.calculatePca( data )
+    console.log("main scores", scores)
+    const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
+    // plot function
+    modules.plotPCA(scores, groups)
+  });
+  document.body.appendChild(sampleDataButton);
+
+  // file input Button
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
@@ -79,12 +92,10 @@ const loadPca = async () => {
             console.log("main json", json)
             // console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
-            pcaData.file = matrix
+            pcaData.file = json
             console.log("pcaData", pcaData)
 
             // console.log('main load PCA csv', csv)
-
-
             const scores = await modules.calculatePca(json)
             console.log("main scores", scores)
             const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
@@ -134,6 +145,48 @@ function csvToJson(csv) {
   return result;
 }
 
+function removeNonNumbers(arr) {
+  return arr.filter(element => typeof element === 'number');
+}
+
+
+async function pcaPlotlyPlot4(data) {
+  console.log("data", data)
+  const deviationMatrix = PCA.computeDeviationMatrix(data);
+  const eigenvectors = PCA.getEigenVectors(deviationMatrix);
+  // const eigenvalues = PCA.computeEigenvalues(deviationMatrix);
+  console.log("eigenvectors", eigenvectors)
+
+  const adjustedMatrix = PCA.computeAdjustedData(data, eigenvectors[0]);
+  console.log("adjustedMatrix------------------", adjustedMatrix)
+  // Extract the first two principal components
+  const pc1 = adjustedMatrix.map(row => row[0]);
+  const pc2 = adjustedMatrix.map(row => row[1]);
+  
+  // Create a scatter plot using Plotly
+  const trace = {
+    x: pc1,
+    y: pc2,
+    mode: 'markers',
+    type: 'scatter'
+  };
+  
+  const layout = {
+    title: 'PCA Results',
+    xaxis: { title: 'Principal Component 1' },
+    yaxis: { title: 'Principal Component 2' }
+  };
+    // Create the plot div
+    const pca_plot4 = document.createElement("div")
+    pca_plot4.id = 'pca_plot4'
+    pca_plot4.style.width = 400 //"auto";
+    pca_plot4.style.height = 400 //"auto";
+
+    document.body.appendChild(pca_plot4);
+  Plotly.newPlot('pca-pca_plot4', [trace], layout);
+}
+
+pcaPlotlyPlot4(data)
 // Assume 'data' is your dataset and 'labels' are the corresponding labels
 // 'data' should be a 2D array where each row represents a sample and each column represents a feature
 // 'labels' should be an array with the same length as the number of rows in 'data'
@@ -202,7 +255,6 @@ async function pcaPlotlyPlot2(data, labels) {
   pca_plot2.id = 'pca_plot2'
   pca_plot2.style.width = 400 //"auto";
   pca_plot2.style.height = 400 //"auto";
-
   document.body.appendChild(pca_plot2);
   // pca_plot2.append(document.createElement('br'));
   console.log("Plotly", Plotly)
@@ -329,12 +381,12 @@ function pcaPlotlyPlot(data, labels) {
   Plotly.newPlot('pca_plot', [trace], layout); // 'pca-plot' is the ID of the div where the plot will be rendered
 }
 
-// // Example usage:
-// const data = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [2, 3, 4], [5, 6, 7]];
-// const labels = ['A', 'B', 'A', 'B', 'A'];
 
-await pcaPlotlyPlot2(data, labels);
-await pcaPlotlyPlot3(data, labels);
+console.log("data", data)
+console.log("pcaData.sampleData", pcaData.sampleData.irisNumbersOnly)
+
+await pcaPlotlyPlot2(pcaData.sampleData.irisNumbersOnly, labels);
+await pcaPlotlyPlot3(pcaData.sampleData.irisNumbersOnly, labels);
 
 // pcaPlotlyPlot2(data, labels);
 

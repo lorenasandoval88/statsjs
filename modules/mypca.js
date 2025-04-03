@@ -7,7 +7,7 @@ const modules = {}
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
 
 function asDataFrame(value) {
-  console.log("value",value)
+  // console.log("value",value)
   // check if value is array of objects (aoo)
   if (value === undefined || value === null)
     throw new Error("No data passed to function.");
@@ -99,8 +99,9 @@ modules.calculatePca = async function (data) {
   console.log("removeNonNumberValues(data)", removeNonNumberValues(data))
   const dataNumbersOnly = removeNonNumberValues(data)
   const matrix = (data.map(Object.values))
+  console.log('matrix',matrix)  
   const categories = matrix.map(x => (removeNumbers(x))).flat()
-  // console.log('categories',categories)  
+  console.log('categories',categories)  
   const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
   const headers2 = matrix.headers
   
@@ -162,22 +163,41 @@ modules.calculatePca = async function (data) {
       id
     }))
   const groups = [...new Set(scores.map(d => d.group))]
-  //  console.log('scores',scores)  
+   console.log('groups',groups)  
 
   return scores
 }
 
+function selectGroup(ctx, group, maxOpacity) {
+  const groupElements = d3.selectAll(".points")
+    .filter(d => d.group !== group);
+  
+  const activeGroup = d3.selectAll(".keyRects")
+    .filter(d => d === group);
+  
+  const otherElements = d3.selectAll(".points")
+    .filter(d => d.group === group);
+  
+  const otherGroups = d3.selectAll(".keyRects")
+    .filter(d => d !== group);
+  
+  groupElements.transition().attr("opacity", 0.1);
+  otherGroups.transition().attr("opacity", 0.1);
+  
+  otherElements.transition().attr("opacity", maxOpacity);
+  activeGroup.transition().attr("opacity", maxOpacity);
+}
 
 modules.plotPCA = function (scores, groups) {
   const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
 
-  const width = 300
+  const width = 400
   const height = width / 1.5
   const fontFamily = 'monospace'
   const maxOpacity = 0.7
   const margin = ({
-    top: 20,
+    top: 25,
     right: 90,
     bottom: 45,
     left: 45
@@ -220,6 +240,15 @@ modules.plotPCA = function (scores, groups) {
 
   const svg = d3.create("svg")
   // const g = d3.select(DOM.svg(width, height));
+  
+  // title
+  svg.append("text")
+  .attr("x", width / 2 - margin.left)
+  .attr("y", margin.top / 2)
+  .attr("text-anchor", "middle")
+  .style("font-size", "16px")
+  .style("font-family", "sans-serif")
+  .text("PCA Plot");
 
   const g = svg
     .attr('width', width)
@@ -283,7 +312,7 @@ modules.plotPCA = function (scores, groups) {
   // console.log("key",key)
   key.enter().append("rect")
     .attr("class", "keyRects")
-    .attr("x", width - margin.left - 70)
+    .attr("x", width - margin.left - 50)
     .attr("y", (d, i) => i * 20)
     .attr("width", 12)
     .attr("height", 12)
@@ -293,7 +322,7 @@ modules.plotPCA = function (scores, groups) {
     })
 
   key.enter().append("text")
-    .attr("x", d => width - margin.left - 50)
+    .attr("x", d => width - margin.left - 30)
     .attr("y", (d, i) => i * 20)
     .attr("dy", "0.7em")
     .text(d => `${d}`)
