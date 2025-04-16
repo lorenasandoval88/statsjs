@@ -7,7 +7,7 @@ const modules = {}
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
 
 function asDataFrame(value) {
-  // console.log("value",value)
+  //  //console.log("value",value)
   // check if value is array of objects (aoo)
   if (value === undefined || value === null)
     throw new Error("No data passed to function.");
@@ -54,7 +54,7 @@ function asDataFrame(value) {
 }
 
 modules.scale = async function (value) {
-  console.log("function info:",modules.scale.toString())
+   //console.log("function info:",modules.scale.toString())
   //Standardization (Z-score transformation)
   //Subtract the mean (μ) from each data point (x)
   //Divide each result by the standard deviation (σ)
@@ -96,33 +96,33 @@ function removeNumbers(arr) {
 
 
 modules.calculatePca = async function (data) {
-  console.log("data",data)
-  console.log("removeNonNumberValues(data)", removeNonNumberValues(data))
+   //console.log("data",data)
+   //console.log("removeNonNumberValues(data)", removeNonNumberValues(data))
   const dataNumbersOnly = removeNonNumberValues(data)
   const matrix = (data.map(Object.values))
-  console.log('matrix',matrix)  
+   //console.log('matrix',matrix)  
   const categories = matrix.map(x => (removeNumbers(x))).flat()
-  console.log('categories',categories)  
+   //console.log('categories',categories)  
   const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
   const headers2 = matrix.headers
   
   let scaledArr = await modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj)
   .filter(([key]) => headers.includes(key)))))
-  console.log('(data.map(obj => Object.fromEntries(Object.entries(obj)...',scaledArr.map(Object.values))
+   //console.log('(data.map(obj => Object.fromEntries(Object.entries(obj)...',scaledArr.map(Object.values))
 
   const dt = scaledArr.map(Object.values)
-  console.log('dt1',dt)  
+   //console.log('dt1',dt)  
 
   const dt22 = matrix.map(x => (removeNonNumbers(x)))
   const dt3 = await modules.scale(dataNumbersOnly)
   // todo: add headers to dt
-  // console.log('(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key))))))',(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))))
+  //  //console.log('(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key))))))',(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))))
   dt['headers'] = headers
   dt22['headers'] = headers2
 
-  console.log('dt',dt)  
-  console.log('dt22',dt22)  
-  console.log('dt3',dt3)  
+   //console.log('dt',dt)  
+   //console.log('dt22',dt22)  
+   //console.log('dt3',dt3)  
 
   const data2 = data.map(({
     species,
@@ -164,7 +164,7 @@ modules.calculatePca = async function (data) {
       id
     }))
   const groups = [...new Set(scores.map(d => d.group))]
-   console.log('groups',groups)  
+    //console.log('groups',groups)  
 
   return scores
 }
@@ -310,7 +310,7 @@ modules.plotPCA = function (div, scores, groups) {
   const key = g.append("g")
     .selectAll("rect")
     .data(groups)
-  // console.log("key",key)
+  //  //console.log("key",key)
   key.enter().append("rect")
     .attr("class", "keyRects")
     .attr("x", width - margin.left - 50)
