@@ -1,5 +1,4 @@
-
-const Plotly = (await import('https://cdn.jsdelivr.net/npm/plotly.js-dist/+esm')).default
+const Plotly = (await import('https://cdn.jsdelivr.net/npm/plotly.js-dist@3.0.1/+esm')).default
 const dataset = (await import("https://esm.sh/ml-dataset-iris"))
 const localForage = (await import('https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js'))
 import { default as PCA } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
@@ -13,7 +12,6 @@ const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width"
 const irisData = dataset.getDataset()
 const irisDataNumbersOnly = irisData.map(x => (removeNonNumbers(x)))
 const irisDataNamesOnly = irisData.map(x => (removeNumbers(x)))
-
 console.log("PCA", PCA)
 console.log("PCA", PCA.getEigenVectors(irisDataNumbersOnly))
 
@@ -91,7 +89,7 @@ const loadPca = async () => {
             const csv = e.target.result;
             const json = csvToJson(csv)
             const matrix = (json.map(Object.values))
-            //console.log("main json", json)
+            console.log("main json", json)
             // //console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
             pcaData.file = json

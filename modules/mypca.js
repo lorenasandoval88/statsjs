@@ -86,6 +86,17 @@ function removeNonNumberValues(ob) {
   });
 }
 
+function removeNumberValues(ob) {
+  return ob.map(obj => {
+    const newObj = {};
+    for (const key in obj) {
+      if (typeof obj[key] !== 'number') {
+        newObj[key] = obj[key];
+      }
+    }
+    return newObj;
+  });
+}
 function removeNonNumbers(arr) {
   return arr.filter(element => typeof element === 'number');
 }
@@ -96,57 +107,37 @@ function removeNumbers(arr) {
 
 
 modules.calculatePca = async function (data) {
-   //console.log("data",data)
-   //console.log("removeNonNumberValues(data)", removeNonNumberValues(data))
-  const dataNumbersOnly = removeNonNumberValues(data)
-  const matrix = (data.map(Object.values))
-   //console.log('matrix',matrix)  
-  const categories = matrix.map(x => (removeNumbers(x))).flat()
-   //console.log('categories',categories)  
+   console.log("data",data)
+
+  const numbersOnlyObjs = removeNonNumberValues(data)
+  console.log("numbersOnlyObjs",numbersOnlyObjs[0])
+  const numbersOnlyArrs = (numbersOnlyObjs.map(Object.values))
+   console.log('numbersOnlyArrs',numbersOnlyArrs[0])  
+
+  const categories =(removeNumberValues(data)).map( x=> Object.values(x)).flat()
+  //  console.log('categories',categories)  
+   
   const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
-  const headers2 = matrix.headers
-  
-  let scaledArr = await modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj)
-  .filter(([key]) => headers.includes(key)))))
-   //console.log('(data.map(obj => Object.fromEntries(Object.entries(obj)...',scaledArr.map(Object.values))
+  const headers2 = data.headers
+  console.log('headers',headers)
+  console.log('headers2',headers2)
+  let scaledObjs = (await modules.scale(numbersOnlyObjs))
+  let scaledArr = scaledObjs.map(Object.values)
+  console.log('scaledArr',scaledArr[0])  
 
-  const dt = scaledArr.map(Object.values)
-   //console.log('dt1',dt)  
-
-  const dt22 = matrix.map(x => (removeNonNumbers(x)))
-  const dt3 = await modules.scale(dataNumbersOnly)
-  // todo: add headers to dt
-  //  //console.log('(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key))))))',(modules.scale(data.map(obj => Object.fromEntries(Object.entries(obj).filter(([key])=> idx.includes(key)))))))
-  dt['headers'] = headers
-  dt22['headers'] = headers2
-
-   //console.log('dt',dt)  
-   //console.log('dt22',dt22)  
-   //console.log('dt3',dt3)  
-
-  const data2 = data.map(({
-    species,
-    id,
-    ...rest
-  }) => rest)
-
-  const pca = new PCA(dt, {
-    center: true,
-    scale: true
-  })
-  const pca2 = new PCA(dt22, {
+  const pca = new PCA(scaledArr, {
     center: true,
     scale: true
   })
 
 
-  const scores = pca2.predict((await (modules.scale(data2))).map(Object.values))
+  const scores = pca.predict(scaledArr)
     .toJSON()
     .map((row, rowIndex) => {
       const columns = Object.keys(data[rowIndex]);
       const rowObj = {
         group: data[rowIndex]['species'],
-        id: data[rowIndex]['id']
+        name: "id_"+rowIndex//data[rowIndex]['id']
       };
       columns.forEach((column, colIndex) => {
         rowObj[`PC${colIndex + 1}`] = row[colIndex];
@@ -156,15 +147,14 @@ modules.calculatePca = async function (data) {
       PC1,
       PC2,
       group,
-      id
+      name
     }) => ({
       PC1,
       PC2,
       group,
-      id
+      name
     }))
-  const groups = [...new Set(scores.map(d => d.group))]
-    //console.log('groups',groups)  
+    console.log("scores",scores)
 
   return scores
 }
@@ -277,14 +267,15 @@ modules.plotPCA = function (div, scores, groups) {
   const gPoints = g.append("g").attr("class", "gPoints");
 
   const tooltip = d3tip()
-    .style('border', 'solid 3px black')
+    .style('border', 'solid 2px navy')
     .style('background-color', 'white')
-    .style('border-radius', '11px')
-    .style('float', 'left')
+    .style('border-radius', '7px')
+    // .style('float', 'left')
     .style('font-family', fontFamily)
+    .style('width', '9%')
     .html((event, d) => `
-          <div style='float: right'>
-            name:${d.Name} <br/>
+          <div style='text-align: center'>
+            name:${d.name} <br/>
             pc1:${d.PC1.toFixed(2)} <br/>
             pc2:${d.PC2.toFixed(2)}
           </div>`)
