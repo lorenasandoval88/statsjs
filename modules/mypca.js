@@ -1,129 +1,58 @@
 const { PCA} = await import("https://esm.sh/ml-pca");
+const dataset = (await import("https://esm.sh/ml-dataset-iris"))
+import { default as PCAjs } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
+const Plotly = (await import('https://cdn.jsdelivr.net/npm/plotly.js-dist@3.0.1/+esm')).default
+
 // import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
 import * as d3 from "https://cdn.skypack.dev/d3@7"
 import { default as d3tip} from 'https://esm.sh/d3-tip';
+import {otherFunctions} from '../otherFunctions.js'
 
-const modules = {}
+
+// Example iris dataset:
+const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
+const irisData = dataset.getDataset()
+const irisDataNumbersOnly = irisData.map(x => (otherFunctions.removeNonNumbers(x)))
+const irisDataNamesOnly = irisData.map(x => (otherFunctions.removeNumbers(x)))
+
+// Declare global data variable 
+const pcaData = {} 
+pcaData.sampleData = {iris:irisData,irisNamesOnly: irisDataNamesOnly, irisNumbersOnly:irisDataNumbersOnly}
+pcaData.file = "none loaded"
+console.log("pcaData", pcaData)
+
+const pca = {}
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
-
-function asDataFrame(value) {
-  //  //console.log("value",value)
-  // check if value is array of objects (aoo)
-  if (value === undefined || value === null)
-    throw new Error("No data passed to function.");
-  if (
-    !Array.isArray(value) ||
-    typeof value[0] !== "object" ||
-    value[0] === null
-  ) {
-    throw new Error("First argument must be an array of objects");
+function formatIrisData(data,headers) {
+  const result = [];
+  result.headers = headers;
+  for (let i = 0; i < data.length; i++) {
+    const obj = {};
+    const currentLine = data[i]
+    for (let j = 0; j < headers.length; j++) {
+      obj[headers[j]] = otherFunctions.convertStrToNumber(currentLine[j])
+    }
+    result.push(obj);
   }
-
-  const aoo = value;
-  // columns: if parsed using d3, the aoo will already have a columns prop
-  // -> create it otherwise
-  if (!value.columns) {
-    const set = new Set();
-    for (const row of aoo) {
-      for (const key of Object.keys(row)) set.add(key);
-    }
-    aoo.columns = [...set];
-  }
-  // create getters and setters for columns
-  aoo.columns.forEach((column) => {
-    if (!Object.getOwnPropertyDescriptor(aoo, column)) {
-      Object.defineProperty(aoo, column, {
-        get: function () {
-          return this.map((row) => row[column]);
-        },
-        set: function (array) {
-          if (!array) {
-            throw new Error(`No data passed to set ${column} column.`);
-          }
-          if (array.length !== this.length) {
-            throw new Error(
-              `Data length (${array.length}) different from column ${column} length (${this.length}).`
-            );
-          }
-          this.forEach((row, index) => (row[column] = array[index]));
-        }
-      });
-    }
-  });
-  return aoo;
+  return result;
 }
 
-modules.scale = async function (value) {
-   //console.log("function info:",modules.scale.toString())
-  //Standardization (Z-score transformation)
-  //Subtract the mean (μ) from each data point (x)
-  //Divide each result by the standard deviation (σ)
-  const clone = JSON.parse(JSON.stringify(value));
-  const df = asDataFrame(clone);
-  df.columns.forEach((column) => {
-    const values = df[column];
-    const mean = d3.mean(values);
-    const sd = d3.deviation(values);
-    df[column] = values.map((v) => {
-      if (v !== null && v !== undefined) {
-        return (v - mean) / sd;
-      }
-      return v;
-    });
-  });
-  return df;
-}
+pca.calculatePca = async function (data) {
+   console.log("mypca.js pca.calculatePca data",data)
 
-function removeNonNumberValues(ob) {
-  return ob.map(obj => {
-    const newObj = {};
-    for (const key in obj) {
-      if (typeof obj[key] === 'number') {
-        newObj[key] = obj[key];
-      }
-    }
-    return newObj;
-  });
-}
-
-function removeNumberValues(ob) {
-  return ob.map(obj => {
-    const newObj = {};
-    for (const key in obj) {
-      if (typeof obj[key] !== 'number') {
-        newObj[key] = obj[key];
-      }
-    }
-    return newObj;
-  });
-}
-function removeNonNumbers(arr) {
-  return arr.filter(element => typeof element === 'number');
-}
-
-function removeNumbers(arr) {
-  return arr.filter(element => typeof element !== 'number');
-}
-
-
-modules.calculatePca = async function (data) {
-   console.log("data",data)
-
-  const numbersOnlyObjs = removeNonNumberValues(data)
+  const numbersOnlyObjs =otherFunctions.removeNonNumberValues(data)
   console.log("numbersOnlyObjs",numbersOnlyObjs[0])
   const numbersOnlyArrs = (numbersOnlyObjs.map(Object.values))
-   console.log('numbersOnlyArrs',numbersOnlyArrs[0])  
+  //  console.log('numbersOnlyArrs',numbersOnlyArrs[0])  
 
-  const categories =(removeNumberValues(data)).map( x=> Object.values(x)).flat()
+  const categories =(otherFunctions.removeNumberValues(data)).map( x=> Object.values(x)).flat()
   //  console.log('categories',categories)  
    
-  const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
-  const headers2 = data.headers
-  console.log('headers',headers)
-  console.log('headers2',headers2)
-  let scaledObjs = (await modules.scale(numbersOnlyObjs))
+  // const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
+  // // console.log('headers',headers)
+  let scaledObjs = (await otherFunctions.scale(numbersOnlyObjs))
   let scaledArr = scaledObjs.map(Object.values)
-  console.log('scaledArr',scaledArr[0])  
+  // console.log('scaledArr',scaledArr[0])  
 
   const pca = new PCA(scaledArr, {
     center: true,
@@ -154,7 +83,7 @@ modules.calculatePca = async function (data) {
       group,
       name
     }))
-    console.log("scores",scores)
+    console.log("mypca.js pca.calculatePcascores",scores)
 
   return scores
 }
@@ -179,7 +108,7 @@ function selectGroup(ctx, group, maxOpacity) {
   activeGroup.transition().attr("opacity", maxOpacity);
 }
 
-modules.plotPCA = function (div, scores, groups) {
+pca.plotPCA = async function (div, scores, groups) {
   const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
 
@@ -348,6 +277,280 @@ modules.plotPCA = function (div, scores, groups) {
   return svg.node();
 }
 
-export {
-  modules
+// load file and plot PCA
+pca.loadPcaDiv = async () => {
+  const pcaDiv1 = document.createElement("div")
+  pcaDiv1.id = 'pcaDiv1'
+  document.body.appendChild(pcaDiv1);
+  pcaDiv1.append(document.createElement('br'));
+
+  const pcaDiv2 = document.createElement("div")
+  pcaDiv2.id = 'pcaDiv2'
+  document.body.appendChild(pcaDiv2);
+  pcaDiv2.append(document.createElement('br'));
+
+  //sample data button 
+  const sampleDataButton = document.createElement('button')
+  sampleDataButton.id = 'sampleData'
+  sampleDataButton.textContent = 'Load Sample Data'
+  document.getElementById('pcaDiv1').appendChild(sampleDataButton);
+
+  sampleDataButton.addEventListener('click', async function () {
+    document.getElementById('pcaDiv2').innerHTML = '';
+
+    const data = formatIrisData(irisData, irisLabels)
+    const scores = await pca.calculatePca( data )
+    //console.log("main scores", scores)
+    const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
+    // plot function
+    pca.plotPCA('pcaDiv2',scores, groups)
+  });
+
+
+  // file input Button
+  const fileInput = document.createElement('input')
+  fileInput.id = 'fileInput'
+  fileInput.setAttribute('type', 'file')
+  document.getElementById('pcaDiv1').appendChild(fileInput);
+
+  fileInput.addEventListener('change', (event) => {
+  document.getElementById('pcaDiv2').innerHTML = '';
+
+    const files = event.target.files;
+    for (const file of files) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const file = event.target.files[0]
+        if (file) {
+          const reader = new FileReader();
+
+          reader.onload = async function (e) {
+            const csv = e.target.result;
+            const json = await otherFunctions.csvToJson(csv)
+            console.log("json", json) 
+            const matrix = (json.map(Object.values))
+            console.log("main json", json)
+            // //console.log('main matrix', matrix)
+            matrix['headers'] = json['headers']
+            pcaData.file = json
+            //console.log("pcaData", pcaData)
+
+            // //console.log('main load PCA csv', csv)
+            const scores = await pca.calculatePca(json)
+            //console.log("main scores", scores)
+            const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
+            // plot function
+            pca.plotPCA('pcaDiv2',scores, groups)
+          };
+          reader.onerror = function () {
+            displayError('Error reading the file.');
+          };
+          reader.readAsText(file);
+        }
+      };
+      reader.readAsText(file); // Read as text, other options are readAsArrayBuffer, readAsDataURL
+    }
+  });
+  // Add the input element to the document body (or any other desired location)
+  // myDiv.replaceWith(newDiv);
 }
+
+export {
+  pca,
+  pcaData
+
+}
+
+async function pcaPlotlyPlot4(data) {
+  //console.log("data", data)
+  const deviationMatrix = PCAjs.computeDeviationMatrix(data);
+  const eigenvectors = PCAjs.getEigenVectors(deviationMatrix);
+  // const eigenvalues = PCAjs.computeEigenvalues(deviationMatrix);
+  //console.log("eigenvectors", eigenvectors)
+
+  const adjustedMatrix = PCAjs.computeAdjustedData(data, eigenvectors[0]);
+  //console.log("adjustedMatrix------------------", adjustedMatrix)
+  // Extract the first two principal components
+  const pc1 = adjustedMatrix.map(row => row[0]);
+  const pc2 = adjustedMatrix.map(row => row[1]);
+  
+  // Create a scatter plot using Plotly
+  const trace = {
+    x: pc1,
+    y: pc2,
+    mode: 'markers',
+    type: 'scatter'
+  };
+  
+  const layout = {
+    title: 'PCA Results',
+    xaxis: { title: 'Principal Component 1' },
+    yaxis: { title: 'Principal Component 2' }
+  };
+    // Create the plot div
+    const pca_plot4 = document.createElement("div")
+    pca_plot4.id = 'pca_plot4'
+    pca_plot4.style.width = 400 //"auto";
+    pca_plot4.style.height = 400 //"auto";
+
+    document.body.appendChild(pca_plot4);
+  Plotly.newPlot('pca-pca_plot4', [trace], layout);
+}
+// pcaPlotlyPlot4(data)
+
+// Assume 'data' is your dataset and 'labels' are the corresponding labels
+// 'data' should be a 2D array where each row represents a sample and each column represents a feature
+// 'labels' should be an array with the same length as the number of rows in 'data'
+async function pcaPlotly3DPlot(data, labels) {
+
+  var eigenvectors = PCAjs.getEigenVectors(data);
+  // var first = PCAjs.computePercentageExplained(vectors,vectors[0])
+  var topTwo = PCAjs.computePercentageExplained(eigenvectors, eigenvectors[0], eigenvectors[1])
+  // // const explainedVariance = PCAjs.getExplainedVariance();
+
+  // //console.log("vectors",vectors)
+  // //console.log("first",first)
+  //console.log("topTwo", topTwo)
+  //console.log("eigenvectors", eigenvectors)
+  //console.log("eigenvectors.map(row => row[0])", eigenvectors[0].vector)
+  //console.log("eigenvectors.map(row => row[1])", eigenvectors[1].vector)
+
+  const numComponents = 2
+  const pcScores = data.map(row => {
+    const transformedRow = [];
+    for (let i = 0; i < numComponents; i++) {
+      transformedRow.push(row.reduce((sum, val, idx) => sum + val * eigenvectors[idx][i], 0));
+    }
+    return transformedRow;
+  });
+  //console.log("pcScores", pcScores)
+  const pc1 = eigenvectors[0].vector //eigenvectors.map(row => row[0]);
+  const pc2 = eigenvectors[1].vector //eigenvectors.map(row => row[1]);
+  // For 3D plot
+  const pc3 = eigenvectors[2].vector //pcScores.map(row => row[2]);
+
+  const trace3d = {
+    x: pc1,
+    y: pc2,
+    z: pc3,
+    mode: 'markers',
+    type: 'scatter3d',
+    marker: {
+      size: 4,
+      opacity: 0.8
+    }
+  };
+
+  const layout3d = {
+    margin: {
+      l: 20,
+      r: 0,
+      b: 50,
+      t: 110
+    },
+    title: '3D PCA Plot',
+    scene: {
+      xaxis: {
+        title: 'Principal Component 1'
+      },
+      yaxis: {
+        title: 'Principal Component 2'
+      },
+      zaxis: {
+        title: 'Principal Component 3'
+      }
+    }
+  };
+  // Create the plot div
+  const pca_plot2 = document.createElement("div")
+  pca_plot2.id = 'pca_plot2'
+  pca_plot2.style.width = 400 //"auto";
+  pca_plot2.style.height = 400 //"auto";
+  document.body.appendChild(pca_plot2);
+  // pca_plot2.append(document.createElement('br'));
+  //console.log("Plotly", Plotly)
+
+  await Plotly.newPlot('pca_plot2', [trace3d], layout3d);
+}
+
+async function pcaPlotly2DPlot(data, labels) {
+  var eigenvectors = PCAjs.getEigenVectors(data);
+  // var first = PCAjs.computePercentageExplained(vectors,vectors[0])
+  var topTwo = PCAjs.computePercentageExplained(eigenvectors, eigenvectors[0], eigenvectors[1])
+  // // const explainedVariance = PCAjs.getExplainedVariance();
+
+  // //console.log("vectors",vectors)
+  // //console.log("first",first)
+  //console.log("topTwo", topTwo)
+  //console.log("eigenvectors", eigenvectors)
+  //console.log("eigenvectors.map(row => row[0])", eigenvectors[0].vector)
+  //console.log("eigenvectors.map(row => row[1])", eigenvectors[1].vector)
+
+  const numComponents = 2
+  const pcScores = data.map(row => {
+    const transformedRow = [];
+    for (let i = 0; i < numComponents; i++) {
+      transformedRow.push(row.reduce((sum, val, idx) => sum + val * eigenvectors[idx][i], 0));
+    }
+    return transformedRow;
+  });
+  //console.log("pcScores", pcScores)
+  const pc1 = eigenvectors[0].vector //eigenvectors.map(row => row[0]);
+  const pc2 = eigenvectors[1].vector //eigenvectors.map(row => row[1]);
+  // For 3D plot
+  // const pc3 = eigenvectors[2].vector//pcScores.map(row => row[2]);
+
+  const trace3d = {
+    x: pc1,
+    y: pc2,
+    // z: pc3,
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+      size: 4,
+      opacity: 0.8
+    }
+  };
+
+  const layout2d = {
+    // margin: {
+    //   l: 150,
+    //   r: 70,
+    //   b: 150,
+    //   t: 50
+    // },
+    title: {
+      text: '3D PCA Plot',
+      x: 0.5,
+      xanchor: 'center'
+    },
+    scene: {
+      xaxis: {
+        title: 'PC1',
+        titlefont: {
+          color: 'red',
+          family: 'Arial, Open Sans',
+          size: 12
+        }
+      },
+      yaxis: {
+        title: 'PC2'
+      },
+      // zaxis: { title: 'Principal Component 3' }
+    }
+  };
+  // Create the plot div
+  const pca_plot3 = document.createElement("div")
+  pca_plot3.id = 'pca_plot3'
+  // pca_plot3.style.width = 400//"auto";
+  // pca_plot3.style.height = 400//"auto";
+
+  document.body.appendChild(pca_plot3);
+  // pca_plot2.append(document.createElement('br'));
+  await Plotly.newPlot('pca_plot3', [trace3d], layout2d);
+}
+
+
+await pcaPlotly3DPlot(pcaData.sampleData.irisNumbersOnly, irisLabels);
+await pcaPlotly2DPlot(pcaData.sampleData.irisNumbersOnly, irisLabels);
+// await pcaPlotly2DPlot(data, labels);
