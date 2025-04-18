@@ -292,29 +292,29 @@ pca.plotPCA = async function (scores, groups) {
     document.body.appendChild(newDiv);
   }
   // document.getElementById(div).appendChild(svg.node());
-  // return svg.node();
+  return svg.node();
 }
 
 // load file and plot PCA
 pca.loadPcaDiv = async () => {
-  const pcaDiv1 = document.createElement("div")
-  pcaDiv1.id = 'pcaDiv1'
-  document.body.appendChild(pcaDiv1);
-  pcaDiv1.append(document.createElement('br'));
+  const pcaDivSampleData = document.createElement("div")
+  pcaDivSampleData.id = 'pcaDivSampleData'
+  document.body.appendChild(pcaDivSampleData);
+  pcaDivSampleData.append(document.createElement('br'));
 
-  const pcaDiv2 = document.createElement("div")
-  pcaDiv2.id = 'pcaDiv2'
-  document.body.appendChild(pcaDiv2);
-  pcaDiv2.append(document.createElement('br'));
+  const pcaDivFileData = document.createElement("div")
+  pcaDivFileData.id = 'pcaDivFileData'
+  document.body.appendChild(pcaDivFileData);
+  pcaDivFileData.append(document.createElement('br'));
 
   //sample data button 
   const sampleDataButton = document.createElement('button')
   sampleDataButton.id = 'sampleData'
   sampleDataButton.textContent = 'Load Sample Data'
-  document.getElementById('pcaDiv1').appendChild(sampleDataButton);
+  document.getElementById('pcaDivSampleData').appendChild(sampleDataButton);
 
   sampleDataButton.addEventListener('click', async function () {
-    document.getElementById('pcaDiv2').innerHTML = '';
+    document.getElementById('pcaDivFileData').innerHTML = '';
 
     const data = formatIrisData(irisData, irisLabels)
     otherFunctions.textBox(irisData)
@@ -331,10 +331,10 @@ pca.loadPcaDiv = async () => {
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
-  document.getElementById('pcaDiv1').appendChild(fileInput);
+  document.getElementById('pcaDivSampleData').appendChild(fileInput);
 
   fileInput.addEventListener('change', (event) => {
-  document.getElementById('pcaDiv2').innerHTML = '';
+  document.getElementById('pcaDivFileData').innerHTML = '';
 
     const files = event.target.files;
     for (const file of files) {
