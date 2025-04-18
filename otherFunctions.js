@@ -111,61 +111,86 @@ otherFunctions.asDataFrame = function (value) {
 
 otherFunctions.scale = async function (Objects) {
   //console.log("function info:",pca.scale.toString())
- //Standardization (Z-score transformation)
- //Subtract the mean (μ) from each data point (x)
- //Divide each result by the standard deviation (σ)
- const clone = JSON.parse(JSON.stringify(Objects));
- const df = otherFunctions.asDataFrame(clone);
- df.columns.forEach((column) => {
-   const values = df[column];
-   const mean = d3.mean(values);
-   const sd = d3.deviation(values);
-   df[column] = values.map((v) => {
-     if (v !== null && v !== undefined) {
-       return (v - mean) / sd;
-     }
-     return v;
-   });
- });
- return df;
+  //Standardization (Z-score transformation)
+  //Subtract the mean (μ) from each data point (x)
+  //Divide each result by the standard deviation (σ)
+  const clone = JSON.parse(JSON.stringify(Objects));
+  const df = otherFunctions.asDataFrame(clone);
+  df.columns.forEach((column) => {
+    const values = df[column];
+    const mean = d3.mean(values);
+    const sd = d3.deviation(values);
+    df[column] = values.map((v) => {
+      if (v !== null && v !== undefined) {
+        return (v - mean) / sd;
+      }
+      return v;
+    });
+  });
+  return df;
 }
 
-otherFunctions.textBox = async function (text,div) {
+otherFunctions.createTableFromCSV = async function (csvData, tableId) {
+  const table = document.getElementById(tableId);
+  table.innerHTML = ""; // Clear existing table content
+  const rows = csvData.split("\n");
 
- if (document.getElementById(div)) {
-  console.log(`div for textbox provided in function parameters.`);
-  div.style.width = 400 +'px' //"auto";
-  div.style.height = 100 +'px' //"auto";
-  div.style.overflow = "auto"
-  div.style.border = "2px solid blue"
-  div.style.resize = "horizontal"
-  div.innerHTML = text;
+  for (const row of rows) {
+    const cells = row.split(",");
+    const tr = document.createElement("tr");
+
+    for (const cell of cells) {
+      const td = document.createElement("td");
+      td.textContent = cell;
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+}
+
+otherFunctions.textBox = async function (text, div) {
+
+  if (document.getElementById(div)) {
+    console.log(`div for textbox provided in function parameters.`);
+    otherFunctions.createTableFromCSV(text, div)
+
+    div.style.display = "block"
+    div.style.overflow = "scroll"
+    div.style.width = "auto" // 400 +'px' //"auto";
+    div.style.height = 100 + 'px' //"auto";
+    div.style.overflow = "auto"
+    div.style.border = "2px solid blue"
+    div.style.resize = "horizontal"
+    // div.innerHTML = text;
 
   } else if (document.getElementById("textboxDiv")) {
     console.log(`div for textbox exists.`);
     const div = document.getElementById("textboxDiv")
-    div.style.width = 400 +'px' //"auto";
-    div.style.height = 100 +'px' //"auto";
-    div.style.overflow = "auto"
-    div.style.border = "2px solid blue"
     div.style.resize = "horizontal"
-    div.innerHTML = text;
-  
+
+    otherFunctions.createTableFromCSV(text, "textboxDiv")
+
+    div.style.display = "block"
+    div.style.overflow = "scroll"
+    div.style.width = 400 + 'px' //"auto";
+    div.style.height = 100 + 'px' //"auto";
+    div.style.border = "2px solid blue"
+
   } else {
     // Optionally, handle the case where the element doesn't exist
     console.log(`div for textbox not found.`);
-    const div = document.createElement("div")
+    const div = document.createElement("table")
     div.id = "textboxDiv"
 
-    div.style.width = 400 +'px' //"auto";
-    div.style.height = 100 +'px' //"auto";
-    div.style.overflow = "auto"
-    div.style.border = "2px solid blue"
+    document.body.appendChild(div);
+
     div.style.resize = "horizontal"
-    div.innerHTML = text;
-  
-  //  document.getElementById('pcaDiv').appendChild(div);
-  document.body.appendChild(div);
+    otherFunctions.createTableFromCSV(text, "textboxDiv")
+    div.style.display = "block"
+    div.style.overflow = "scroll"
+    div.style.width = 400 + 'px' //"auto";
+    div.style.height = 100 + 'px' //"auto";
+    div.style.border = "2px solid blue"
   }
 
 

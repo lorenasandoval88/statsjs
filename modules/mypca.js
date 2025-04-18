@@ -25,10 +25,11 @@ const irisDataNamesOnly = irisData.map(x => (otherFunctions.removeNumbers(x)))
 
 // Declare global data variable 
 const pcaData = {}
-pcaData.sampleData = {
-  iris: irisData,
-  irisNamesOnly: irisDataNamesOnly,
-  irisNumbersOnly: irisDataNumbersOnly
+pcaData.iris = {
+  data: irisData,
+  colNames: irisLabels,
+  categories: irisDataNamesOnly,
+  dataNumbersOnly: irisDataNumbersOnly
 }
 pcaData.file = "none loaded"
 console.log("pcaData", pcaData)
@@ -288,7 +289,7 @@ pca.plotPCA = async function (scores, groups, div) {
     div.style.width = 400 + 'px' //"auto";
     document.body.appendChild(div);
     div.appendChild(svg.node())
-    //  document.getElementById('pcaDiv').appendChild(div);
+    //  document.getElementById('mainPcaDiv').appendChild(div);
 
   }
 
@@ -298,42 +299,44 @@ pca.plotPCA = async function (scores, groups, div) {
 // load file and plot PCA
 pca.loadPcaDiv = async (divId) => {
 
-  const divElement = document.getElementById(divId);
-  let pcaDiv
-  if (divElement !== null) {
+  let mainPcaDiv = document.getElementById(divId);
+  if (mainPcaDiv !== null) {
     // The div with the specified ID exists
     console.log("PCA div exists!, creating PCA div");
-    // You can perform actions on the div element here
-    pcaDiv = divElement
-    pcaDiv.id = 'pcaDiv'
+    mainPcaDiv.id = 'mainPcaDiv'
 
   } else {
     // The div with the specified ID does not exist
     console.log("PCA div does not exist.");
     // create the div element here
-    pcaDiv = document.createElement("div")
-    pcaDiv.id = 'pcaDiv'
-    document.body.appendChild(pcaDiv);
-    pcaDiv.append(document.createElement('br'));
+    mainPcaDiv = document.createElement("div")
+    mainPcaDiv.id = 'mainPcaDiv'
+    document.body.appendChild(mainPcaDiv);
+    // mainPcaDiv.append(document.createElement('br'));
 
   }
 
-  // sample data button 
-  const sampleDataButton = document.createElement('button')
-  sampleDataButton.id = 'sampleDataButton'
-  sampleDataButton.textContent = 'Load Sample Data'
-  pcaDiv.appendChild(sampleDataButton);
-
-  // create textbox div
-  const textBoxDiv = document.createElement("div")
-  textBoxDiv.id = 'textBoxDiv'
-  pcaDiv.appendChild(textBoxDiv);
-
+  // iris data button 
+  const irisDataButton = document.createElement('button')
+  irisDataButton.id = 'irisDataButton'
+  irisDataButton.textContent = 'Load Iris Data'
+  mainPcaDiv.appendChild(irisDataButton);
+  
   // file input Button
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
-  pcaDiv.appendChild(fileInput);
+  mainPcaDiv.appendChild(fileInput);
+  mainPcaDiv.append(document.createElement('br'));
+  mainPcaDiv.append(document.createElement('br'));
+
+
+  // create textbox div
+  const textBoxDiv = document.createElement("div")
+  textBoxDiv.id = 'textBoxDiv'
+  mainPcaDiv.appendChild(textBoxDiv);
+
+
 
   // event listener for load file data buttons
   fileInput.addEventListener('change', (event) => {
@@ -348,7 +351,7 @@ pca.loadPcaDiv = async (divId) => {
 
           reader.onload = async function (e) {
             const csv = e.target.result;
-            // console.log("csv", csv)
+            console.log("csv", csv)
             const json = await otherFunctions.csvToJson(csv)
             console.log("json", json)
             const matrix = (json.map(Object.values))
@@ -380,20 +383,26 @@ pca.loadPcaDiv = async (divId) => {
     }
   });
 
-  // event listener for load sample data buttons
-  document.getElementById('sampleDataButton').addEventListener('click', async function () {
+  // event listener for load iris data buttons
+  document.getElementById('irisDataButton').addEventListener('click', async function () {
     const data = formatIrisData(irisData, irisLabels)
     const scores = await pca.calculatePca(data)
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
 
     // plot function
     pca.plotPCA(scores, groups)
+
+    //iris data as csv
+    console.log("irisData", irisData)
+    const csv2 = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
+    // console.log("csv2", csv2)
+
     // textbox div
-    otherFunctions.textBox(irisData, textBoxDiv)
+    otherFunctions.textBox(csv2, textBoxDiv)
   });
 
-  // add textbox div to pcaDiv 
-  // document.getElementById('pcaDiv').appendChild(textBoxDiv);
+  // add textbox div to mainPcaDiv 
+  // document.getElementById('mainPcaDiv').appendChild(textBoxDiv);
 
   // Add the input element to the document body (or any other desired location)
   // myDiv.replaceWith(newDiv);
@@ -446,7 +455,7 @@ async function pcaPlotlyPlot4(data) {
 }
 
 // Assume 'data' is your dataset and 'labels' are the corresponding labels
-// 'data' should be a 2D array where each row represents a sample and each column represents a feature
+// 'data' should be a 2D array where each row represents a iris and each column represents a feature
 // 'labels' should be an array with the same length as the number of rows in 'data'
 async function pcaPlotly3DPlot(data, labels) {
 
@@ -597,6 +606,6 @@ async function pcaPlotly2DPlot(data, labels) {
   await imports.Plotly.newPlot('pca_plot3', [trace3d], layout2d);
 }
 // pcaPlotlyPlot4(data)
-// await pcaPlotly3DPlot(pcaData.sampleData.irisNumbersOnly, irisLabels);
-// await pcaPlotly2DPlot(pcaData.sampleData.irisNumbersOnly, irisLabels);
+// await pcaPlotly3DPlot(pcaData.irisData.irisNumbersOnly, irisLabels);
+// await pcaPlotly2DPlot(pcaData.irisData.irisNumbersOnly, irisLabels);
 // await pcaPlotly2DPlot(data, labels);
