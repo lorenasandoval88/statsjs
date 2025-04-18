@@ -132,14 +132,23 @@ otherFunctions.scale = async function (Objects) {
 
 otherFunctions.textBox = async function (text) {
   // Create the plot div
-  const textBoxDiv = document.createElement("div")
-  textBoxDiv.id = 'textBoxDiv'
-  textBoxDiv.style.width = 600 //"auto";
-  textBoxDiv.style.height = 300 //"auto";
-  textBoxDiv.style.border = "2px solid blue";
-  textBoxDiv.innerHTML = text;
+  const oldDiv = document.getElementById('newDiv')
+  const newDiv = document.createElement("div")
+  newDiv.id = 'newDiv'
+  newDiv.style.width = 400 +'px' //"auto";
+  newDiv.style.height = 100 +'px' //"auto";
+  newDiv.style.overflow = "auto"
+  newDiv.style.border = "2px solid blue";
+  newDiv.innerHTML = text;
 
-  document.body.appendChild(textBoxDiv);
+  if (oldDiv) {
+    oldDiv.replaceWith(newDiv);
+
+  } else {
+    // Optionally, handle the case where the element doesn't exist
+    console.log(`Element with ID for textbox not found.`);
+    document.body.appendChild(newDiv);
+  }
 }
 
 

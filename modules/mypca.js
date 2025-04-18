@@ -109,7 +109,7 @@ function selectGroup(ctx, group, maxOpacity) {
   activeGroup.transition().attr("opacity", maxOpacity);
 }
 
-pca.plotPCA = async function (div, scores, groups) {
+pca.plotPCA = async function (scores, groups) {
   const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
 
@@ -274,8 +274,25 @@ pca.plotPCA = async function (div, scores, groups) {
   // document.body.appendChild(pcaDiv);
   // pcaDiv.append(document.createElement('br'));
   // document.getElementById('pcaDiv').appendChild(svg.node());
-  document.getElementById(div).appendChild(svg.node());
-  return svg.node();
+  // Create the plot div
+  const oldDiv = document.getElementById('newPcaDiv')
+  const newDiv = document.createElement("div")
+  newDiv.id = 'newPcaDiv'
+    // div.style.width = 600 //"auto";
+  // newDiv.style.height = 300 //"auto";
+  // newDiv.style.border = "2px solid blue";
+  newDiv.appendChild(svg.node());
+
+  if (oldDiv) {
+    oldDiv.replaceWith(newDiv);
+
+  } else {
+    // Optionally, handle the case where the element doesn't exist
+    console.log(`Element with ID for pcaplot not found.`);
+    document.body.appendChild(newDiv);
+  }
+  // document.getElementById(div).appendChild(svg.node());
+  // return svg.node();
 }
 
 // load file and plot PCA
@@ -306,7 +323,7 @@ pca.loadPcaDiv = async () => {
     //console.log("main scores", scores)
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
     // plot function
-    pca.plotPCA('pcaDiv2',scores, groups)
+    pca.plotPCA(scores, groups)
   });
 
 
@@ -330,7 +347,10 @@ pca.loadPcaDiv = async () => {
           reader.onload = async function (e) {
             const csv = e.target.result;
             console.log("csv", csv)
+
+            // csv/sample textbox
             otherFunctions.textBox(csv)
+
             const json = await otherFunctions.csvToJson(csv)
             console.log("json", json) 
             const matrix = (json.map(Object.values))
@@ -345,7 +365,7 @@ pca.loadPcaDiv = async () => {
             //console.log("main scores", scores)
             const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
             // plot function
-            pca.plotPCA('pcaDiv2',scores, groups)
+            pca.plotPCA(scores, groups)
           };
           reader.onerror = function () {
             displayError('Error reading the file.');
@@ -395,7 +415,7 @@ async function pcaPlotlyPlot4(data) {
     // Create the plot div
     const pca_plot4 = document.createElement("div")
     pca_plot4.id = 'pca_plot4'
-    pca_plot4.style.width = 400 //"auto";
+    // pca_plot4.style.width = 400 //"auto";
     pca_plot4.style.height = 400 //"auto";
 
     document.body.appendChild(pca_plot4);
