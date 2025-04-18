@@ -2,7 +2,8 @@ const { PCA} = await import("https://esm.sh/ml-pca");
 const dataset = (await import("https://esm.sh/ml-dataset-iris"))
 import { default as PCAjs } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
 const Plotly = (await import('https://cdn.jsdelivr.net/npm/plotly.js-dist@3.0.1/+esm')).default
-
+const localForage = (await import('https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js'))
+ 
 // import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
 import * as d3 from "https://cdn.skypack.dev/d3@7"
 import { default as d3tip} from 'https://esm.sh/d3-tip';
@@ -299,6 +300,8 @@ pca.loadPcaDiv = async () => {
     document.getElementById('pcaDiv2').innerHTML = '';
 
     const data = formatIrisData(irisData, irisLabels)
+    otherFunctions.textBox(irisData)
+
     const scores = await pca.calculatePca( data )
     //console.log("main scores", scores)
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
@@ -326,6 +329,8 @@ pca.loadPcaDiv = async () => {
 
           reader.onload = async function (e) {
             const csv = e.target.result;
+            console.log("csv", csv)
+            otherFunctions.textBox(csv)
             const json = await otherFunctions.csvToJson(csv)
             console.log("json", json) 
             const matrix = (json.map(Object.values))
@@ -396,7 +401,6 @@ async function pcaPlotlyPlot4(data) {
     document.body.appendChild(pca_plot4);
   Plotly.newPlot('pca-pca_plot4', [trace], layout);
 }
-// pcaPlotlyPlot4(data)
 
 // Assume 'data' is your dataset and 'labels' are the corresponding labels
 // 'data' should be a 2D array where each row represents a sample and each column represents a feature
@@ -549,8 +553,7 @@ async function pcaPlotly2DPlot(data, labels) {
   // pca_plot2.append(document.createElement('br'));
   await Plotly.newPlot('pca_plot3', [trace3d], layout2d);
 }
-
-
-await pcaPlotly3DPlot(pcaData.sampleData.irisNumbersOnly, irisLabels);
-await pcaPlotly2DPlot(pcaData.sampleData.irisNumbersOnly, irisLabels);
+// pcaPlotlyPlot4(data)
+// await pcaPlotly3DPlot(pcaData.sampleData.irisNumbersOnly, irisLabels);
+// await pcaPlotly2DPlot(pcaData.sampleData.irisNumbersOnly, irisLabels);
 // await pcaPlotly2DPlot(data, labels);

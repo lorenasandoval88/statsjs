@@ -130,6 +130,20 @@ otherFunctions.scale = async function (Objects) {
  return df;
 }
 
+otherFunctions.textBox = async function (text) {
+  // Create the plot div
+  const textBoxDiv = document.createElement("div")
+  textBoxDiv.id = 'textBoxDiv'
+  textBoxDiv.style.width = 600 //"auto";
+  textBoxDiv.style.height = 300 //"auto";
+  textBoxDiv.style.border = "2px solid blue";
+  textBoxDiv.innerHTML = text;
+
+  document.body.appendChild(textBoxDiv);
+}
+
+
+
 export {
   otherFunctions
 }

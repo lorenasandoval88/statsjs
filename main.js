@@ -1,7 +1,5 @@
-const Plotly = (await import('https://cdn.jsdelivr.net/npm/plotly.js-dist@3.0.1/+esm')).default
-const localForage = (await import('https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js'))
-import { default as PCA } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
 import {pca} from './modules/mypca.js'
+import {otherFunctions} from './otherFunctions.js'
 
 
 //https://observablehq.com/@saehrimnir/dimensionality-reduction-drawings
@@ -12,4 +10,5 @@ import {pca} from './modules/mypca.js'
 
 // display pca div 
 pca.loadPcaDiv()
+
 
