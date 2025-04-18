@@ -10,6 +10,7 @@ import { default as d3tip} from 'https://esm.sh/d3-tip';
 
 const imports = {}
 
+imports.divCount = 0
 imports.d3 = d3
 imports.d3tip = d3tip
 imports.Plotly = Plotly

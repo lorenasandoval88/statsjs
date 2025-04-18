@@ -3,14 +3,18 @@
 // import { default as imports.PCAjs } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
 // const Plotly = (await import('https://cdn.jsdelivr.net/npm/imports.Plotly.js-dist@3.0.1/+esm')).default
 // const localForage = (await import('https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js'))
- 
+
 // // import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
 // import * as imports.d3 from "https://cdn.skypack.dev/imports.d3@7"
 // import { default as imports.d3tip} from 'https://esm.sh/imports.d3-tip';
 
 
-import {otherFunctions} from '../otherFunctions.js'
-import {imports} from '../imports.js'
+import {
+  otherFunctions
+} from '../otherFunctions.js'
+import {
+  imports
+} from '../imports.js'
 
 
 // Example iris dataset:
@@ -20,15 +24,21 @@ const irisDataNumbersOnly = irisData.map(x => (otherFunctions.removeNonNumbers(x
 const irisDataNamesOnly = irisData.map(x => (otherFunctions.removeNumbers(x)))
 
 // Declare global data variable 
-const pcaData = {} 
-pcaData.sampleData = {iris:irisData,irisNamesOnly: irisDataNamesOnly, irisNumbersOnly:irisDataNumbersOnly}
+const pcaData = {}
+pcaData.sampleData = {
+  iris: irisData,
+  irisNamesOnly: irisDataNamesOnly,
+  irisNumbersOnly: irisDataNumbersOnly
+}
 pcaData.file = "none loaded"
 console.log("pcaData", pcaData)
 
 const pca = {}
 
+pca.plotCount = 0
+
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
-function formatIrisData(data,headers) {
+function formatIrisData(data, headers) {
   const result = [];
   result.headers = headers;
   for (let i = 0; i < data.length; i++) {
@@ -43,16 +53,16 @@ function formatIrisData(data,headers) {
 }
 
 pca.calculatePca = async function (data) {
-   console.log("mypca.js pca.calculatePca data",data)
+  console.log("mypca.js pca.calculatePca data", data)
 
-  const numbersOnlyObjs =otherFunctions.removeNonNumberValues(data)
-  console.log("numbersOnlyObjs",numbersOnlyObjs[0])
+  const numbersOnlyObjs = otherFunctions.removeNonNumberValues(data)
+  console.log("numbersOnlyObjs", numbersOnlyObjs[0])
   const numbersOnlyArrs = (numbersOnlyObjs.map(Object.values))
   //  console.log('numbersOnlyArrs',numbersOnlyArrs[0])  
 
-  const categories =(otherFunctions.removeNumberValues(data)).map( x=> Object.values(x)).flat()
+  const categories = (otherFunctions.removeNumberValues(data)).map(x => Object.values(x)).flat()
   //  console.log('categories',categories)  
-   
+
   // const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
   // // console.log('headers',headers)
   let scaledObjs = (await otherFunctions.scale(numbersOnlyObjs))
@@ -71,7 +81,7 @@ pca.calculatePca = async function (data) {
       const columns = Object.keys(data[rowIndex]);
       const rowObj = {
         group: data[rowIndex]['species'],
-        name: "id_"+rowIndex//data[rowIndex]['id']
+        name: "id_" + rowIndex //data[rowIndex]['id']
       };
       columns.forEach((column, colIndex) => {
         rowObj[`PC${colIndex + 1}`] = row[colIndex];
@@ -88,7 +98,7 @@ pca.calculatePca = async function (data) {
       group,
       name
     }))
-    console.log("mypca.js pca.calculatePcascores",scores)
+  console.log("mypca.js pca.calculatePcascores", scores)
 
   return scores
 }
@@ -96,24 +106,24 @@ pca.calculatePca = async function (data) {
 function selectGroup(ctx, group, maxOpacity) {
   const groupElements = imports.d3.selectAll(".points")
     .filter(d => d.group !== group);
-  
+
   const activeGroup = imports.d3.selectAll(".keyRects")
     .filter(d => d === group);
-  
+
   const otherElements = imports.d3.selectAll(".points")
     .filter(d => d.group === group);
-  
+
   const otherGroups = imports.d3.selectAll(".keyRects")
     .filter(d => d !== group);
-  
+
   groupElements.transition().attr("opacity", 0.1);
   otherGroups.transition().attr("opacity", 0.1);
-  
+
   otherElements.transition().attr("opacity", maxOpacity);
   activeGroup.transition().attr("opacity", maxOpacity);
 }
 
-pca.plotPCA = async function (scores, groups) {
+pca.plotPCA = async function (scores, groups, div) {
   const color = imports.d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
 
@@ -164,16 +174,17 @@ pca.plotPCA = async function (scores, groups) {
       .text("PC2"))
 
   const svg = imports.d3.create("svg")
+  svg.id = "svgid"
   // const g = imports.d3.select(DOM.svg(width, height));
-  
+
   // title
   svg.append("text")
-  .attr("x", width / 2 - margin.left)
-  .attr("y", margin.top / 2)
-  .attr("text-anchor", "middle")
-  .style("font-size", "16px")
-  .style("font-family", "sans-serif")
-  .text("PCA Plot");
+    .attr("x", width / 2 - margin.left)
+    .attr("y", margin.top / 2)
+    .attr("text-anchor", "middle")
+    .style("font-size", "16px")
+    .style("font-family", "sans-serif")
+    .text("PCA Plot");
 
   const g = svg
     .attr('width', width)
@@ -256,89 +267,76 @@ pca.plotPCA = async function (scores, groups) {
     .on("click", (event, d) => {
       return selectGroup(this, d, maxOpacity)
     });
-  // x and y-axis labels
-  // svg.append("text")
-  //     .attr("class", "x label")
-  //     .attr("text-anchor", "end")
-  //     .attr("x", width/2)
-  //     .attr("y", height - 6)
-  //     .text("PC1");
-  // svg.append("text")
-  //     .attr("class", "y label")
-  //     .attr("text-anchor", "end")
-  //     .attr("x", -height/2)
-  //     .attr("y", 0)
-  //     .attr("dy", "0.9em")
-  //     .attr("transform", "rotate(-90)")
-  //     .text("PC2");
 
 
-  // const pcaDiv = document.createElement("div")
-  // pcaDiv.id = 'pcaDiv'
-  // document.body.appendChild(pcaDiv);
-  // pcaDiv.append(document.createElement('br'));
-  // document.getElementById('pcaDiv').appendChild(svg.node());
-  // Create the plot div
-  const oldDiv = document.getElementById('newPcaDiv')
-  const newDiv = document.createElement("div")
-  newDiv.id = 'newPcaDiv'
-    // div.style.width = 600 //"auto";
-  // newDiv.style.height = 300 //"auto";
-  // newDiv.style.border = "2px solid blue";
-  newDiv.appendChild(svg.node());
+  if (document.getElementById(div)) {
+    console.log(`div for pcaPlot provided in function parameters.`);
+    div.appendChild(svg.node())
 
-  if (oldDiv) {
-    oldDiv.replaceWith(newDiv);
+  } else if (document.getElementById("pcaPlotDiv")) {
+    console.log(`div for pcaPlot exists.`);
+    const div = document.getElementById("pcaPlotDiv")
+    div.style.width = 400 + 'px' //"auto";
+    // div.innerHTML(svg.node())
+    svg.node().replaceWith(svg.node())
 
   } else {
     // Optionally, handle the case where the element doesn't exist
-    console.log(`Element with ID for pcaplot not found.`);
-    document.body.appendChild(newDiv);
+    console.log(`div for pcaPlot not found.`);
+    const div = document.createElement("div")
+    div.id = "pcaPlotDiv"
+    div.style.width = 400 + 'px' //"auto";
+    document.body.appendChild(div);
+    div.appendChild(svg.node())
+    //  document.getElementById('pcaDiv').appendChild(div);
+
   }
-  // document.getElementById(div).appendChild(svg.node());
+
   return svg.node();
 }
 
 // load file and plot PCA
-pca.loadPcaDiv = async () => {
-  const pcaDivSampleData = document.createElement("div")
-  pcaDivSampleData.id = 'pcaDivSampleData'
-  document.body.appendChild(pcaDivSampleData);
-  pcaDivSampleData.append(document.createElement('br'));
+pca.loadPcaDiv = async (divId) => {
 
-  const pcaDivFileData = document.createElement("div")
-  pcaDivFileData.id = 'pcaDivFileData'
-  document.body.appendChild(pcaDivFileData);
-  pcaDivFileData.append(document.createElement('br'));
+  const divElement = document.getElementById(divId);
+  let pcaDiv
+  if (divElement !== null) {
+    // The div with the specified ID exists
+    console.log("PCA div exists!, creating PCA div");
+    // You can perform actions on the div element here
+    pcaDiv = divElement
+    pcaDiv.id = 'pcaDiv'
 
-  //sample data button 
+  } else {
+    // The div with the specified ID does not exist
+    console.log("PCA div does not exist.");
+    // create the div element here
+    pcaDiv = document.createElement("div")
+    pcaDiv.id = 'pcaDiv'
+    document.body.appendChild(pcaDiv);
+    pcaDiv.append(document.createElement('br'));
+
+  }
+
+  // sample data button 
   const sampleDataButton = document.createElement('button')
-  sampleDataButton.id = 'sampleData'
+  sampleDataButton.id = 'sampleDataButton'
   sampleDataButton.textContent = 'Load Sample Data'
-  document.getElementById('pcaDivSampleData').appendChild(sampleDataButton);
+  pcaDiv.appendChild(sampleDataButton);
 
-  sampleDataButton.addEventListener('click', async function () {
-    document.getElementById('pcaDivFileData').innerHTML = '';
-
-    const data = formatIrisData(irisData, irisLabels)
-    otherFunctions.textBox(irisData)
-
-    const scores = await pca.calculatePca( data )
-    //console.log("main scores", scores)
-    const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
-    // plot function
-    pca.plotPCA(scores, groups)
-  });
-
+  // create textbox div
+  const textBoxDiv = document.createElement("div")
+  textBoxDiv.id = 'textBoxDiv'
+  pcaDiv.appendChild(textBoxDiv);
 
   // file input Button
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
-  document.getElementById('pcaDivSampleData').appendChild(fileInput);
+  pcaDiv.appendChild(fileInput);
 
+  // event listener for load file data buttons
   fileInput.addEventListener('change', (event) => {
-  document.getElementById('pcaDivFileData').innerHTML = '';
 
     const files = event.target.files;
     for (const file of files) {
@@ -350,13 +348,9 @@ pca.loadPcaDiv = async () => {
 
           reader.onload = async function (e) {
             const csv = e.target.result;
-            console.log("csv", csv)
-
-            // csv/sample textbox
-            otherFunctions.textBox(csv)
-
+            // console.log("csv", csv)
             const json = await otherFunctions.csvToJson(csv)
-            console.log("json", json) 
+            console.log("json", json)
             const matrix = (json.map(Object.values))
             console.log("main json", json)
             // //console.log('main matrix', matrix)
@@ -368,8 +362,13 @@ pca.loadPcaDiv = async () => {
             const scores = await pca.calculatePca(json)
             //console.log("main scores", scores)
             const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
+
+            // csv file textbox
+            otherFunctions.textBox(csv, textBoxDiv)
+
             // plot function
             pca.plotPCA(scores, groups)
+
           };
           reader.onerror = function () {
             displayError('Error reading the file.');
@@ -380,6 +379,22 @@ pca.loadPcaDiv = async () => {
       reader.readAsText(file); // Read as text, other options are readAsArrayBuffer, readAsDataURL
     }
   });
+
+  // event listener for load sample data buttons
+  document.getElementById('sampleDataButton').addEventListener('click', async function () {
+    const data = formatIrisData(irisData, irisLabels)
+    const scores = await pca.calculatePca(data)
+    const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
+
+    // plot function
+    pca.plotPCA(scores, groups)
+    // textbox div
+    otherFunctions.textBox(irisData, textBoxDiv)
+  });
+
+  // add textbox div to pcaDiv 
+  // document.getElementById('pcaDiv').appendChild(textBoxDiv);
+
   // Add the input element to the document body (or any other desired location)
   // myDiv.replaceWith(newDiv);
 }
@@ -402,7 +417,7 @@ async function pcaPlotlyPlot4(data) {
   // Extract the first two principal components
   const pc1 = adjustedMatrix.map(row => row[0]);
   const pc2 = adjustedMatrix.map(row => row[1]);
-  
+
   // Create a scatter plot using imports.Plotly
   const trace = {
     x: pc1,
@@ -410,19 +425,23 @@ async function pcaPlotlyPlot4(data) {
     mode: 'markers',
     type: 'scatter'
   };
-  
+
   const layout = {
     title: 'PCA Results',
-    xaxis: { title: 'Principal Component 1' },
-    yaxis: { title: 'Principal Component 2' }
+    xaxis: {
+      title: 'Principal Component 1'
+    },
+    yaxis: {
+      title: 'Principal Component 2'
+    }
   };
-    // Create the plot div
-    const pca_plot4 = document.createElement("div")
-    pca_plot4.id = 'pca_plot4'
-    // pca_plot4.style.width = 400 //"auto";
-    pca_plot4.style.height = 400 //"auto";
+  // Create the plot div
+  const pca_plot4 = document.createElement("div")
+  pca_plot4.id = 'pca_plot4'
+  // pca_plot4.style.width = 400 //"auto";
+  pca_plot4.style.height = 400 //"auto";
 
-    document.body.appendChild(pca_plot4);
+  document.body.appendChild(pca_plot4);
   imports.Plotly.newPlot('pca-pca_plot4', [trace], layout);
 }
 

@@ -130,42 +130,44 @@ otherFunctions.scale = async function (Objects) {
  return df;
 }
 
-otherFunctions.textBox = async function (text) {
-  // Create the plot div
-  // const oldDiv = document.getElementById('newDiv')
-  // const newDiv = document.createElement("div")
-  // newDiv.id = 'newDiv'
-  // newDiv.style.width = 400 +'px' //"auto";
-  // newDiv.style.height = 100 +'px' //"auto";
-  // newDiv.style.overflow = "auto"
-  // newDiv.style.border = "2px solid blue";
-  // newDiv.innerHTML = text;
+otherFunctions.textBox = async function (text,div) {
 
-  // if (oldDiv) {
-  //   oldDiv.replaceWith(newDiv);
+ if (document.getElementById(div)) {
+  console.log(`div for textbox provided in function parameters.`);
+  div.style.width = 400 +'px' //"auto";
+  div.style.height = 100 +'px' //"auto";
+  div.style.overflow = "auto"
+  div.style.border = "2px solid blue"
+  div.style.resize = "horizontal"
+  div.innerHTML = text;
 
-  // } else {
-  //   // Optionally, handle the case where the element doesn't exist
-  //   console.log(`Element with ID for textbox not found.`);
-  //   document.body.appendChild(newDiv);
-  // }
-
-  const oldDiv = document.getElementById('newDiv')
-
- if (oldDiv) {
-    oldDiv.innerHTML = text;
+  } else if (document.getElementById("textboxDiv")) {
+    console.log(`div for textbox exists.`);
+    const div = document.getElementById("textboxDiv")
+    div.style.width = 400 +'px' //"auto";
+    div.style.height = 100 +'px' //"auto";
+    div.style.overflow = "auto"
+    div.style.border = "2px solid blue"
+    div.style.resize = "horizontal"
+    div.innerHTML = text;
+  
   } else {
     // Optionally, handle the case where the element doesn't exist
-    console.log(`Element with ID for textbox not found.`);
-    const newDiv = document.createElement("div")
-    newDiv.id = 'newDiv'
-    newDiv.style.width = 400 +'px' //"auto";
-    newDiv.style.height = 100 +'px' //"auto";
-    newDiv.style.overflow = "auto"
-    newDiv.style.border = "2px solid blue";
-    newDiv.innerHTML = text;
-    document.body.appendChild(newDiv);
+    console.log(`div for textbox not found.`);
+    const div = document.createElement("div")
+    div.id = "textboxDiv"
+
+    div.style.width = 400 +'px' //"auto";
+    div.style.height = 100 +'px' //"auto";
+    div.style.overflow = "auto"
+    div.style.border = "2px solid blue"
+    div.style.resize = "horizontal"
+    div.innerHTML = text;
+  
+  //  document.getElementById('pcaDiv').appendChild(div);
+  document.body.appendChild(div);
   }
+
 
 }
 
