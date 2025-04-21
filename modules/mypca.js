@@ -8,7 +8,7 @@
 // import * as imports.d3 from "https://cdn.skypack.dev/imports.d3@7"
 // import { default as imports.d3tip} from 'https://esm.sh/imports.d3-tip';
 
-
+// TODO: limit textbox rows to 500
 import {
   otherFunctions
 } from '../otherFunctions.js'
@@ -54,10 +54,10 @@ function formatIrisData(data, headers) {
 }
 
 pca.calculatePca = async function (data) {
-  console.log("mypca.js pca.calculatePca data", data)
+  // console.log("mypca.js pca.calculatePca data", data)
 
   const numbersOnlyObjs = otherFunctions.removeNonNumberValues(data)
-  console.log("numbersOnlyObjs", numbersOnlyObjs[0])
+  // console.log("numbersOnlyObjs", numbersOnlyObjs[0])
   const numbersOnlyArrs = (numbersOnlyObjs.map(Object.values))
   //  console.log('numbersOnlyArrs',numbersOnlyArrs[0])  
 
@@ -99,7 +99,7 @@ pca.calculatePca = async function (data) {
       group,
       name
     }))
-  console.log("mypca.js pca.calculatePcascores", scores)
+  // console.log("mypca.js pca.calculatePcascores", scores)
 
   return scores
 }
@@ -275,7 +275,7 @@ pca.plotPCA = async function (scores, groups, div) {
     div.appendChild(svg.node())
 
   } else if (document.getElementById("pcaPlotDiv")) {
-    console.log(`div for pcaPlot exists.`);
+    console.log(`div for pcaPlot exists, updating....`);
     const div = document.getElementById("pcaPlotDiv")
     div.style.width = 400 + 'px' //"auto";
     // div.innerHTML(svg.node())
@@ -283,7 +283,7 @@ pca.plotPCA = async function (scores, groups, div) {
 
   } else {
     // Optionally, handle the case where the element doesn't exist
-    console.log(`div for pcaPlot not found.`);
+    // console.log(`div for pcaPlot not found.`);
     const div = document.createElement("div")
     div.id = "pcaPlotDiv"
     div.style.width = 400 + 'px' //"auto";
@@ -301,13 +301,13 @@ pca.loadPcaDiv = async (divId) => {
 
   let mainPcaDiv = document.getElementById(divId);
   if (mainPcaDiv !== null) {
-    // The div with the specified ID exists
-    console.log("PCA div exists!, creating PCA div");
+    // The div with the specified ID exists, updating...
+    console.log("PCA plot div exists, updating...!, loading div");
     mainPcaDiv.id = 'mainPcaDiv'
 
   } else {
     // The div with the specified ID does not exist
-    console.log("PCA div does not exist.");
+    console.log("PCA plot div does not exist.");
     // create the div element here
     mainPcaDiv = document.createElement("div")
     mainPcaDiv.id = 'mainPcaDiv'
@@ -393,7 +393,7 @@ pca.loadPcaDiv = async (divId) => {
     pca.plotPCA(scores, groups)
 
     //iris data as csv
-    console.log("irisData", irisData)
+    // console.log("irisData", irisData)
     const csv2 = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
     // console.log("csv2", csv2)
 
