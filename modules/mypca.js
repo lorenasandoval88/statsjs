@@ -299,6 +299,7 @@ pca.plotPCA = async function (scores, groups, div) {
 // load file and plot PCA
 pca.loadPcaDiv = async (divId) => {
 
+  let myPlot
   let mainPcaDiv = document.getElementById(divId);
   if (mainPcaDiv !== null) {
     // The div with the specified ID exists, updating...
@@ -370,7 +371,7 @@ pca.loadPcaDiv = async (divId) => {
             otherFunctions.textBox(csv, textBoxDiv)
 
             // plot function
-            const myPlot = pca.plotPCA(scores, groups)
+            myPlot = pca.plotPCA(scores, groups)
 
           };
           reader.onerror = function () {
