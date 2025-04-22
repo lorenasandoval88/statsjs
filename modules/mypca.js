@@ -303,7 +303,7 @@ pca.plotPCA = async function (scores, div) {
     }
 
 
-  return svg.node();
+  return svg;
 }
 
 // load file and plot PCA
