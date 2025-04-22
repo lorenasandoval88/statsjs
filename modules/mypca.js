@@ -10,18 +10,27 @@
 
 // TODO: limit textbox rows to 500
 import {
-  otherFunctions
+  csvToJson,
+  convertStrToNumber,
+  removeNonNumbers,
+  removeNumbers,
+  removeNonNumberValues,
+  removeNumberValues,
+  asDataFrame,
+  scale,
+  createTableFromCSV,
+  textBox
 } from '../otherFunctions.js'
 import {
-  imports
+  PCA, PCAjs, Plotly, d3, d3tip, dataset, localForage 
 } from '../imports.js'
 
 
 // Example iris dataset:
 const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
-const irisData = imports.iris.getDataset()
-const irisDataNumbersOnly = irisData.map(x => (otherFunctions.removeNonNumbers(x)))
-const irisDataNamesOnly = irisData.map(x => (otherFunctions.removeNumbers(x)))
+const irisData = dataset.getDataset()
+const irisDataNumbersOnly = irisData.map(x => (removeNonNumbers(x)))
+const irisDataNamesOnly = irisData.map(x => (removeNumbers(x)))
 
 // Declare global data variable 
 const data = {}
@@ -46,7 +55,7 @@ function formatIrisData(data, headers) {
     const obj = {};
     const currentLine = data[i]
     for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = otherFunctions.convertStrToNumber(currentLine[j])
+      obj[headers[j]] = convertStrToNumber(currentLine[j])
     }
     result.push(obj);
   }
@@ -56,17 +65,17 @@ function formatIrisData(data, headers) {
 pca.scores = async function (data) {
   // console.log("mypca.js pca.scores data", data)
 
-  const numbersOnlyObjs = otherFunctions.removeNonNumberValues(data)
+  const numbersOnlyObjs = removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs[0])
   const numbersOnlyArrs = (numbersOnlyObjs.map(Object.values))
   //  console.log('numbersOnlyArrs',numbersOnlyArrs[0])  
 
-  const categories = (otherFunctions.removeNumberValues(data)).map(x => Object.values(x)).flat()
+  const categories = (removeNumberValues(data)).map(x => Object.values(x)).flat()
   //  console.log('categories',categories)  
 
   // const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
   // // console.log('headers',headers)
-  let scaledObjs = (await otherFunctions.scale(numbersOnlyObjs))
+  let scaledObjs = (await scale(numbersOnlyObjs))
   let scaledArr = scaledObjs.map(Object.values)
   // console.log('scaledArr',scaledArr[0])  
 
@@ -361,7 +370,7 @@ pca.loadDiv = async (divId) => {
           reader.onload = async function (e) {
             const csv = e.target.result;
             // console.log("csv", csv)
-            const json = await otherFunctions.csvToJson(csv)
+            const json = await csvToJson(csv)
             // console.log("json", json)
             const matrix = (json.map(Object.values))
             console.log("main json", json)
@@ -377,7 +386,7 @@ pca.loadDiv = async (divId) => {
             // plot function
              pca.plotPCA(scores )
             // csv file textbox
-            otherFunctions.textBox(csv, textBoxDiv)
+            textBox(csv, textBoxDiv)
 
           };
           reader.onerror = function () {
@@ -403,7 +412,7 @@ pca.loadDiv = async (divId) => {
     const irisCsv = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
 
     // textbox div
-    otherFunctions.textBox(irisCsv, textBoxDiv)
+    textBox(irisCsv, textBoxDiv)
   });
 
 }

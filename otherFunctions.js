@@ -2,7 +2,7 @@ import { d3 } from './imports.js'
 
 
 
-csvToJson = async function (csv) {
+const csvToJson = async function (csv) {
   
   const lines = csv.split(/\r?\n/);
   // //console.log("lines", lines)
@@ -24,7 +24,7 @@ csvToJson = async function (csv) {
   return result;
 }
 
-convertStrToNumber = function (str) {
+const convertStrToNumber = function (str) {
   // Check if the string is empty or null
   if (isNaN(str)) {
     return str; // It's a letter or other non-numeric character, return the original string
@@ -33,15 +33,15 @@ convertStrToNumber = function (str) {
   }
 }
 
-removeNonNumbers = function (arr) {
+const removeNonNumbers = function (arr) {
   return arr.filter(element => typeof element === 'number');
 }
 
-removeNumbers = function (arr) {
+const removeNumbers = function (arr) {
   return arr.filter(element => typeof element !== 'number');
 }
 
-removeNonNumberValues = function (ob) {
+const removeNonNumberValues = function (ob) {
   return ob.map(obj => {
     const newObj = {};
     for (const key in obj) {
@@ -53,7 +53,7 @@ removeNonNumberValues = function (ob) {
   });
 }
 
-removeNumberValues = function (ob) {
+const removeNumberValues = function (ob) {
   return ob.map(obj => {
     const newObj = {};
     for (const key in obj) {
@@ -65,7 +65,7 @@ removeNumberValues = function (ob) {
   });
 }
 
-asDataFrame = function (value) {
+const asDataFrame = function (value) {
   //  //console.log("value",value)
   // check if value is array of objects (aoo)
   if (value === undefined || value === null)
@@ -112,7 +112,7 @@ asDataFrame = function (value) {
   return aoo;
 }
 
-scale = async function (Objects) {
+const scale = async function (Objects) {
   //console.log("function info:",pca.scale.toString())
   //Standardization (Z-score transformation)
   //Subtract the mean (μ) from each data point (x)
@@ -133,7 +133,7 @@ scale = async function (Objects) {
   return df;
 }
 
-createTableFromCSV = async function (csvData, tableId) {
+const createTableFromCSV = async function (csvData, tableId) {
   const table = document.getElementById(tableId);
   table.innerHTML = ""; // Clear existing table content
   const rows = csvData.split("\n");
@@ -151,7 +151,7 @@ createTableFromCSV = async function (csvData, tableId) {
   }
 }
 
-textBox = async function (text, div) {
+const textBox = async function (text, div) {
 
   if (document.getElementById(div)) {
     console.log(`div for textbox provided in function parameters.`);
