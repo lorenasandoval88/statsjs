@@ -161,7 +161,7 @@ otherFunctions.textBox = async function (text, div) {
     div.style.display = "block"
     div.style.overflow = "scroll"
     div.style.width = "auto" // 400 +'px' //"auto";
-    div.style.height = 100 + 'px' //"auto";
+    div.style.height = 200 + 'px' //"auto";
     div.style.overflow = "auto"
     div.style.border = "2px solid blue"
     div.style.resize = "horizontal"
@@ -177,12 +177,12 @@ otherFunctions.textBox = async function (text, div) {
     div.style.display = "block"
     div.style.overflow = "scroll"
     div.style.width = 400 + 'px' //"auto";
-    div.style.height = 100 + 'px' //"auto";
+    div.style.height = 200 + 'px' //"auto";
     div.style.border = "2px solid blue"
 
   } else {
     // Optionally, handle the case where the element doesn't exist
-    console.log(`div for textbox not found.`);
+    console.log(`div for textbox not found. creating textbox div...`);
     const div = document.createElement("table")
     div.id = "textboxDiv"
 
@@ -193,7 +193,7 @@ otherFunctions.textBox = async function (text, div) {
     div.style.display = "block"
     div.style.overflow = "scroll"
     div.style.width = 400 + 'px' //"auto";
-    div.style.height = 100 + 'px' //"auto";
+    div.style.height = 200 + 'px' //"auto";
     div.style.border = "2px solid blue"
   }
 

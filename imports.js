@@ -9,8 +9,9 @@ import * as d3 from "https://cdn.skypack.dev/d3@7"
 import { default as d3tip} from 'https://esm.sh/d3-tip';
 
 
-console.log("Plotly", Plotly)
-console.log("PCA", PCA)
+// console.log("Plotly", Plotly)
+// console.log("PCA", PCA)
+
 const imports = {}
 
 imports.divCount = 0

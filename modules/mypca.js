@@ -53,8 +53,8 @@ function formatIrisData(data, headers) {
   return result;
 }
 
-pca.calculatePca = async function (data) {
-  // console.log("mypca.js pca.calculatePca data", data)
+pca.calculatePcaScores = async function (data) {
+  // console.log("mypca.js pca.calculatePcaScores data", data)
 
   const numbersOnlyObjs = otherFunctions.removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs[0])
@@ -99,7 +99,7 @@ pca.calculatePca = async function (data) {
       group,
       name
     }))
-  // console.log("mypca.js pca.calculatePcascores", scores)
+  // console.log("mypca.js pca.calculatePcaScoresscores", scores)
 
   return scores
 }
@@ -124,7 +124,10 @@ function selectGroup(ctx, group, maxOpacity) {
   activeGroup.transition().attr("opacity", maxOpacity);
 }
 
-pca.plotPCA = async function (scores, groups, div) {
+
+
+pca.plotPCA = async function (scores, div) {
+  const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
   const color = imports.d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
 
@@ -269,29 +272,36 @@ pca.plotPCA = async function (scores, groups, div) {
       return selectGroup(this, d, maxOpacity)
     });
 
-
-  if (document.getElementById(div)) {
+    
+// updating pca plot div
+    if (document.getElementById(div)) {
     console.log(`div for pcaPlot provided in function parameters.`);
     div.appendChild(svg.node())
 
-  } else if (document.getElementById("pcaPlotDiv")) {
-    console.log(`div for pcaPlot exists, updating....`);
-    const div = document.getElementById("pcaPlotDiv")
-    div.style.width = 400 + 'px' //"auto";
-    // div.innerHTML(svg.node())
-    svg.node().replaceWith(svg.node())
+    } else if (!document.getElementById("childDiv")) {
+      console.log(`div for pcaPlot NOT provided in function parameters, creating....`);
+      const parentDiv = document.createElement("div")
+      parentDiv.id = "parentDiv"
+      parentDiv.style.width = 400 + 'px' //"auto";
+      document.body.appendChild(parentDiv)
 
-  } else {
-    // Optionally, handle the case where the element doesn't exist
-    // console.log(`div for pcaPlot not found.`);
-    const div = document.createElement("div")
-    div.id = "pcaPlotDiv"
-    div.style.width = 400 + 'px' //"auto";
-    document.body.appendChild(div);
-    div.appendChild(svg.node())
-    //  document.getElementById('mainPcaDiv').appendChild(div);
+      const childDiv = document.createElement("div")
+      childDiv.id = "childDiv"
+      childDiv.appendChild(svg.node())
+      parentDiv.appendChild(childDiv)
 
-  }
+      // div.replaceWith(svg.node());
+    } else if (document.getElementById("childDiv")) {
+      console.log(`div for pcaPlot found, updating....`);
+      const div  = document.getElementById("childDiv")
+      document.getElementById("parentDiv").removeChild(div)
+
+      const childDiv = document.createElement("div")
+      childDiv.id = "childDiv"
+      document.getElementById("parentDiv").appendChild(childDiv)
+      childDiv.appendChild(svg.node())
+    }
+
 
   return svg.node();
 }
@@ -313,8 +323,6 @@ pca.loadPcaDiv = async (divId) => {
     mainPcaDiv = document.createElement("div")
     mainPcaDiv.id = 'mainPcaDiv'
     document.body.appendChild(mainPcaDiv);
-    // mainPcaDiv.append(document.createElement('br'));
-
   }
 
   // iris data button 
@@ -356,22 +364,20 @@ pca.loadPcaDiv = async (divId) => {
             const json = await otherFunctions.csvToJson(csv)
             // console.log("json", json)
             const matrix = (json.map(Object.values))
-            // console.log("main json", json)
+            console.log("main json", json)
             // //console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
             pcaData.file = json
             //console.log("pcaData", pcaData)
 
             // //console.log('main load PCA csv', csv)
-            const scores = await pca.calculatePca(json)
-            //console.log("main scores", scores)
-            const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
-
-            // csv file textbox
-            otherFunctions.textBox(csv, textBoxDiv)
+            const scores = await pca.calculatePcaScores(json)
+            console.log("main scores", scores)
 
             // plot function
-            myPlot = pca.plotPCA(scores, groups)
+             pca.plotPCA(scores )
+            // csv file textbox
+            otherFunctions.textBox(csv, textBoxDiv)
 
           };
           reader.onerror = function () {
@@ -384,29 +390,26 @@ pca.loadPcaDiv = async (divId) => {
     }
   });
 
-  // event listener for load iris data buttons
+  // event listener for load iris data button
   document.getElementById('irisDataButton').addEventListener('click', async function () {
     const data = formatIrisData(irisData, irisLabels)
-    const scores = await pca.calculatePca(data)
+    const scores = await pca.calculatePcaScores(data)
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
 
     // plot function
-    pca.plotPCA(scores, groups)
+    pca.plotPCA(scores)
 
-    //iris data as csv
-    // console.log("irisData", irisData)
-    const csv2 = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
-    // console.log("csv2", csv2)
+    //convert iris data to csv
+    const irisCsv = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
 
     // textbox div
-    otherFunctions.textBox(csv2, textBoxDiv)
+    otherFunctions.textBox(irisCsv, textBoxDiv)
   });
 
   // add textbox div to mainPcaDiv 
   // document.getElementById('mainPcaDiv').appendChild(textBoxDiv);
 
   // Add the input element to the document body (or any other desired location)
-  return myPlot
   // myDiv.replaceWith(newDiv);
 }
 
