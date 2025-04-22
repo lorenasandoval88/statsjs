@@ -370,7 +370,7 @@ pca.loadPcaDiv = async (divId) => {
             otherFunctions.textBox(csv, textBoxDiv)
 
             // plot function
-            pca.plotPCA(scores, groups)
+            const myPlot = pca.plotPCA(scores, groups)
 
           };
           reader.onerror = function () {
@@ -405,6 +405,7 @@ pca.loadPcaDiv = async (divId) => {
   // document.getElementById('mainPcaDiv').appendChild(textBoxDiv);
 
   // Add the input element to the document body (or any other desired location)
+  return myPlot
   // myDiv.replaceWith(newDiv);
 }
 
