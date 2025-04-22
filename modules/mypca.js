@@ -302,12 +302,12 @@ pca.loadPcaDiv = async (divId) => {
   let mainPcaDiv = document.getElementById(divId);
   if (mainPcaDiv !== null) {
     // The div with the specified ID exists, updating...
-    console.log("PCA plot div exists, updating...!, loading div");
+    console.log("div ID provided in pca.loadPcaDiv(), loading div");
     mainPcaDiv.id = 'mainPcaDiv'
 
   } else {
     // The div with the specified ID does not exist
-    console.log("PCA plot div does not exist.");
+    console.log("div not provided in pca.loadPcaDiv(). creating div...");
     // create the div element here
     mainPcaDiv = document.createElement("div")
     mainPcaDiv.id = 'mainPcaDiv'

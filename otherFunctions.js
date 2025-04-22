@@ -2,9 +2,7 @@ import {  imports} from './imports.js'
 
 const otherFunctions = {}
 
-console.log("imports", imports)
 
-console.log(imports.d3.mean([1,5,8,93]))
 
 otherFunctions.csvToJson = async function (csv) {
   const lines = csv.split(/\r?\n/);
