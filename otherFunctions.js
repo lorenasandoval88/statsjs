@@ -1,4 +1,4 @@
-import {  imports} from '../imports.js'
+import {  imports} from './imports.js'
 
 const otherFunctions = {}
 
