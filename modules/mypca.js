@@ -79,7 +79,7 @@ pca.scores = async function (data) {
   let scaledArr = scaledObjs.map(Object.values)
   // console.log('scaledArr',scaledArr[0])  
 
-  const pca = new imports.PCA(scaledArr, {
+  const pca = new PCA(scaledArr, {
     center: true,
     scale: true
   })
@@ -114,16 +114,16 @@ pca.scores = async function (data) {
 }
 
 function selectGroup(ctx, group, maxOpacity) {
-  const groupElements = imports.d3.selectAll(".points")
+  const groupElements = d3.selectAll(".points")
     .filter(d => d.group !== group);
 
-  const activeGroup = imports.d3.selectAll(".keyRects")
+  const activeGroup = d3.selectAll(".keyRects")
     .filter(d => d === group);
 
-  const otherElements = imports.d3.selectAll(".points")
+  const otherElements = d3.selectAll(".points")
     .filter(d => d.group === group);
 
-  const otherGroups = imports.d3.selectAll(".keyRects")
+  const otherGroups = d3.selectAll(".keyRects")
     .filter(d => d !== group);
 
   groupElements.transition().attr("opacity", 0.1);
@@ -137,7 +137,7 @@ function selectGroup(ctx, group, maxOpacity) {
 
 pca.plotPCA = async function (scores, div) {
   const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
-  const color = imports.d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
+  const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
 
   const width = 400
@@ -150,15 +150,15 @@ pca.plotPCA = async function (scores, div) {
     bottom: 45,
     left: 45
   })
-  const paddedMin = imports.d3.min(scores, d => d.PC1) - imports.d3.min(scores, d => d.PC1) * -0.10
-  const paddedMax = imports.d3.max(scores, d => d.PC1) + imports.d3.max(scores, d => d.PC1) * 0.10
-  const x = imports.d3.scaleLinear()
+  const paddedMin = d3.min(scores, d => d.PC1) - d3.min(scores, d => d.PC1) * -0.10
+  const paddedMax = d3.max(scores, d => d.PC1) + d3.max(scores, d => d.PC1) * 0.10
+  const x = d3.scaleLinear()
     .domain([paddedMin, paddedMax])
     .range([margin.left, width - margin.right])
 
   const xAxis = g => g
     .attr("transform", `translate(0,${height - margin.bottom + 5})`)
-    .call(imports.d3.axisBottom(x))
+    .call(d3.axisBottom(x))
     .call(g => g.select(".domain").remove())
     .call(g => g.append("text")
       .attr("x", width - margin.left - 20)
@@ -170,13 +170,13 @@ pca.plotPCA = async function (scores, div) {
       .attr("text-anchor", "end")
       .text("PC1"))
 
-  const y = imports.d3.scaleLinear()
-    .domain(imports.d3.extent(scores, d => d.PC2))
+  const y = d3.scaleLinear()
+    .domain(d3.extent(scores, d => d.PC2))
     .range([height - margin.bottom, margin.top])
 
   const yAxis = g => g
     .attr("transform", `translate(${margin.left-5},0)`)
-    .call(imports.d3.axisLeft(y))
+    .call(d3.axisLeft(y))
     .call(g => g.select(".domain").remove())
     .call(g => g.select(".tick:last-of-type text").clone()
       .attr("x", -margin.top)
@@ -186,9 +186,9 @@ pca.plotPCA = async function (scores, div) {
       .attr("font-weight", "bold")
       .text("PC2"))
 
-  const svg = imports.d3.create("svg")
+  const svg = d3.create("svg")
   svg.id = "svgid"
-  // const g = imports.d3.select(DOM.svg(width, height));
+  // const g = d3.select(DOM.svg(width, height));
 
   // title
   svg.append("text")
@@ -219,12 +219,12 @@ pca.plotPCA = async function (scores, div) {
     .attr("height", height - margin.top - margin.bottom)
     .attr("fill", "white")
     .on("click", d => {
-      imports.d3.selectAll(".points, .keyRects").transition().attr("opacity", maxOpacity)
+      d3.selectAll(".points, .keyRects").transition().attr("opacity", maxOpacity)
     })
 
   const gPoints = g.append("g").attr("class", "gPoints");
 
-  const tooltip = imports.d3tip()
+  const tooltip = d3tip()
     .style('border', 'solid 2px navy')
     .style('background-color', 'white')
     .style('border-radius', '7px')
@@ -425,18 +425,18 @@ export {
 
 async function pcaPlotlyPlot4(data) {
   //console.log("data", data)
-  const deviationMatrix = imports.PCAjs.computeDeviationMatrix(data);
-  const eigenvectors = imports.PCAjs.getEigenVectors(deviationMatrix);
-  // const eigenvalues = imports.PCAjs.computeEigenvalues(deviationMatrix);
+  const deviationMatrix = PCAjs.computeDeviationMatrix(data);
+  const eigenvectors = PCAjs.getEigenVectors(deviationMatrix);
+  // const eigenvalues = PCAjs.computeEigenvalues(deviationMatrix);
   //console.log("eigenvectors", eigenvectors)
 
-  const adjustedMatrix = imports.PCAjs.computeAdjustedData(data, eigenvectors[0]);
+  const adjustedMatrix = PCAjs.computeAdjustedData(data, eigenvectors[0]);
   //console.log("adjustedMatrix------------------", adjustedMatrix)
   // Extract the first two principal components
   const pc1 = adjustedMatrix.map(row => row[0]);
   const pc2 = adjustedMatrix.map(row => row[1]);
 
-  // Create a scatter plot using imports.Plotly
+  // Create a scatter plot using Plotly
   const trace = {
     x: pc1,
     y: pc2,
@@ -460,7 +460,7 @@ async function pcaPlotlyPlot4(data) {
   pca_plot4.style.height = 400 //"auto";
 
   document.body.appendChild(pca_plot4);
-  imports.Plotly.newPlot('pca-pca_plot4', [trace], layout);
+  Plotly.newPlot('pca-pca_plot4', [trace], layout);
 }
 
 // Assume 'data' is your dataset and 'labels' are the corresponding labels
