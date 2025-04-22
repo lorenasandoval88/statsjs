@@ -79,7 +79,7 @@ asDataFrame = function (value) {
   }
 
   const aoo = value;
-  // columns: if parsed using imports.d3, the aoo will already have a columns prop
+  // columns: if parsed using d3, the aoo will already have a columns prop
   // -> create it otherwise
   if (!value.columns) {
     const set = new Set();
@@ -121,8 +121,8 @@ scale = async function (Objects) {
   const df = asDataFrame(clone);
   df.columns.forEach((column) => {
     const values = df[column];
-    const mean = imports.d3.mean(values);
-    const sd = imports.d3.deviation(values);
+    const mean = d3.mean(values);
+    const sd = d3.deviation(values);
     df[column] = values.map((v) => {
       if (v !== null && v !== undefined) {
         return (v - mean) / sd;
