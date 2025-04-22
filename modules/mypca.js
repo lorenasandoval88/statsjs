@@ -53,8 +53,8 @@ function formatIrisData(data, headers) {
   return result;
 }
 
-pca.calculatePcaScores = async function (data) {
-  // console.log("mypca.js pca.calculatePcaScores data", data)
+pca.scores = async function (data) {
+  // console.log("mypca.js pca.scores data", data)
 
   const numbersOnlyObjs = otherFunctions.removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs[0])
@@ -99,7 +99,7 @@ pca.calculatePcaScores = async function (data) {
       group,
       name
     }))
-  // console.log("mypca.js pca.calculatePcaScoresscores", scores)
+  // console.log("mypca.js pca.scoresscores", scores)
 
   return scores
 }
@@ -371,7 +371,7 @@ pca.loadPcaDiv = async (divId) => {
             //console.log("pcaData", pcaData)
 
             // //console.log('main load PCA csv', csv)
-            const scores = await pca.calculatePcaScores(json)
+            const scores = await pca.scores(json)
             console.log("main scores", scores)
 
             // plot function
@@ -393,7 +393,7 @@ pca.loadPcaDiv = async (divId) => {
   // event listener for load iris data button
   document.getElementById('irisDataButton').addEventListener('click', async function () {
     const data = formatIrisData(irisData, irisLabels)
-    const scores = await pca.calculatePcaScores(data)
+    const scores = await pca.scores(data)
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
 
     // plot function
@@ -406,11 +406,6 @@ pca.loadPcaDiv = async (divId) => {
     otherFunctions.textBox(irisCsv, textBoxDiv)
   });
 
-  // add textbox div to mainPcaDiv 
-  // document.getElementById('mainPcaDiv').appendChild(textBoxDiv);
-
-  // Add the input element to the document body (or any other desired location)
-  // myDiv.replaceWith(newDiv);
 }
 
 export {

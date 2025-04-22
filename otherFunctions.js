@@ -1,10 +1,8 @@
-import {  imports} from './imports.js'
-
-const otherFunctions = {}
+import { d3 } from './imports.js'
 
 
 
-otherFunctions.csvToJson = async function (csv) {
+csvToJson = async function (csv) {
   
   const lines = csv.split(/\r?\n/);
   // //console.log("lines", lines)
@@ -18,7 +16,7 @@ otherFunctions.csvToJson = async function (csv) {
     const currentLine = lines[i].split(',');
 
     for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = otherFunctions.convertStrToNumber(currentLine[j])
+      obj[headers[j]] = convertStrToNumber(currentLine[j])
     }
     result.push(obj);
   }
@@ -26,7 +24,7 @@ otherFunctions.csvToJson = async function (csv) {
   return result;
 }
 
-otherFunctions.convertStrToNumber = function (str) {
+convertStrToNumber = function (str) {
   // Check if the string is empty or null
   if (isNaN(str)) {
     return str; // It's a letter or other non-numeric character, return the original string
@@ -35,15 +33,15 @@ otherFunctions.convertStrToNumber = function (str) {
   }
 }
 
-otherFunctions.removeNonNumbers = function (arr) {
+removeNonNumbers = function (arr) {
   return arr.filter(element => typeof element === 'number');
 }
 
-otherFunctions.removeNumbers = function (arr) {
+removeNumbers = function (arr) {
   return arr.filter(element => typeof element !== 'number');
 }
 
-otherFunctions.removeNonNumberValues = function (ob) {
+removeNonNumberValues = function (ob) {
   return ob.map(obj => {
     const newObj = {};
     for (const key in obj) {
@@ -55,7 +53,7 @@ otherFunctions.removeNonNumberValues = function (ob) {
   });
 }
 
-otherFunctions.removeNumberValues = function (ob) {
+removeNumberValues = function (ob) {
   return ob.map(obj => {
     const newObj = {};
     for (const key in obj) {
@@ -67,7 +65,7 @@ otherFunctions.removeNumberValues = function (ob) {
   });
 }
 
-otherFunctions.asDataFrame = function (value) {
+asDataFrame = function (value) {
   //  //console.log("value",value)
   // check if value is array of objects (aoo)
   if (value === undefined || value === null)
@@ -114,13 +112,13 @@ otherFunctions.asDataFrame = function (value) {
   return aoo;
 }
 
-otherFunctions.scale = async function (Objects) {
+scale = async function (Objects) {
   //console.log("function info:",pca.scale.toString())
   //Standardization (Z-score transformation)
   //Subtract the mean (μ) from each data point (x)
   //Divide each result by the standard deviation (σ)
   const clone = JSON.parse(JSON.stringify(Objects));
-  const df = otherFunctions.asDataFrame(clone);
+  const df = asDataFrame(clone);
   df.columns.forEach((column) => {
     const values = df[column];
     const mean = imports.d3.mean(values);
@@ -135,7 +133,7 @@ otherFunctions.scale = async function (Objects) {
   return df;
 }
 
-otherFunctions.createTableFromCSV = async function (csvData, tableId) {
+createTableFromCSV = async function (csvData, tableId) {
   const table = document.getElementById(tableId);
   table.innerHTML = ""; // Clear existing table content
   const rows = csvData.split("\n");
@@ -153,11 +151,11 @@ otherFunctions.createTableFromCSV = async function (csvData, tableId) {
   }
 }
 
-otherFunctions.textBox = async function (text, div) {
+textBox = async function (text, div) {
 
   if (document.getElementById(div)) {
     console.log(`div for textbox provided in function parameters.`);
-    otherFunctions.createTableFromCSV(text, div)
+    createTableFromCSV(text, div)
 
     div.style.display = "block"
     div.style.overflow = "scroll"
@@ -173,7 +171,7 @@ otherFunctions.textBox = async function (text, div) {
     const div = document.getElementById("textboxDiv")
     div.style.resize = "horizontal"
 
-    otherFunctions.createTableFromCSV(text, "textboxDiv")
+    createTableFromCSV(text, "textboxDiv")
 
     div.style.display = "block"
     div.style.overflow = "scroll"
@@ -190,7 +188,7 @@ otherFunctions.textBox = async function (text, div) {
     document.body.appendChild(div);
 
     div.style.resize = "horizontal"
-    otherFunctions.createTableFromCSV(text, "textboxDiv")
+    createTableFromCSV(text, "textboxDiv")
     div.style.display = "block"
     div.style.overflow = "scroll"
     div.style.width = 400 + 'px' //"auto";
@@ -204,5 +202,14 @@ otherFunctions.textBox = async function (text, div) {
 
 
 export {
-  otherFunctions
+  csvToJson,
+  convertStrToNumber,
+  removeNonNumbers,
+  removeNumbers,
+  removeNonNumberValues,
+  removeNumberValues,
+  asDataFrame,
+  scale,
+  createTableFromCSV,
+  textBox
 }
