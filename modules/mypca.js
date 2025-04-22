@@ -352,11 +352,11 @@ pca.loadPcaDiv = async (divId) => {
 
           reader.onload = async function (e) {
             const csv = e.target.result;
-            console.log("csv", csv)
+            // console.log("csv", csv)
             const json = await otherFunctions.csvToJson(csv)
-            console.log("json", json)
+            // console.log("json", json)
             const matrix = (json.map(Object.values))
-            console.log("main json", json)
+            // console.log("main json", json)
             // //console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
             pcaData.file = json
