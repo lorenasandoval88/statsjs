@@ -24,19 +24,19 @@ const irisDataNumbersOnly = irisData.map(x => (otherFunctions.removeNonNumbers(x
 const irisDataNamesOnly = irisData.map(x => (otherFunctions.removeNumbers(x)))
 
 // Declare global data variable 
-const pcaData = {}
-pcaData.iris = {
+const data = {}
+data.iris = {
   data: irisData,
   colNames: irisLabels,
   categories: irisDataNamesOnly,
   dataNumbersOnly: irisDataNumbersOnly
 }
-pcaData.file = "none loaded"
-console.log("pcaData", pcaData)
+data.file = "none loaded"
+console.log("data", data)
 
 const pca = {}
 
-pca.plotCount = 0
+pca.data = data
 
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
 function formatIrisData(data, headers) {
@@ -307,18 +307,18 @@ pca.plotPCA = async function (scores, div) {
 }
 
 // load file and plot PCA
-pca.loadPcaDiv = async (divId) => {
+pca.loadDiv = async (divId) => {
 
   let myPlot
   let mainPcaDiv = document.getElementById(divId);
   if (mainPcaDiv !== null) {
     // The div with the specified ID exists, updating...
-    console.log("div ID provided in pca.loadPcaDiv(), loading div");
+    console.log("div ID provided in pca.loadDiv(), loading div");
     mainPcaDiv.id = 'mainPcaDiv'
 
   } else {
     // The div with the specified ID does not exist
-    console.log("div not provided in pca.loadPcaDiv(). creating div...");
+    console.log("div not provided in pca.loadDiv(). creating div...");
     // create the div element here
     mainPcaDiv = document.createElement("div")
     mainPcaDiv.id = 'mainPcaDiv'
@@ -367,8 +367,8 @@ pca.loadPcaDiv = async (divId) => {
             console.log("main json", json)
             // //console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
-            pcaData.file = json
-            //console.log("pcaData", pcaData)
+            pca.data.file = json
+            //console.log("pca.data", pca.data)
 
             // //console.log('main load PCA csv', csv)
             const scores = await pca.scores(json)
