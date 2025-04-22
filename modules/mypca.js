@@ -409,8 +409,8 @@ pca.loadDiv = async (divId) => {
 }
 
 export {
-  pca,
-  pcaData
+  pca
+  
 
 }
 
