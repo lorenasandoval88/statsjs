@@ -312,49 +312,46 @@ pca.plotPCA = async function (scores, div) {
     }
 
 
-  return svg;
+  return svg.node();
 }
 
 // load file and plot PCA
 pca.loadDiv = async (divId) => {
 
   let myPlot
-  let mainPcaDiv = document.getElementById(divId);
+  let loadDiv = document.getElementById(divId);
   if (document.getElementById(divId) ) {
     // The div with the specified ID exists, updating...
     console.log("div ID provided in pca.loadDiv(), loading div");
-    mainPcaDiv.id = 'mainPcaDiv'
+    // loadDiv.id = 'loadDiv'
 
   } else {
-    // The div with the specified ID does not exist
-    console.log("div not provided in pca.loadDiv(). creating div...");
+    console.log("pca.loadDiv() div not provide in parameters. creating div...");
     // create the div element here
-    mainPcaDiv = document.createElement("div")
-    mainPcaDiv.id = 'mainPcaDiv'
-    document.body.appendChild(mainPcaDiv);
+    loadDiv = document.createElement("div")
+    loadDiv.id = 'loadDiv'
+    document.body.appendChild(loadDiv);
   }
 
   // iris data button 
   const irisDataButton = document.createElement('button')
   irisDataButton.id = 'irisDataButton'
   irisDataButton.textContent = 'Load Iris Data'
-  mainPcaDiv.appendChild(irisDataButton);
+  loadDiv.appendChild(irisDataButton);
   
   // file input Button
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
-  mainPcaDiv.appendChild(fileInput);
-  mainPcaDiv.append(document.createElement('br'));
-  mainPcaDiv.append(document.createElement('br'));
+  loadDiv.appendChild(fileInput);
+  loadDiv.append(document.createElement('br'));
+  loadDiv.append(document.createElement('br'));
 
 
   // create textbox div
   const textBoxDiv = document.createElement("div")
   textBoxDiv.id = 'textBoxDiv'
-  mainPcaDiv.appendChild(textBoxDiv);
-
-
+  loadDiv.appendChild(textBoxDiv);
 
   // event listener for load file data buttons
   fileInput.addEventListener('change', (event) => {
