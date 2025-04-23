@@ -282,13 +282,14 @@ pca.plotPCA = async function (scores, div) {
     });
 
     
-// updating pca plot div
+  // Here we add the svg to the plot div
+  // Check if the div was provided in the function call
     if (document.getElementById(div)) {
-    console.log(`div for pcaPlot provided in function parameters.`);
+    console.log(`pcaPlot div provided in function parameters.`);
     div.appendChild(svg.node())
 
     } else if (!document.getElementById("childDiv")) {
-      console.log(`div for pcaPlot NOT provided in function parameters, creating....`);
+      console.log(`pcaPlot div  NOT provided in function parameters, creating....`);
       const parentDiv = document.createElement("div")
       parentDiv.id = "parentDiv"
       parentDiv.style.width = 400 + 'px' //"auto";
@@ -355,7 +356,7 @@ pca.loadDiv = async (divId) => {
 
   // event listener for load file data buttons
   fileInput.addEventListener('change', (event) => {
-
+    console.log("fileInput event")
     const files = event.target.files;
     for (const file of files) {
       const reader = new FileReader();
@@ -398,6 +399,9 @@ pca.loadDiv = async (divId) => {
 
   // event listener for load iris data button
   document.getElementById('irisDataButton').addEventListener('click', async function () {
+
+    console.log("fileInpload iris data button event")
+
     const data = formatIrisData(irisData, irisLabels)
     const scores = await pca.scores(data)
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
