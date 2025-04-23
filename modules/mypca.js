@@ -400,7 +400,7 @@ pca.loadDiv = async (divId) => {
   // event listener for load iris data button
   document.getElementById('irisDataButton').addEventListener('click', async function () {
 
-    console.log("fileInpload iris data button event")
+    console.log("load iris data button event")
 
     const data = formatIrisData(irisData, irisLabels)
     const scores = await pca.scores(data)
