@@ -199,7 +199,7 @@ const textBox = async function (text, divId, options = {}) {
 
   }
 
-
+return document.getElementById("textboxDiv")
 }
 
 
