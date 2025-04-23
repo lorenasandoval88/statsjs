@@ -1,5 +1,5 @@
 import {pca} from './modules/mypca.js'
-// import {otherFunctions} from './otherFunctions.js'
+import {textBox} from './otherFunctions.js'
 
 
 //https://observablehq.com/@saehrimnir/dimensionality-reduction-drawings
@@ -12,5 +12,4 @@ import {pca} from './modules/mypca.js'
 // document.body.appendChild(myDiv)
 // display pca div 
 pca.loadDiv()
-
 

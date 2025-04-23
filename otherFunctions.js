@@ -1,9 +1,11 @@
-import { d3 } from './imports.js'
+import {
+  d3
+} from './imports.js'
 
 
 
 const csvToJson = async function (csv) {
-  
+
   const lines = csv.split(/\r?\n/);
   // //console.log("lines", lines)
   const headers = lines[0].split(',');
@@ -151,49 +153,50 @@ const createTableFromCSV = async function (csvData, tableId) {
   }
 }
 
-const textBox = async function (text, div) {
+const textBox = async function (text, divId, options = {}) {
 
-  if (document.getElementById(div)) {
-    console.log(`div for textbox provided in function parameters.`);
-    createTableFromCSV(text, div)
+  const {
+    width: width = 300, //"auto",
+    height: height = 150, //"auto",
+    border: border = "2px solid",
+    color: color = "red", //"auto",
+  } = options;
 
+  // check if textbox div was provided in the function call
+  if (document.getElementById(divId)) {
+    console.log(`textbox div provided in function parameters.`);
+    const div = document.getElementById(divId)
+    div.id = divId
     div.style.display = "block"
     div.style.overflow = "scroll"
-    div.style.width = "auto" // 400 +'px' //"auto";
-    div.style.height = 200 + 'px' //"auto";
-    div.style.overflow = "auto"
-    div.style.border = "2px solid blue"
-    div.style.resize = "horizontal"
-    // div.innerHTML = text;
+    div.style.width = width + 'px'
+    div.style.height = height + 'px'
+    div.style.border = border + " " + color//"2px solid blue"
+    div.style.resize = "both"
 
+    console.log("divId", div.style)
+    createTableFromCSV(text, divId)
+
+    // update textbox content
   } else if (document.getElementById("textboxDiv")) {
-    console.log(`div for textbox exists.`);
-    const div = document.getElementById("textboxDiv")
-    div.style.resize = "horizontal"
-
+    console.log(`textbox div exists. updating contents...`);
     createTableFromCSV(text, "textboxDiv")
-
-    div.style.display = "block"
-    div.style.overflow = "scroll"
-    div.style.width = 400 + 'px' //"auto";
-    div.style.height = 200 + 'px' //"auto";
-    div.style.border = "2px solid blue"
 
   } else {
     // Optionally, handle the case where the element doesn't exist
-    console.log(`div for textbox not found. creating textbox div...`);
+    console.log(`textbox div NOT provided in function parameters. creating div...`);
     const div = document.createElement("table")
     div.id = "textboxDiv"
-
     document.body.appendChild(div);
 
-    div.style.resize = "horizontal"
     createTableFromCSV(text, "textboxDiv")
     div.style.display = "block"
     div.style.overflow = "scroll"
-    div.style.width = 400 + 'px' //"auto";
-    div.style.height = 200 + 'px' //"auto";
-    div.style.border = "2px solid blue"
+    div.style.width = width + 'px'
+    div.style.height = height + 'px'
+    div.style.border = border + " " + color//"2px solid blue"
+    div.style.resize = "both"
+
   }
 
 

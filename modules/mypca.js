@@ -320,7 +320,7 @@ pca.loadDiv = async (divId) => {
 
   let myPlot
   let mainPcaDiv = document.getElementById(divId);
-  if (mainPcaDiv !== null) {
+  if (document.getElementById(divId) ) {
     // The div with the specified ID exists, updating...
     console.log("div ID provided in pca.loadDiv(), loading div");
     mainPcaDiv.id = 'mainPcaDiv'
