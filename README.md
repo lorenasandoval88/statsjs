@@ -1,4 +1,4 @@
-# statsJs
+# Welcome to statsJs!
 
 Multivariate statistical visualization (clustering, correlation, heatmaps, etc) in JavaScript. 
 
