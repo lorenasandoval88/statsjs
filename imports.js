@@ -1,6 +1,7 @@
-const { PCA} = await import("https://esm.sh/ml-pca");
+// const { npm_pca} = await import("https://esm.sh/ml-pca");
+import { PCA as npm_pca } from "https://esm.sh/ml-pca"
 const dataset = (await import("https://esm.sh/ml-dataset-iris"))
-import { default as PCAjs } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
+import { default as npm_pcajs } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
 const Plotly = (await import('https://cdn.jsdelivr.net/npm/plotly.js-dist@3.0.1/+esm')).default
 const localForage = (await import('https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js'))
 // import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
@@ -22,4 +23,4 @@ import { default as d3tip} from 'https://esm.sh/d3-tip';
 // imports.localForage = localForage
 
 // export { imports };
-export { PCA, PCAjs, Plotly, d3, d3tip, dataset, localForage };
+export { npm_pca, npm_pcajs, Plotly, d3, d3tip, dataset, localForage };

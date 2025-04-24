@@ -3,8 +3,8 @@ import {
   } from './modules/mypca.js'
 
 import{
-    PCA, 
-    PCAjs, 
+    npm_pca, 
+    npm_pcajs, 
     Plotly, 
     d3, 
     d3tip, 
@@ -31,8 +31,8 @@ import{
 export {
     pca,
 
-    PCA, 
-    PCAjs, 
+    npm_pca, 
+    npm_pcajs, 
     Plotly, 
     d3, 
     d3tip, 

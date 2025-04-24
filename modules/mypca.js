@@ -1,6 +1,6 @@
 // const { PCA} = await import("https://esm.sh/ml-pca");
 // const dataset = (await import("https://esm.sh/ml-dataset-iris"))
-// import { default as imports.PCAjs } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
+// import { default as imports.npm_pcajs } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
 // const Plotly = (await import('https://cdn.jsdelivr.net/npm/imports.Plotly.js-dist@3.0.1/+esm')).default
 // const localForage = (await import('https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js'))
 
@@ -22,7 +22,7 @@ import {
   textBox
 } from '../otherFunctions.js'
 import {
-  PCA, PCAjs, Plotly, d3, d3tip, dataset, localForage 
+  npm_pca, npm_pcajs, Plotly, d3, d3tip, dataset, localForage 
 } from '../imports.js'
 
 
@@ -32,21 +32,31 @@ const irisData = dataset.getDataset()
 const irisDataNumbersOnly = irisData.map(x => (removeNonNumbers(x)))
 const irisDataNamesOnly = irisData.map(x => (removeNumbers(x)))
 
+const ir = irisData.map((row) =>
+   row.reduce((acc, curr, index) => {
+    acc[irisLabels[index]] = curr;
+    return acc;
+  }, {})
+ )
+console.log("irisData", ir)
+
+
 // Declare global data variable 
 const data = {}
-data.iris = {
-  data: irisData,
-  colNames: irisLabels,
-  categories: irisDataNamesOnly,
-  dataNumbersOnly: irisDataNumbersOnly
-}
+data.iris = ir
+// {
+  // data: irisData,
+  // colNames: irisLabels,
+  // categories: irisDataNamesOnly,
+  // dataNumbersOnly: irisDataNumbersOnly
+// }
 data.file = "none loaded"
 console.log("data", data)
 
 const pca = {}
 
 pca.data = data
-
+console.log("pca",pca)
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
 function formatIrisData(data, headers) {
   const result = [];
@@ -63,7 +73,7 @@ function formatIrisData(data, headers) {
 }
 
 pca.scores = async function (data) {
-  // console.log("mypca.js pca.scores data", data)
+  console.log("mypca.js pca.scores data", data)
 
   const numbersOnlyObjs = removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs[0])
@@ -79,7 +89,7 @@ pca.scores = async function (data) {
   let scaledArr = scaledObjs.map(Object.values)
   // console.log('scaledArr',scaledArr[0])  
 
-  const pca = new PCA(scaledArr, {
+  const pca = new npm_pca(scaledArr, {
     center: true,
     scale: true
   })
@@ -136,12 +146,13 @@ function selectGroup(ctx, group, maxOpacity) {
 
 
 pca.plotPCA = async function (scores, div) {
-  //TO calcscores
+  //TODO calcscores
 console.log("scores1",scores)
   if (scores === undefined) {
     console.log("pca.Plot scores not provided, using Iris data")
-    const scores = pca.data.iris.dataNumbersOnly
-    console.log("scores",scores)
+    const scores = pca.data.iris
+    console.log("scores2",scores)
+    return scores
   }
   console.log("pca.Plot scores not provided, using Iris data")
 
@@ -383,7 +394,7 @@ pca.loadUI = async (divId) => {
             // //console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
             pca.data.file = json
-            //console.log("pca.data", pca.data)
+            console.log("pca.data", pca.data)
 
             // //console.log('main load PCA csv', csv)
             const scores = await pca.scores(json)
@@ -428,18 +439,16 @@ pca.loadUI = async (divId) => {
 
 export {
   pca
-  
-
 }
 
 async function pcaPlotlyPlot4(data) {
   //console.log("data", data)
-  const deviationMatrix = PCAjs.computeDeviationMatrix(data);
-  const eigenvectors = PCAjs.getEigenVectors(deviationMatrix);
-  // const eigenvalues = PCAjs.computeEigenvalues(deviationMatrix);
+  const deviationMatrix = npm_pcajs.computeDeviationMatrix(data);
+  const eigenvectors = npm_pcajs.getEigenVectors(deviationMatrix);
+  // const eigenvalues = npm_pcajs.computeEigenvalues(deviationMatrix);
   //console.log("eigenvectors", eigenvectors)
 
-  const adjustedMatrix = PCAjs.computeAdjustedData(data, eigenvectors[0]);
+  const adjustedMatrix = npm_pcajs.computeAdjustedData(data, eigenvectors[0]);
   //console.log("adjustedMatrix------------------", adjustedMatrix)
   // Extract the first two principal components
   const pc1 = adjustedMatrix.map(row => row[0]);
@@ -477,10 +486,10 @@ async function pcaPlotlyPlot4(data) {
 // 'labels' should be an array with the same length as the number of rows in 'data'
 async function pcaPlotly3DPlot(data, labels) {
 
-  var eigenvectors = imports.PCAjs.getEigenVectors(data);
-  // var first = imports.PCAjs.computePercentageExplained(vectors,vectors[0])
-  var topTwo = imports.PCAjs.computePercentageExplained(eigenvectors, eigenvectors[0], eigenvectors[1])
-  // // const explainedVariance = imports.PCAjs.getExplainedVariance();
+  var eigenvectors = imports.npm_pcajs.getEigenVectors(data);
+  // var first = imports.npm_pcajs.computePercentageExplained(vectors,vectors[0])
+  var topTwo = imports.npm_pcajs.computePercentageExplained(eigenvectors, eigenvectors[0], eigenvectors[1])
+  // // const explainedVariance = imports.npm_pcajs.getExplainedVariance();
 
   // //console.log("vectors",vectors)
   // //console.log("first",first)
@@ -548,10 +557,10 @@ async function pcaPlotly3DPlot(data, labels) {
 }
 
 async function pcaPlotly2DPlot(data, labels) {
-  var eigenvectors = imports.PCAjs.getEigenVectors(data);
-  // var first = imports.PCAjs.computePercentageExplained(vectors,vectors[0])
-  var topTwo = imports.PCAjs.computePercentageExplained(eigenvectors, eigenvectors[0], eigenvectors[1])
-  // // const explainedVariance = imports.PCAjs.getExplainedVariance();
+  var eigenvectors = imports.npm_pcajs.getEigenVectors(data);
+  // var first = imports.npm_pcajs.computePercentageExplained(vectors,vectors[0])
+  var topTwo = imports.npm_pcajs.computePercentageExplained(eigenvectors, eigenvectors[0], eigenvectors[1])
+  // // const explainedVariance = imports.npm_pcajs.getExplainedVariance();
 
   // //console.log("vectors",vectors)
   // //console.log("first",first)
