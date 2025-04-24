@@ -1,17 +1,17 @@
 # Welcome to statsJs!
 
-Multivariate statistics plots in Javascript (clustering, correlation, heatmaps etc.) 
-live at https://lorenasandoval88.github.io/statsjs/
 
 
 ### Loading statsJs: 
+=======
+Multivariate statistical visualization (clustering, correlation, heatmaps, etc) in JavaScript. 
 
-**Use the await keyword with the dynamic import() function to load statsJs modules asynchronously.**
+live at: https://episphere.github.io/statsjs
 
-```sdk = await import("https://lorenasandoval88.github.io/statsjs/sdk.js")```
+### Loading statsJs:
 
-**Next, call the loadUI() module to render the user interface**
+`sdk = await import("https://episphere.github.io/statsJs/sdk.js")`
 
-```sdk.loadUI()```
+
 
 Documentation can be found on the [wiki](https://github.com/episphere/statsJs/wiki).
