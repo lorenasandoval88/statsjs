@@ -136,6 +136,15 @@ function selectGroup(ctx, group, maxOpacity) {
 
 
 pca.plotPCA = async function (scores, div) {
+  //TO calcscores
+console.log("scores1",scores)
+  if (scores === undefined) {
+    console.log("pca.Plot scores not provided, using Iris data")
+    const scores = pca.data.iris.dataNumbersOnly
+    console.log("scores",scores)
+  }
+  console.log("pca.Plot scores not provided, using Iris data")
+
   const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
   const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
@@ -289,7 +298,7 @@ pca.plotPCA = async function (scores, div) {
     div.appendChild(svg.node())
 
     } else if (!document.getElementById("childDiv")) {
-      console.log(`pcaPlot div  NOT provided in function parameters, creating....`);
+      console.log(`pcaPlot div  NOT provided in function parameters, creating div....`);
       const parentDiv = document.createElement("div")
       parentDiv.id = "parentDiv"
       parentDiv.style.width = 400 + 'px' //"auto";
@@ -317,42 +326,41 @@ pca.plotPCA = async function (scores, div) {
 }
 
 // load file and plot PCA
-pca.loadDiv = async (divId) => {
+pca.loadUI = async (divId) => {
 
-  let myPlot
-  let loadDiv = document.getElementById(divId);
+  let loadUI = document.getElementById(divId);
   if (document.getElementById(divId) ) {
     // The div with the specified ID exists, updating...
-    console.log("div ID provided in pca.loadDiv(), loading div");
-    // loadDiv.id = 'loadDiv'
+    console.log("div ID provided in pca.loadUI(), loading div");
+    // loadUI.id = 'loadUI'
 
   } else {
-    console.log("pca.loadDiv() div not provide in parameters. creating div...");
+    console.log("pca.loadUI() div not provide in parameters. creating div...");
     // create the div element here
-    loadDiv = document.createElement("div")
-    loadDiv.id = 'loadDiv'
-    document.body.appendChild(loadDiv);
+    loadUI = document.createElement("div")
+    loadUI.id = 'loadUI'
+    document.body.appendChild(loadUI);
   }
 
   // iris data button 
   const irisDataButton = document.createElement('button')
   irisDataButton.id = 'irisDataButton'
   irisDataButton.textContent = 'Load Iris Data'
-  loadDiv.appendChild(irisDataButton);
+  loadUI.appendChild(irisDataButton);
   
   // file input Button
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
-  loadDiv.appendChild(fileInput);
-  loadDiv.append(document.createElement('br'));
-  loadDiv.append(document.createElement('br'));
+  loadUI.appendChild(fileInput);
+  loadUI.append(document.createElement('br'));
+  loadUI.append(document.createElement('br'));
 
 
   // create textbox div
   const textBoxDiv = document.createElement("div")
   textBoxDiv.id = 'textBoxDiv'
-  loadDiv.appendChild(textBoxDiv);
+  loadUI.appendChild(textBoxDiv);
 
   // event listener for load file data buttons
   fileInput.addEventListener('change', (event) => {

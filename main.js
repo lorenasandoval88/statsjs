@@ -11,5 +11,5 @@ import {textBox} from './otherFunctions.js'
 // myDiv.id = 'myDiv'
 // document.body.appendChild(myDiv)
 // display pca div 
-pca.loadDiv()
+pca.loadUI()
 
