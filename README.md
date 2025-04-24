@@ -1,9 +1,6 @@
 # Welcome to statsJs!
 
 
-
-### Loading statsJs: 
-
 Multivariate statistical visualization (clustering, correlation, heatmaps, etc) in JavaScript. 
 
 live at: https://lorenasandoval88.github.io/statsjs
