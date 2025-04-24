@@ -8,10 +8,10 @@ live at https://lorenasandoval88.github.io/statsjs/
 
 **Use the await keyword with the dynamic import() function to load statsJs modules asynchronously.**
 
-`sdk = await import("https://lorenasandoval88.github.io/statsjs/sdk.js")`
+```sdk = await import("https://lorenasandoval88.github.io/statsjs/sdk.js")```
 
-**Next, call the loadPca() module to render a PCA plot along with data input buttons**
+**Next, call the loadUI() module to render the user interface**
 
-`sdk.loadPca()`
+```sdk.loadUI()```
 
 Documentation can be found on the [wiki](https://github.com/episphere/statsJs/wiki).
