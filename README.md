@@ -3,15 +3,15 @@
 
 
 ### Loading statsJs: 
-=======
+
 Multivariate statistical visualization (clustering, correlation, heatmaps, etc) in JavaScript. 
 
-live at: https://episphere.github.io/statsjs
+live at: https://lorenasandoval88.github.io/statsjs
 
 ### Loading statsJs:
 
-`sdk = await import("https://episphere.github.io/statsJs/sdk.js")`
+`sdk = await import("https://lorenasandoval88.github.io/statsJs/sdk.js")`
 
 
 
-Documentation can be found on the [wiki](https://github.com/episphere/statsJs/wiki).
+Documentation can be found on the [wiki](https://github.com/lorenasandoval88/statsJs/wiki).
