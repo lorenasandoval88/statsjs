@@ -10,8 +10,8 @@ live at: https://lorenasandoval88.github.io/statsjs
 
 ### Loading statsJs PCA User Interface:
 
-```sdk = await import("https://lorenasandoval88.github.io/statsJs/sdk.js")```
+`sdk = await import("https://lorenasandoval88.github.io/statsJs/sdk.js")`
 
 
 
-Documentation can be found on the [wiki](https://github.com/lorenasandoval88/statsJs/wiki).
+Further documentation can be found on the [wiki](https://github.com/lorenasandoval88/statsJs/wiki).
