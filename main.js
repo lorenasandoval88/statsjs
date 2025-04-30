@@ -12,5 +12,5 @@ import {textBox} from './otherFunctions.js'
 // document.body.appendChild(myDiv)
 // display pca div 
 pca.loadUI()
-pca.plotPCA()
+// await pca.plotPCA()
 

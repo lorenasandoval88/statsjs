@@ -72,8 +72,8 @@ function formatIrisData(data, headers) {
   return result;
 }
 
-pca.scores = async function (data) {
-  console.log("mypca.js pca.scores data", data)
+pca.getScores = async function (data) {
+  console.log("mypca.js pca.getScores data", data)
 
   const numbersOnlyObjs = removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs[0])
@@ -118,7 +118,7 @@ pca.scores = async function (data) {
       group,
       name
     }))
-  // console.log("mypca.js pca.scoresscores", scores)
+  // console.log("mypca.js pca.getScoresscores", scores)
 
   return scores
 }
@@ -145,22 +145,27 @@ function selectGroup(ctx, group, maxOpacity) {
 
 
 
-pca.plotPCA = async function (scores, div) {
+pca.plotPCA = async function (scores, div, options = {}) {
+
+  const {
+    width: width = 400,
+    colors: colors = ["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"],
+  } = options;
+
   //TODO calcscores
-console.log("scores1",scores)
-  if (scores === undefined) {
+console.log("pca.plotPCA scores provided??",scores)
+
+if (scores === undefined) {
     console.log("pca.Plot scores not provided, using Iris data")
-    const scores = pca.data.iris
-    console.log("scores2",scores)
-    return scores
-  }
-  console.log("pca.Plot scores not provided, using Iris data")
+    scores = await pca.getScores(pca.data.iris)
+}
+
+  console.log("pca.Plot scores2:",scores)
 
   const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
-  const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
+  // const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
     .domain(groups)
 
-  const width = 400
   const height = width / 1.5
   const fontFamily = 'monospace'
   const maxOpacity = 0.7
@@ -269,7 +274,7 @@ console.log("scores1",scores)
     .attr("class", "points")
     .attr("cx", d => x(d.PC1))
     .attr("cy", d => y(d.PC2))
-    .attr("fill", d => color(d.group))
+    .attr("fill", d => colors(d.group))
     // .style("mix-blend-mode", blendingMode)
     .attr("opacity", 0.7)
     .attr("r", 4)
@@ -286,7 +291,7 @@ console.log("scores1",scores)
     .attr("y", (d, i) => i * 20)
     .attr("width", 12)
     .attr("height", 12)
-    .attr("fill", d => color(d))
+    .attr("fill", d => colors(d))
     .on("click", (event, d) => {
       return selectGroup(this, d, maxOpacity)
     })
@@ -331,10 +336,12 @@ console.log("scores1",scores)
       document.getElementById("parentDiv").appendChild(childDiv)
       childDiv.appendChild(svg.node())
     }
-
-
+  console.log("pcaplot div", div)
   return svg.node();
 }
+
+
+
 
 // load file and plot PCA
 pca.loadUI = async (divId) => {
@@ -397,7 +404,7 @@ pca.loadUI = async (divId) => {
             console.log("pca.data", pca.data)
 
             // //console.log('main load PCA csv', csv)
-            const scores = await pca.scores(json)
+            const scores = await pca.getScores(json)
             console.log("main scores", scores)
 
             // plot function
@@ -422,7 +429,7 @@ pca.loadUI = async (divId) => {
     console.log("load iris data button event")
 
     const data = formatIrisData(irisData, irisLabels)
-    const scores = await pca.scores(data)
+    const scores = await pca.getScores(data)
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
 
     // plot function
