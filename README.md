@@ -13,4 +13,6 @@ live at: https://lorenasandoval88.github.io/statsjs
 `sdk.pca.UI()`
 
 
+`sdk.plotPCA(scores, div, {colors =  ["#8C236A", "#4477AA"]})`
+
 Further documentation can be found on the [wiki](https://github.com/lorenasandoval88/statsJs/wiki).
