@@ -5,7 +5,7 @@ Multivariate statistical visualization (clustering, correlation, heatmaps, etc) 
 
 live at: https://lorenasandoval88.github.io/statsjs
 
-### Loading statsJs PCA User Interface:
+### Loading statsJs ES6 Modules:
 
 `sdk = await import("https://lorenasandoval88.github.io/statsjs/sdk.js")`
 
