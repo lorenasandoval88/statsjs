@@ -28,6 +28,7 @@ import {
 
 // Example iris dataset:
 const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
+const irisColumnNames = "sepal_length,sepal_width,petal_length,petal_width,species\n"
 const irisData = dataset.getDataset()
 
 const ir = irisData.map((row) =>
@@ -36,13 +37,16 @@ const ir = irisData.map((row) =>
     return acc;
   }, {})
  )
+// ir.headers = irisLabels
 
-
+const csv = irisColumnNames + irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n')
 // Declare global data variable for pca
 const pca = {
   data:{}
 }
-pca.data.iris = ir
+pca.data.iris = {}
+pca.data.iris.json = ir
+pca.data.iris.csv = csv// irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n')
 pca.data.file = "none loaded"
 console.log("pca",pca)
 
@@ -148,7 +152,7 @@ console.log("running pca.plot()------------------------------------")
 
 
   const {
-    div: div = "",
+    divId: divId = "",
     data: data = formatIrisData(irisData, irisLabels),
     width: width = 400,
     colors: colors = ["red", "blue", "green", "orange", "purple", "pink", "yellow"],
@@ -156,18 +160,13 @@ console.log("running pca.plot()------------------------------------")
 
   //TODO calcscores
 
-// if (scores === undefined) {
-//     console.log("pca.Plot scores not provided, using Iris data")
-//     scores = await pca.getScores(pca.data.iris)
-// }
-console.log(" data", data)
-const scores = await pca.getScores(data)
-
-
-
-
+  // if (scores === undefined) {
+  //     console.log("pca.Plot scores not provided, using Iris data")
+  //     scores = await pca.getScores(pca.data.iris)
+  // }
+  console.log(" data", data)
+  const scores = await pca.getScores(data)
   const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
-
   const color = d3.scaleOrdinal(colors).domain(groups)
 
 
@@ -314,34 +313,20 @@ const scores = await pca.getScores(data)
     
   // Here we add the svg to the plot div
   // Check if the div was provided in the function call
-    if (document.getElementById(div)) {
+    if (document.getElementById(divId)) {
     console.log(`pcaPlot div provided in function parameters.`);
+    const div = document.getElementById(divId)
+    div.innerHTML = ""
     div.appendChild(svg.node())
 
-    } else if (!document.getElementById("childDiv")) {
-      console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
-      const parentDiv = document.createElement("div")
-      parentDiv.id = "parentDiv"
-      parentDiv.style.width = 400 + 'px' //"auto";
-      document.body.appendChild(parentDiv)
-
-      const childDiv = document.createElement("div")
-      childDiv.id = "childDiv"
-      childDiv.appendChild(svg.node())
-      parentDiv.appendChild(childDiv)
-
-      // div.replaceWith(svg.node());
-    } else if (document.getElementById("childDiv")) {
-      console.log(`div for pcaPlot found, updating....`);
-      const div  = document.getElementById("childDiv")
-      document.getElementById("parentDiv").removeChild(div)
-
-      const childDiv = document.createElement("div")
-      childDiv.id = "childDiv"
-      document.getElementById("parentDiv").appendChild(childDiv)
-      childDiv.appendChild(svg.node())
+  } else if (!document.getElementById("childDiv")) {
+    console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
+    const div = document.createElement("div")
+    document.body.appendChild(div)
+    div.appendChild(svg.node());
     }
-  console.log("pcaplot div", div)
+
+  console.log("pcaplot div", divId)
   return svg.node();
 }
 
@@ -355,6 +340,7 @@ const scores = await pca.getScores(data)
 
 // load file and plot PCA
 pca.loadUI = async (divId) => {
+  console.log("running pca.loadUI() -------------------");
 
   let loadUI = document.getElementById(divId);
   if (document.getElementById(divId) ) {
@@ -363,7 +349,7 @@ pca.loadUI = async (divId) => {
     // loadUI.id = 'loadUI'
 
   } else {
-    console.log("pca.loadUI() div not provide in parameters. creating div...");
+    console.log(" div not provide in parameters. creating div...");
     // create the div element here
     loadUI = document.createElement("div")
     loadUI.id = 'loadUI'
@@ -384,6 +370,10 @@ pca.loadUI = async (divId) => {
   loadUI.append(document.createElement('br'));
   loadUI.append(document.createElement('br'));
 
+  // create plot div
+  const plotDiv = document.createElement("div")
+  plotDiv.id = 'plotDiv'
+  loadUI.appendChild(plotDiv);
 
   // create textbox div
   const textBoxDiv = document.createElement("div")
@@ -406,21 +396,28 @@ pca.loadUI = async (divId) => {
             // console.log("csv", csv)
             const json = await csvToJson(csv)
             // console.log("json", json)
+
+            // plot function
+            pca.plot({data: json, divId: "plotDiv"})
+
             const matrix = (json.map(Object.values))
             console.log("main json", json)
             // //console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
-            pca.data.file = json
-            console.log("pca.data", pca.data)
 
+            pca.data.file = []
+            pca.data.file.json = json
+            pca.data.file.csv = csv
+
+            console.log("pca.data", pca)
+            textBox( {text: pca.data.file.csv, divId: "textBoxDiv"})
             // //console.log('main load PCA csv', csv)
-            const scores = await pca.getScores(json)
-            console.log("main scores", scores)
+            // const scores = await pca.getScores(json)
+            // console.log("main scores", scores)
 
-            // plot function
-             pca.plot({colors: ["red","green"]}, scores)
+     
             // csv file textbox
-            textBox(csv, textBoxDiv)
+            // textBox(csv)
 
           };
           reader.onerror = function () {
@@ -428,9 +425,12 @@ pca.loadUI = async (divId) => {
           };
           reader.readAsText(file);
         }
+    
+
       };
       reader.readAsText(file); // Read as text, other options are readAsArrayBuffer, readAsDataURL
     }
+
   });
 
   // event listener for load iris data button
@@ -443,13 +443,13 @@ pca.loadUI = async (divId) => {
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
 
     // plot function
-    pca.plot({},scores)
+    pca.plot({ divId: "plotDiv"})
 
     //convert iris data to csv
-    const irisCsv = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
+    // const irisCsv = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
 
     // textbox div
-    textBox(irisCsv, textBoxDiv)
+    textBox({text: pca.data.iris.csv, divId: "textBoxDiv"})
   });
 
 }

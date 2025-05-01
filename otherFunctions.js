@@ -153,15 +153,17 @@ const createTableFromCSV = async function (csvData, tableId) {
   }
 }
 
-const textBox = async function (text,  divId, options = {}) {
+const textBox = async function ( options = {}) {
 
   const {
+    text: text = "No text provided",
+    divId: divId = "",
     width: width = 300, //"auto",
     height: height = 150, //"auto",
     border: border = "2px solid",
     color: color = "red", //"auto",
   } = options;
-
+console.log("textBox options", options)
   // check if textbox div was provided in the function call
   if (document.getElementById(divId)) {
     console.log(`textbox div provided in function parameters.`);
@@ -174,7 +176,6 @@ const textBox = async function (text,  divId, options = {}) {
     div.style.border = border + " " + color//"2px solid blue"
     div.style.resize = "both"
 
-    console.log("divId", div.style)
     createTableFromCSV(text, divId)
 
     // update textbox content
