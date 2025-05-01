@@ -17,7 +17,7 @@ live at: https://lorenasandoval88.github.io/statsjs
 
 `sdk.pca.plot( {colors: ["#8C236A", "#4477AA"]} )`
 
-    options can include the following (order is irrelevant):
+    options can include the following (order is irrelevant) or be left empty:
     {
         divId: "as a string", 
         colors: [...list],
@@ -30,7 +30,7 @@ live at: https://lorenasandoval88.github.io/statsjs
 
 `sdk.textBox( {text:  pca.data.iris.csv} )`
 
-    options can include the following (order is irrelevant):
+    options can include the following (order is irrelevant) or be left empty:
     {
         divId: "as a string", 
         text: data in csv or text format,
