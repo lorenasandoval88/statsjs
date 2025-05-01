@@ -155,6 +155,7 @@ console.log("running pca.plot()------------------------------------")
     divId: divId = "",
     data: data = formatIrisData(irisData, irisLabels),
     width: width = 400,
+    height: height = 120,
     colors: colors = ["red", "blue", "green", "orange", "purple", "pink", "yellow"],
   } = options;
 
@@ -170,7 +171,6 @@ console.log("running pca.plot()------------------------------------")
   const color = d3.scaleOrdinal(colors).domain(groups)
 
 
-  const height = width / 1.5
   const fontFamily = 'monospace'
   const maxOpacity = 0.7
   const margin = ({
