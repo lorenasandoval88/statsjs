@@ -153,7 +153,7 @@ const createTableFromCSV = async function (csvData, tableId) {
   }
 }
 
-const textBox = async function (text, divId, options = {}) {
+const textBox = async function (text,  divId, options = {}) {
 
   const {
     width: width = 300, //"auto",

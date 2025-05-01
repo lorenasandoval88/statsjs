@@ -29,8 +29,6 @@ import {
 // Example iris dataset:
 const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
 const irisData = dataset.getDataset()
-const irisDataNumbersOnly = irisData.map(x => (removeNonNumbers(x)))
-const irisDataNamesOnly = irisData.map(x => (removeNumbers(x)))
 
 const ir = irisData.map((row) =>
    row.reduce((acc, curr, index) => {
@@ -38,25 +36,19 @@ const ir = irisData.map((row) =>
     return acc;
   }, {})
  )
-console.log("irisData", ir)
 
 
-// Declare global data variable 
-const data = {}
-data.iris = ir
-// {
-  // data: irisData,
-  // colNames: irisLabels,
-  // categories: irisDataNamesOnly,
-  // dataNumbersOnly: irisDataNumbersOnly
-// }
-data.file = "none loaded"
-console.log("data", data)
-
-const pca = {}
-
-pca.data = data
+// Declare global data variable for pca
+const pca = {
+  data:{}
+}
+pca.data.iris = ir
+pca.data.file = "none loaded"
 console.log("pca",pca)
+
+
+
+
 // PCA (scale, asDataframe, plotPCA)/////////////////////////////////////////////////////////
 function formatIrisData(data, headers) {
   const result = [];
@@ -73,7 +65,7 @@ function formatIrisData(data, headers) {
 }
 
 pca.getScores = async function (data) {
-  console.log("mypca.js pca.getScores data", data)
+  console.log("running pca.getScores()--------------")
 
   const numbersOnlyObjs = removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs[0])
@@ -118,7 +110,7 @@ pca.getScores = async function (data) {
       group,
       name
     }))
-  // console.log("mypca.js pca.getScoresscores", scores)
+  console.log("pca scores", scores)
 
   return scores
 }
@@ -145,26 +137,39 @@ function selectGroup(ctx, group, maxOpacity) {
 
 
 
-pca.plotPCA = async function (scores, div, options = {}) {
+
+
+
+pca.plot = async function ( options = {} ) {
+console.log("running pca.plot()------------------------------------")
+  // const data = formatIrisData(irisData, irisLabels)
+  // const scores = await pca.getScores(data)
+  // const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
+
 
   const {
+    div: div = "",
+    data: data = formatIrisData(irisData, irisLabels),
     width: width = 400,
-    colors: colors = ["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"],
+    colors: colors = ["red", "blue", "green", "orange", "purple", "pink", "yellow"],
   } = options;
 
   //TODO calcscores
-console.log("pca.plotPCA scores provided??",scores)
 
-if (scores === undefined) {
-    console.log("pca.Plot scores not provided, using Iris data")
-    scores = await pca.getScores(pca.data.iris)
-}
+// if (scores === undefined) {
+//     console.log("pca.Plot scores not provided, using Iris data")
+//     scores = await pca.getScores(pca.data.iris)
+// }
+console.log(" data", data)
+const scores = await pca.getScores(data)
 
-  console.log("pca.Plot scores2:",scores)
+
+
 
   const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
-  // const color = d3.scaleOrdinal(["#8C236A", "#4477AA", "#AA7744", "#117777", "#DD7788", "#77AADD", "#777711", "#AA4488", "#44AA77", "#AA4455"])
-    .domain(groups)
+
+  const color = d3.scaleOrdinal(colors).domain(groups)
+
 
   const height = width / 1.5
   const fontFamily = 'monospace'
@@ -274,7 +279,7 @@ if (scores === undefined) {
     .attr("class", "points")
     .attr("cx", d => x(d.PC1))
     .attr("cy", d => y(d.PC2))
-    .attr("fill", d => colors(d.group))
+    .attr("fill", d => color(d.group))
     // .style("mix-blend-mode", blendingMode)
     .attr("opacity", 0.7)
     .attr("r", 4)
@@ -291,7 +296,7 @@ if (scores === undefined) {
     .attr("y", (d, i) => i * 20)
     .attr("width", 12)
     .attr("height", 12)
-    .attr("fill", d => colors(d))
+    .attr("fill", d => color(d))
     .on("click", (event, d) => {
       return selectGroup(this, d, maxOpacity)
     })
@@ -314,7 +319,7 @@ if (scores === undefined) {
     div.appendChild(svg.node())
 
     } else if (!document.getElementById("childDiv")) {
-      console.log(`pcaPlot div  NOT provided in function parameters, creating div....`);
+      console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
       const parentDiv = document.createElement("div")
       parentDiv.id = "parentDiv"
       parentDiv.style.width = 400 + 'px' //"auto";
@@ -339,6 +344,11 @@ if (scores === undefined) {
   console.log("pcaplot div", div)
   return svg.node();
 }
+
+
+
+
+
 
 
 
@@ -408,7 +418,7 @@ pca.loadUI = async (divId) => {
             console.log("main scores", scores)
 
             // plot function
-             pca.plotPCA(scores )
+             pca.plot({colors: ["red","green"]}, scores)
             // csv file textbox
             textBox(csv, textBoxDiv)
 
@@ -433,7 +443,7 @@ pca.loadUI = async (divId) => {
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
 
     // plot function
-    pca.plotPCA(scores)
+    pca.plot({},scores)
 
     //convert iris data to csv
     const irisCsv = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
