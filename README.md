@@ -11,7 +11,7 @@ live at: https://lorenasandoval88.github.io/statsjs
 
 ### Loading the User Interface (UI):
 
-`sdk.pca.UI()`
+`sdk.pca.loadUI()`
 
 ### Loading statsJs PCA plot only:
 
