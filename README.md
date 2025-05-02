@@ -28,7 +28,9 @@ live at: https://lorenasandoval88.github.io/statsjs
 
 ### Loading statsJs textBox only:
 
-`sdk.textBox( {text:  pca.data.iris.csv} )`
+
+`const csv = sdk. pca.data.iris.csv`
+`sdk.textBox( {text: csv} )`
 
     options can include the following (order is irrelevant) or be left empty:
     {
