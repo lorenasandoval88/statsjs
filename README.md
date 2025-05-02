@@ -28,8 +28,9 @@ live at: https://lorenasandoval88.github.io/statsjs
 
 ### Loading statsJs textBox only:
 
-
+define the text using the built in Iris data. 
 `const csv = sdk. pca.data.iris.csv`
+
 `sdk.textBox( {text: csv} )`
 
     options can include the following (order is irrelevant) or be left empty:
