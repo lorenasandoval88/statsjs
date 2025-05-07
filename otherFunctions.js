@@ -163,7 +163,7 @@ const textBox = async function ( options = {}) {
     border: border = "2px solid",
     color: color = "red", //"auto",
   } = options;
-console.log("textBox options", options)
+// console.log("textBox options", options)
   // check if textbox div was provided in the function call
   if (document.getElementById(divId)) {
     console.log(`textbox div provided in function parameters.`);
@@ -175,6 +175,11 @@ console.log("textBox options", options)
     div.style.height = height + 'px'
     div.style.border = border + " " + color//"2px solid blue"
     div.style.resize = "both"
+    div.style.alignContent = "center"
+    div.style.marginRight = "auto"
+    div.style.marginLeft = "auto"
+
+     console.log("div",div);
 
     createTableFromCSV(text, divId)
 
@@ -188,6 +193,8 @@ console.log("textBox options", options)
     console.log(`textbox div NOT provided in function parameters. creating div...`);
     const div = document.createElement("table")
     div.id = "textboxDiv"
+    div.style.alignContent = "center"
+
     document.body.appendChild(div);
 
     createTableFromCSV(text, "textboxDiv")
@@ -197,6 +204,9 @@ console.log("textBox options", options)
     div.style.height = height + 'px'
     div.style.border = border + " " + color//"2px solid blue"
     div.style.resize = "both"
+    div.style.alignContent = "center"
+    div.style.marginRight = "auto"
+    div.style.marginLeft = "auto"
 
   }
 

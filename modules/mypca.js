@@ -1,12 +1,5 @@
-// const { PCA} = await import("https://esm.sh/ml-pca");
-// const dataset = (await import("https://esm.sh/ml-dataset-iris"))
-// import { default as imports.npm_pcajs } from 'https://cdn.jsdelivr.net/npm/pca-js@1.0.1/+esm'
-// const Plotly = (await import('https://cdn.jsdelivr.net/npm/imports.Plotly.js-dist@3.0.1/+esm')).default
-// const localForage = (await import('https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js'))
-
-// // import {PCA} from 'https://cdn.jsdelivr.net/npm/ml-pca@4.1.1/+esm'
-// import * as imports.d3 from "https://cdn.skypack.dev/imports.d3@7"
-// import { default as imports.d3tip} from 'https://esm.sh/imports.d3-tip';
+console.log("mypca.js loaded") 
+  
 
 // TODO: limit textbox rows to 500
 import {
@@ -48,7 +41,7 @@ pca.data.iris = {}
 pca.data.iris.json = ir
 pca.data.iris.csv = csv// irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n')
 pca.data.file = "none loaded"
-console.log("pca",pca)
+console.log("pca object:",pca)
 
 
 
@@ -69,7 +62,7 @@ function formatIrisData(data, headers) {
 }
 
 pca.getScores = async function (data) {
-  console.log("running pca.getScores()--------------")
+  console.log("running pca.getScores()-------------------------------")
 
   const numbersOnlyObjs = removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs[0])
@@ -114,7 +107,7 @@ pca.getScores = async function (data) {
       group,
       name
     }))
-  console.log("pca scores", scores)
+  console.log("PCA1 and PC2 - getScores() (1st row):", scores[0])
 
   return scores
 }
@@ -145,7 +138,7 @@ function selectGroup(ctx, group, maxOpacity) {
 
 
 pca.plot = async function ( options = {} ) {
-console.log("running pca.plot()------------------------------------")
+console.log("running pca.plot()-------------------------------")
   // const data = formatIrisData(irisData, irisLabels)
   // const scores = await pca.getScores(data)
   // const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
@@ -155,17 +148,13 @@ console.log("running pca.plot()------------------------------------")
     divId: divId = "",
     data: data = formatIrisData(irisData, irisLabels),
     width: width = 400,
-    height: height = 120,
+    height: height = 200,
     colors: colors = ["red", "blue", "green", "orange", "purple", "pink", "yellow"],
   } = options;
 
   //TODO calcscores
 
-  // if (scores === undefined) {
-  //     console.log("pca.Plot scores not provided, using Iris data")
-  //     scores = await pca.getScores(pca.data.iris)
-  // }
-  console.log(" data", data)
+  console.log(" data - pca.plot() (1st row):", data[0])
   const scores = await pca.getScores(data)
   const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
   const color = d3.scaleOrdinal(colors).domain(groups)
@@ -326,7 +315,6 @@ console.log("running pca.plot()------------------------------------")
     div.appendChild(svg.node());
     }
 
-  console.log("pcaplot div", divId)
   return svg.node();
 }
 
@@ -340,49 +328,56 @@ console.log("running pca.plot()------------------------------------")
 
 // load file and plot PCA
 pca.loadUI = async (divId) => {
-  console.log("running pca.loadUI() -------------------");
+  console.log("running pca.loadUI()-------------------------------");
 
-  let loadUI = document.getElementById(divId);
+  const {
+
+    //todo: add textbox opyions, height width color etc
+  } = options
+
+
+  let div = document.getElementById(divId);
   if (document.getElementById(divId) ) {
     // The div with the specified ID exists, updating...
     console.log("div ID provided in pca.loadUI(), loading div");
-    // loadUI.id = 'loadUI'
+    // div.id = 'loadUI'
 
   } else {
-    console.log(" div not provide in parameters. creating div...");
+    console.log(" div NOT found in parameters. creating div...");
     // create the div element here
-    loadUI = document.createElement("div")
+    div = document.createElement("div")
     loadUI.id = 'loadUI'
-    document.body.appendChild(loadUI);
+    div.style.alignContent = "center"
+    document.body.appendChild(div);
   }
 
   // iris data button 
   const irisDataButton = document.createElement('button')
   irisDataButton.id = 'irisDataButton'
   irisDataButton.textContent = 'Load Iris Data'
-  loadUI.appendChild(irisDataButton);
+  div.appendChild(irisDataButton);
   
   // file input Button
   const fileInput = document.createElement('input')
   fileInput.id = 'fileInput'
   fileInput.setAttribute('type', 'file')
-  loadUI.appendChild(fileInput);
-  loadUI.append(document.createElement('br'));
-  loadUI.append(document.createElement('br'));
+  div.appendChild(fileInput);
+  div.append(document.createElement('br'));
+  div.append(document.createElement('br'));
 
   // create plot div
   const plotDiv = document.createElement("div")
   plotDiv.id = 'plotDiv'
-  loadUI.appendChild(plotDiv);
+  div.appendChild(plotDiv);
 
   // create textbox div
   const textBoxDiv = document.createElement("div")
   textBoxDiv.id = 'textBoxDiv'
-  loadUI.appendChild(textBoxDiv);
+  div.appendChild(textBoxDiv);
 
   // event listener for load file data buttons
   fileInput.addEventListener('change', (event) => {
-    console.log("fileInput event")
+    console.log("fileInput button clicked!")
     const files = event.target.files;
     for (const file of files) {
       const reader = new FileReader();
@@ -436,7 +431,7 @@ pca.loadUI = async (divId) => {
   // event listener for load iris data button
   document.getElementById('irisDataButton').addEventListener('click', async function () {
 
-    console.log("load iris data button event")
+    console.log(" button clicked!")
 
     const data = formatIrisData(irisData, irisLabels)
     const scores = await pca.getScores(data)
