@@ -145,7 +145,7 @@ console.log("running pca.plot()-------------------------------")
 
 
   const {
-    divId: divId = "",
+    divid: divid = "",
     data: data = formatIrisData(irisData, irisLabels),
     width: width = 400,
     height: height = 200,
@@ -302,9 +302,9 @@ console.log("running pca.plot()-------------------------------")
     
   // Here we add the svg to the plot div
   // Check if the div was provided in the function call
-    if (document.getElementById(divId)) {
+    if (document.getElementById(divid)) {
     console.log(`pcaPlot div provided in function parameters.`);
-    const div = document.getElementById(divId)
+    const div = document.getElementById(divid)
     div.innerHTML = ""
     div.appendChild(svg.node())
 
@@ -332,15 +332,15 @@ pca.loadUI = async (options = {}) => {
 console.log("pca.loadUI options", options)
 
   const {
-    divId: divId = "loadUI",
+    divid: divid = "loadUI",
     //todo: add textbox opyions, height width color etc
   } = options
 
-  console.log("pca.loadUI divId", divId)
-  console.log("pca.loadUI div", document.getElementById(divId))
+  console.log("pca.loadUI divid", divid)
+  console.log("pca.loadUI div", document.getElementById(divid))
 
-  let div = document.getElementById(divId);
-  if (document.getElementById(divId) ) {
+  let div = document.getElementById(divid);
+  if (document.getElementById(divid) ) {
     // The div with the specified ID exists, updating...
     console.log("div ID provided in pca.loadUI(), loading div");
     // div.id = 'loadUI'
@@ -396,7 +396,7 @@ console.log("pca.loadUI options", options)
             // console.log("json", json)
 
             // plot function
-            pca.plot({data: json, divId: "plotDiv"})
+            pca.plot({data: json, divid: "plotDiv"})
 
             const matrix = (json.map(Object.values))
             console.log("main json", json)
@@ -408,7 +408,7 @@ console.log("pca.loadUI options", options)
             pca.data.file.csv = csv
 
             console.log("pca.data", pca)
-            textBox( {text: pca.data.file.csv, divId: "textBoxDiv"})
+            textBox( {text: pca.data.file.csv, divid: "textBoxDiv"})
             // //console.log('main load PCA csv', csv)
             // const scores = await pca.getScores(json)
             // console.log("main scores", scores)
@@ -441,13 +441,13 @@ console.log("pca.loadUI options", options)
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
 
     // plot function
-    pca.plot({ divId: "plotDiv"})
+    pca.plot({ divid: "plotDiv"})
 
     //convert iris data to csv
     // const irisCsv = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
 
     // textbox div
-    textBox({text: pca.data.iris.csv, divId: "textBoxDiv"})
+    textBox({text: pca.data.iris.csv, divid: "textBoxDiv"})
   });
 
 }
