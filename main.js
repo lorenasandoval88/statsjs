@@ -8,12 +8,11 @@ import {textBox} from './otherFunctions.js'
 
 
 
-pca.loadUI()
-pca.loadUI("myPCA")
+pca.loadUI({divId:"myPCA"})
 
 
-const myDiv = document.createElement("div")
-myDiv.id = 'myDiv'
-document.body.appendChild(myDiv)
+// const myDiv = document.createElement("div")
+// myDiv.id = 'myDiv'
+// document.body.appendChild(myDiv)
 // await pca.plot({colors:["blue","red"]})
 

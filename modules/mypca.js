@@ -327,14 +327,17 @@ console.log("running pca.plot()-------------------------------")
 
 
 // load file and plot PCA
-pca.loadUI = async (divId) => {
+pca.loadUI = async (options = {}) => {
   console.log("running pca.loadUI()-------------------------------");
+console.log("pca.loadUI options", options)
 
   const {
-
+    divId: divId = "loadUI",
     //todo: add textbox opyions, height width color etc
   } = options
 
+  console.log("pca.loadUI divId", divId)
+  console.log("pca.loadUI div", document.getElementById(divId))
 
   let div = document.getElementById(divId);
   if (document.getElementById(divId) ) {
@@ -346,7 +349,7 @@ pca.loadUI = async (divId) => {
     console.log(" div NOT found in parameters. creating div...");
     // create the div element here
     div = document.createElement("div")
-    loadUI.id = 'loadUI'
+    div.id = 'loadUI'
     div.style.alignContent = "center"
     document.body.appendChild(div);
   }
