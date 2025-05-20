@@ -118,7 +118,7 @@ const scale = async function (Objects) {
   //console.log("function info:",pca.scale.toString())
   //Standardization (Z-score transformation)
   //Subtract the mean (μ) from each data point (x)
-  //Divide each result by the standard deviation (σ)
+  //divide each result by the standard deviation (σ)
   const clone = JSON.parse(JSON.stringify(Objects));
   const df = asDataFrame(clone);
   df.columns.forEach((column) => {
@@ -157,7 +157,7 @@ const textBox = async function ( options = {}) {
 
   const {
     text: text = "No text provided",
-    divId: divId = "",
+    divid: divid = "",
     width: width = 300, //"auto",
     height: height = 150, //"auto",
     border: border = "2px solid",
@@ -165,10 +165,10 @@ const textBox = async function ( options = {}) {
   } = options;
 // console.log("textBox options", options)
   // check if textbox div was provided in the function call
-  if (document.getElementById(divId)) {
+  if (document.getElementById(divid)) {
     console.log(`textbox div provided in function parameters.`);
-    const div = document.getElementById(divId)
-    div.id = divId
+    const div = document.getElementById(divid)
+    div.id = divid
     div.style.display = "block"
     div.style.overflow = "scroll"
     div.style.width = width + 'px'
@@ -181,7 +181,7 @@ const textBox = async function ( options = {}) {
 
      console.log("div",div);
 
-    createTableFromCSV(text, divId)
+    createTableFromCSV(text, divid)
 
     // update textbox content
   } else if (document.getElementById("textboxDiv")) {
