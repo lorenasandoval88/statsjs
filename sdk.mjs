@@ -1,6 +1,6 @@
 import { 
     pca,
-  } from './modules/mypca.js'
+  } from './modules/myPca.mjs'
 
 import{
     npm_pca, 

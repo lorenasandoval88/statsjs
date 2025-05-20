@@ -1,4 +1,4 @@
-console.log("mypca.js loaded") 
+console.log("mypca.mjs loaded") 
   
 
 // TODO: limit textbox rows to 500
@@ -455,6 +455,33 @@ console.log("pca.loadUI options", options)
 export {
   pca
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 async function pcaPlotlyPlot4(data) {
   //console.log("data", data)

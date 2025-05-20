@@ -1,4 +1,4 @@
-import {pca} from './modules/mypca.js'
+import {pca} from './modules/myPca.mjs'
 import {textBox} from './otherFunctions.js'
 
 
