@@ -332,7 +332,7 @@ pca.loadUI = async (options = {}) => {
 console.log("pca.loadUI options", options)
 
   const {
-    divid: divid = "loadUI",
+    divid: divid = "",
     //todo: add textbox opyions, height width color etc
   } = options
 

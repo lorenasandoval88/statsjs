@@ -8,7 +8,7 @@ import {textBox} from './otherFunctions.js'
 
 
 
-pca.loadUI({divId:"myPCA"})
+pca.loadUI({divid:"myPCA"})
 
 
 // const myDiv = document.createElement("div")
