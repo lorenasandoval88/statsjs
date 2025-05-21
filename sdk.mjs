@@ -2,6 +2,10 @@ import {
     pca,
   } from './modules/myPca.mjs'
 
+  import { 
+    heatmap,
+  } from './modules/myHeatmap.mjs'
+
 import{
     npm_pca, 
     npm_pcajs, 
@@ -29,6 +33,7 @@ import{
 
 
 export {
+    heatmap,
     pca,
 
     npm_pca, 

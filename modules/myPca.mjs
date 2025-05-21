@@ -376,6 +376,8 @@ console.log("pca.loadUI options", options)
   // create textbox div
   const textBoxDiv = document.createElement("div")
   textBoxDiv.id = 'textBoxDiv'
+  textBoxDiv.style.alignContent = "left"
+
   div.appendChild(textBoxDiv);
 
   // event listener for load file data buttons

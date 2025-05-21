@@ -57,15 +57,15 @@ const buildData = async function(matrix)  {
 }
 
 const color_scale = d3.scaleLinear()
-  .domain([0, 10])
+  .domain([0, 8])
   .range(['#fff', 'green'])
 
 
 
  const margin = ({ 
-    top: 30,
+    top: 53,
     bottom: 10,
-    left: 20,
+    left: 45,
     right: 10
   });
 
@@ -77,10 +77,10 @@ heatmap.plot = async function (options = {}){
   const {
     divid: divid = "",
 
-    matrix: matrix = "no matrix provided",
-    rownames: rownames = d3.range(matrix.length),
+    matrix: matrix = irisDataNums,//"no matrix provided",
+    rownames: rownames = irisData.map((d,idx) => d[4]+idx),//d3.range(matrix.length),// irisData.map((d) => d[irisLabels[0]]),
     colnames: colnames = irisLabels.slice(0, -1),
-    height: height = 400,
+    height: height = 1200,
     width: width = 400,
   } =  options
   console.log("heatmap rownames", rownames)   
@@ -186,7 +186,7 @@ console.log("buildData(matrix)", buildData(matrix))
   heatmap.plot({matrix: irisDataNums, divid: "myHeatmap"} )
 
 
-  heatmap.plot({matrix: irisDataNums} )
+  // heatmap.plot({matrix: irisDataNums} )
 
 
   export {

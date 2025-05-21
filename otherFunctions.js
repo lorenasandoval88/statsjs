@@ -158,11 +158,12 @@ const textBox = async function ( options = {}) {
   const {
     text: text = "No text provided",
     divid: divid = "",
-    width: width = 300, //"auto",
+    width: width = 460, //"auto",
     height: height = 150, //"auto",
     border: border = "2px solid",
     color: color = "red", //"auto",
   } = options;
+
 // console.log("textBox options", options)
   // check if textbox div was provided in the function call
   if (document.getElementById(divid)) {
@@ -175,9 +176,12 @@ const textBox = async function ( options = {}) {
     div.style.height = height + 'px'
     div.style.border = border + " " + color//"2px solid blue"
     div.style.resize = "both"
-    div.style.alignContent = "center"
-    div.style.marginRight = "auto"
-    div.style.marginLeft = "auto"
+    // div.style.alignContent = "left"
+    // div.style.marginRight = "auto"
+    // div.style.marginLeft = "auto"
+    div.appendChild(document.createElement('br'));
+    div.appendChild(document.createElement('br'));
+    div.appendChild(document.createElement('br'));
 
      console.log("div",div);
 
@@ -193,8 +197,9 @@ const textBox = async function ( options = {}) {
     console.log(`textbox div NOT provided in function parameters. creating div...`);
     const div = document.createElement("table")
     div.id = "textboxDiv"
-    div.style.alignContent = "center"
-
+    div.appendChild(document.createElement('br'));
+    div.appendChild(document.createElement('br'));
+    div.appendChild(document.createElement('br'));
     document.body.appendChild(div);
 
     createTableFromCSV(text, "textboxDiv")
@@ -204,9 +209,9 @@ const textBox = async function ( options = {}) {
     div.style.height = height + 'px'
     div.style.border = border + " " + color//"2px solid blue"
     div.style.resize = "both"
-    div.style.alignContent = "center"
-    div.style.marginRight = "auto"
-    div.style.marginLeft = "auto"
+    // div.style.alignContent = "left"
+    // div.style.marginRight = "auto"
+    // div.style.marginLeft = "auto"
 
   }
 
