@@ -83,9 +83,9 @@ heatmap.plot = async function (options = {}){
     height: height = 1200,
     width: width = 400,
   } =  options
-  console.log("heatmap rownames", rownames)   
-  console.log("heatmap colnames", colnames)
-  console.log("heatmap matrix", matrix)
+  // console.log("heatmap rownames", rownames)   
+  // console.log("heatmap colnames", colnames)
+  // console.log("heatmap matrix", matrix)
 
     // index of the rows based on cluster hierarchy
     const svg = d3

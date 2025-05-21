@@ -40,7 +40,7 @@
     
     <script src="modules/myPca.mjs" type="module"></script>
     <script src="modules/myHeatmap.mjs" type="module"></script>
-
+    <script src="modules/myDendogram.mjs" type="module"></script>
     <script src="main.js" type="module"></script>
     <script src="sdk.mjs" type="module"></script>
     
@@ -251,15 +251,15 @@
                                         <div class="divider-custom-line"></div>
                                     </div>
                                     <!-- Portfolio Modal - Image-->
-                                    <img class="img-fluid rounded mb-5" src="assets/img/portfolio/cake.png" alt="..." />
+                                    <!-- <img class="img-fluid rounded mb-5" src="assets/img/portfolio/cake.png" alt="..." /> -->
                                     <!-- Portfolio Modal - Text-->
-                                    <div id="myDendogram"  style="width: 100%; height: 1300px;  border-radius: 0.5rem; padding: 1rem;">
+                                    <div id="myDendogram"  style="width: 100%; height: 600px;  border-radius: 0.5rem; padding: 1rem;">
                                     </div>
                                     <p class="mb-4">Type the following in the console or web application:<br>
-                                        await import("https://lorenasandoval88.github.io/statsjs/sdk.mjs").pca.loadUI()<br>
+                                        const sdk = await import("https://lorenasandoval88.github.io/statsjs/sdk.mjs").dendogram.plot()<br>
                                         
                                         <br>parameters:<br>
-                                        pca.loadUI({divid = "myDiv"})                                   
+                                        sdk.dendogram.plot({divid = "myDiv"})                                 
                                     </p>
                                     <!-- <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p> -->
                                     <button class="btn btn-primary" data-bs-dismiss="modal">
@@ -296,10 +296,10 @@
                                     <div id="myHeatmap"  style="width: 100%; height: 1280px; background-color: #f8f9fa; border-radius: 0.5rem; padding: 1rem;"></div>
 
                                     <p class="mb-4">Type the following in the console or web application:<br>
-                                        await import("https://lorenasandoval88.github.io/statsjs/sdk.mjs").pca.loadUI()<br>
+                                        const sdk = await import("https://lorenasandoval88.github.io/statsjs/sdk.mjs").heatmap.plot()<br>
                                         
                                         <br>parameters:<br>
-                                        pca.loadUI({divid = "myDiv"})                                   
+                                        sdk.heatmap.plot({divid = "myDiv"})                                   
                                     </p>                                    <button class="btn btn-primary" data-bs-dismiss="modal">
                                         <i class="fas fa-xmark fa-fw"></i>
                                         Close Window
