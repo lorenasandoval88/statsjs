@@ -1,4 +1,7 @@
 console.log("heatmap.mjs loaded") 
+//https://observablehq.com/@saehrimnir/dimensionality-reduction-drawings
+//https://observablehq.com/@3e787c1af6c5a437/a-comparative-overview-of-dimension-reduction-methods
+//https://codesandbox.io/p/sandbox/eloquent-shtern-cj5vr6?file=%2Fsrc%2FpcaUtils.js%3A28%2C14-28%2C19
 
 import {
     csvToJson,
@@ -39,7 +42,7 @@ heatmap.data.iris = {}
 heatmap.data.iris.json = ir
 heatmap.data.iris.csv = csv// irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n')
 heatmap.data.file = "none loaded"
-console.log("heatmap object:",heatmap)
+// console.log("heatmap object:",heatmap)
 
 
 // auxiliary function to convert a matrix to a data array
@@ -72,7 +75,7 @@ const color_scale = d3.scaleLinear()
 
 
 heatmap.plot = async function (options = {}){
-  console.log("heatmap options", options)
+  // console.log("heatmap options", options)
 
   const {
     divid: divid = "",
@@ -115,7 +118,7 @@ heatmap.plot = async function (options = {}){
     .range([0, width-margin.left-margin.right])
   
   const txtLengths = d3.selectAll("text").nodes().map( n => n.getComputedTextLength())
-  console.log("txtLengths",txtLengths)
+  // console.log("txtLengths",txtLengths)
      
   const g = svg
     .attr('width', width)
@@ -142,9 +145,9 @@ heatmap.plot = async function (options = {}){
     .attr("dx", "7px")
     .attr("dy", "0.3em")
   
-console.log("y_axis", y_axis)
-console.log("x_axis", x_axis)
-console.log("buildData(matrix)", buildData(matrix))
+// console.log("y_axis", y_axis)
+// console.log("x_axis", x_axis)
+// console.log("buildData(matrix)", buildData(matrix))
 
    // create squares
    const gPoints = g.append("g").attr("class", "gPoints");

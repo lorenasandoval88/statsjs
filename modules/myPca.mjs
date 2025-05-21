@@ -154,7 +154,7 @@ console.log("running pca.plot()-------------------------------")
 
   //TODO calcscores
 
-  console.log(" data - pca.plot() (1st row):", data[0])
+  // console.log(" data - pca.plot() (1st row):", data[0])
   const scores = await pca.getScores(data)
   const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
   const color = d3.scaleOrdinal(colors).domain(groups)
@@ -329,15 +329,15 @@ console.log("running pca.plot()-------------------------------")
 // load file and plot PCA
 pca.loadUI = async (options = {}) => {
   console.log("running pca.loadUI()-------------------------------");
-console.log("pca.loadUI options", options)
+// console.log("pca.loadUI options", options)
 
   const {
     divid: divid = "",
     //todo: add textbox opyions, height width color etc
   } = options
 
-  console.log("pca.loadUI divid", divid)
-  console.log("pca.loadUI div", document.getElementById(divid))
+  // console.log("pca.loadUI divid", divid)
+  // console.log("pca.loadUI div", document.getElementById(divid))
 
   let div = document.getElementById(divid);
   if (document.getElementById(divid) ) {
