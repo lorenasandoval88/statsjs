@@ -145,7 +145,7 @@ console.log("running pca_plot()-------------------------------")
 
 
   const {
-    divid: divid = "",
+    divid: divid = undefined,
     data: data = formatIrisData(irisData, irisLabels),
     width: width = 400,
     height: height = 200,
@@ -401,8 +401,6 @@ const pca_UI = async (options = {}) => {
             pca_plot({data: json, divid: "plotDiv"})
 
             const matrix = (json.map(Object.values))
-            console.log("main json", json)
-            // //console.log('main matrix', matrix)
             matrix['headers'] = json['headers']
 
             pca.data.file = []
