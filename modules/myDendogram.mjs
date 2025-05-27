@@ -18,7 +18,7 @@ import {
     Plotly,
     d3,
     d3tip,
-    dataset,
+    ml_dataset_iris,
     localForage,
     hclust,
     dist,
@@ -31,8 +31,8 @@ import {
 // Example iris dataset:
 const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
 const irisColumnNames = "sepal_length,sepal_width,petal_length,petal_width,species\n"
-const irisData = dataset.getDataset()
-const irisDataNums = dataset.getNumbers()
+const irisData = ml_dataset_iris.getDataset()
+const irisDataNums = ml_dataset_iris.getNumbers()
 
 const ir = irisData.map((row) =>
     row.reduce((acc, curr, index) => {
@@ -54,7 +54,7 @@ dendogram.data.file = "none loaded"
 console.log("heatmap object:", dendogram)
 
 
-// auxiliary functions, convert a matrix to a data array
+// heatmap auxiliary functions, convert a matrix to a data array
 const buildData = async function (matrix) {
     let array = []
     d3.range(matrix.length).map((d) => {
@@ -76,7 +76,7 @@ function colElbow(d, maxHeight, marginTop, colNames2Lengths) { // H = width, V =
         (height - (d.source.data.height / maxHeight) * height) +
         "H" + d.target.x +
         "V" + (height - (d.target.data.height / maxHeight) * height))
-    console.log("path", path)
+    // console.log("path", path)
     return path
 }
 
@@ -95,8 +95,8 @@ function rowElbow(d, maxHeight, marginLeft, rowNames2Lengths) { // H = width, V 
 // trim label lengths if they are greater than 8 characters
 function trimText(idx, arr) {
     return idx.map(e => {
-        if (arr[e].length > 8) {
-            return arr[e].slice(0, 8)
+        if (arr[e].length > 12) {
+            return arr[e].slice(0, 6) + "..." + arr[e].slice(-3)// truncate to 13 characters
         } else {
             return arr[e]
         }
@@ -107,23 +107,25 @@ function trimText(idx, arr) {
 
 
 
-dendogram.plot = function (options = {}) {
+dendogram.plot = async function (options = {}) {
     const {
         divid: divid = "",
         matrix: matrix = irisDataNums, //numbers only, no species,
-        rownames: rownames = irisData.map((d, idx) => d[4] + idx), //d3.range(matrix.length),// irisData.map((d) => d[irisLabels[0]]),
+        // rownames: rownames = irisData.map((d, idx) => d[4] + idx), //d3.range(matrix.length),// irisData.map((d) => d[irisLabels[0]]),
+        rownames: rownames = irisData.map((d, idx) => d[4] + idx),
+        // rownames: rownames = irisData.map((d, idx) =>  idx),
         colnames: colnames = irisLabels.slice(0, -1),
         width: width = 400,
         height: height = 1200,
         // dendograms
-        clusterCols: clusterCols = false,
+        clusterCols: clusterCols = true,
         clusterRows: clusterRows = true,
         clusteringDistanceRows: clusteringDistanceRows = "euclidean",
         clusteringDistanceCols: clusteringDistanceCols = "euclidean",
         clusteringMethodCols: clusteringMethodCols = "complete",
         clusteringMethodRows: clusteringMethodRows = "complete",
-        marginTop: marginTop = clusterCols ? 80 : 50,
-        marginLeft: marginLeft = clusterRows ? 120 : 30,
+        marginTop: marginTop = clusterCols ? 100 : 100,
+        marginLeft: marginLeft = clusterRows ? 180 : 30,
         colPadding: colPadding = clusterCols ? 20 : 0,
         rowPadding: rowPadding = clusterRows ? 20 : 0,
         // heatmap
@@ -170,18 +172,28 @@ dendogram.plot = function (options = {}) {
     clusterLayout2(root2)
 
     let colIdx = clusterCols ? root.leaves().map(x => x.data.index) : d3.range(data[0].length) //col clust
+    console.log("colIdx", colIdx)
     let rowIdx = clusterRows ? root2.leaves().map(x => x.data.index) : d3.range(data.length) //row clust
     //   console.log("rowIdx",rowIdx)
     const newMatrix2 = transpose(colIdx.map(i => transpose(rowIdx.map(e => data[e]))[i]))
+    console.log("newMatrix2",newMatrix2)
+    console.log("buildData",buildData(newMatrix2))
 
     // if labels (truncated length) are not provided, indices are used
     let colNames2 = colnames ? trimText(colIdx, colnames) : Array.from(new Array(data[0].length), (x, i) => i + 1)
-    let rowNames2 = colnames ? trimText(rowIdx, rownames) : Array.from(new Array(data[0].length), (x, i) => i + 1)
-      console.log("rowNames2",rowNames2)
+    console.log("colNames",colnames)
+    console.log("colNames2",colNames2)
+
+    let rowNames2 = rownames ? trimText(rowIdx, rownames) : Array.from(new Array(data[0].length), (x, i) => i + 1) //rownames.map((x,i) => x + rowIdx[i])//
+    // let rowNames2 = rowIdx//rownames ? trimText(rowIdx, rownames) : Array.from(new Array(data[0].length), (x, i) => i + 1) //rownames.map((x,i) => x + rowIdx[i])//
+
+    console.log("rowNames2",rowNames2)
 
     // max x and y label lengths to be used in dendogram heights
     const colNames2Lengths = d3.max(colNames2.map(e => e.length))
-    const rowNames2Lengths = d3.max(rowNames2.map(e => e.length))
+    const rowNames2Lengths = d3.max(rowNames2.map(e => String(e).length))
+    console.log("rowNames2Lengths",rowNames2Lengths)
+
 
     const color_scale = d3.scaleLinear()
         .domain(colorScale)
@@ -196,16 +208,21 @@ dendogram.plot = function (options = {}) {
         // .domain(rownames)
         .range([0, height - margin.top])
 
+    console.log("y_scale",y_scale)
+
+
     const g = svg
         .attr('width', width)
         .attr('height', height)
         .append('g')
         // move the entire graph down and right to accomodate labels
-        .attr('transform', `translate(${margin.left+margin.right+5}, ${margin.top+margin.bottom+15})`)
+        .attr('transform', `translate(${margin.left+margin.right}, ${margin.top+margin.bottom})`)
+    console.log("rowNames3-----------------------------")
 
     //text x axis
     const xAxis = g.append('g')
         .call(d3.axisTop(x_scale))
+        .style("font-size", "10px");
 
     xAxis.selectAll('.tick').selectAll('line').remove()
     xAxis.selectAll("text")
@@ -218,11 +235,12 @@ dendogram.plot = function (options = {}) {
     //text y axis
     let yAxis = g.append('g')
         .call(d3.axisLeft(y_scale))
+        .style("font-size", "9px")
         .attr("id", "ya")
 
     yAxis.selectAll('.tick').selectAll('line').remove()
     yAxis.selectAll("text")
-        .attr("dx", "7px")
+        .attr("dx", "2px")
         .attr("dy", "0.3em")
         .attr("class", "yaa")
 
@@ -239,11 +257,14 @@ dendogram.plot = function (options = {}) {
            value:${d.value.toFixed(decimal)} <br/>
            row:${rowNames2[d.n]}, col:${colNames2[d.t] } 
         </div>`)
+    console.log("rowNames4-----------------------------")
 
+
+    const heatMapData = await buildData(newMatrix2)
     // Apply tooltip to our SVG
     svg.call(tooltip)
     gPoints.selectAll()
-        .data(buildData(newMatrix2))
+        .data(heatMapData)
         .enter()
         .append('rect')
         .attr('x', (d) => x_scale(colNames2[d.t]))
@@ -255,20 +276,74 @@ dendogram.plot = function (options = {}) {
         .on('mouseout', tooltip.hide)
 
 
+    console.log("rowNames5-----------------------------")
 
+    // Top dendogram---------------------------------
+
+    const dendoTooltip = d3tip()
+    .style('border', 'solid 3px black')
+    .style('background-color', 'white')
+    .style('border-radius', '9px')
+    .style('float', 'left')
+    .style('font-family', 'monospace')
+    .html((event, d) => `
+<div style='float: right'>
+   Height:${d.source.data.height.toFixed(3)} <br/>
+</div>`)
+
+
+
+if (clusterCols== true){
+
+
+
+    // console.log(root.links()) 
+      const colMaxHeight = root.data.height;
+    
+      const allNodes = root.descendants().reverse()
+      const leafs = allNodes.filter(d => !d.children)
+          leafs.sort((a,b) => a.x - b.x)
+      const leafHeight = (width-margin.left)/ leafs.length // spacing between leaves
+          leafs.forEach((d,i) => d.x = i*leafHeight + leafHeight/2)
+      
+      allNodes.forEach(node => {
+        if (node.children) {
+          node.x = d3.mean(node.children, d => d.x)
+        }})
+    
+
+    // Apply tooltip to our SVG
+      svg.call(dendoTooltip)
+
+      root.links().forEach((link,i) => {
+      svg
+          .append("path")
+          .attr("class", "link")
+          .attr("stroke", link.source.color || "blue")
+          .attr("stroke-width", `${2}px`)
+          .attr("fill", 'none')
+          .attr("transform", `translate(${margin.left},7)`)
+          .attr("d", colElbow(link,colMaxHeight,margin.top,colNames2Lengths))
+          .on('mouseover', dendoTooltip.show)
+          // Hide the tooltip when "mouseout"
+          .on('mouseout', dendoTooltip.hide)
+        })
+      }
+             
+      
     // bottom/row dendogram----------------------
 
     if (clusterRows == true) {
-        const dendoTooltip = d3tip()
-            .style('border', 'solid 3px black')
-            .style('background-color', 'white')
-            .style('border-radius', '10px')
-            .style('float', 'left')
-            .style('font-family', 'monospace')
-            .html((event, d) => `
-        <div style='float: right'>
-           Height:${d.source.data.height.toFixed(3)} <br/>
-        </div>`)
+        // const dendoTooltip = d3tip()
+        //     .style('border', 'solid 3px black')
+        //     .style('background-color', 'white')
+        //     .style('border-radius', '9px')
+        //     .style('float', 'left')
+        //     .style('font-family', 'monospace')
+        //     .html((event, d) => `
+        // <div style='float: right'>
+        //    Height:${d.source.data.height.toFixed(3)} <br/>
+        // </div>`)
 
         const rowMaxHeight = root2.data.height;
         const clusterLayout2 = d3.cluster()
@@ -288,15 +363,17 @@ dendogram.plot = function (options = {}) {
 
         // Apply tooltip to our SVG
         svg.call(dendoTooltip)
+
+
         //   console.log(root2.links()) 
         root2.links().forEach((link, i) => {
             svg
                 .append("path")
                 .attr("class", "link")
                 .attr("stroke", link.source.color || "red")
-                .attr("stroke-width", `${5}px`)
+                .attr("stroke-width", `${2}px`)
                 .attr("fill", 'none')
-                .attr("transform", `translate(7,${margin.top})`)
+                .attr("transform", `translate(${rowNames2Lengths},${margin.top})`)
                 .attr("d", rowElbow(link, rowMaxHeight, margin.left, rowNames2Lengths))
                 .on('mouseover', dendoTooltip.show)
                 // Hide the tooltip when "mouseout"
@@ -305,6 +382,8 @@ dendogram.plot = function (options = {}) {
         svg.selectAll('path')
             .data(root2.links())
     }
+
+    console.log("rowNames6-----------------------------")
 
     // Here we add the svg to the plot div
     // Check if the div was provided in the function call
@@ -326,7 +405,7 @@ dendogram.plot = function (options = {}) {
 }
 
 // dendogram.plot({divid:"myDendogram"})
-dendogram.plot()
+// dendogram.plot()
 
 export {
     dendogram,

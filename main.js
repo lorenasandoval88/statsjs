@@ -9,6 +9,7 @@ import {heatmap} from './modules/myHeatmap.mjs'
 pca.loadUI({divid:"myPCA"})
 // pca.loadUI()
 
+// dendogram.plot()
 dendogram.plot({divid:"myDendogram"})
 
 

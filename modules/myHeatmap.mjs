@@ -16,14 +16,14 @@ import {
     textBox
   } from '../otherFunctions.js'
   import {
-    npm_pca, npm_pcajs, Plotly, d3, d3tip, dataset, localForage 
+    npm_pca, npm_pcajs, Plotly, d3, d3tip, ml_dataset_iris, localForage 
   } from '../imports.js'
 
   // Example iris dataset:
 const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
 const irisColumnNames = "sepal_length,sepal_width,petal_length,petal_width,species\n"
-const irisData = dataset.getDataset()
-const irisDataNums = dataset.getNumbers()
+const irisData = ml_dataset_iris.getDataset()
+const irisDataNums = ml_dataset_iris.getNumbers()
 
 const ir = irisData.map((row) =>
    row.reduce((acc, curr, index) => {
@@ -83,7 +83,7 @@ heatmap.plot = async function (options = {}){
     matrix: matrix = irisDataNums,//"no matrix provided",
     rownames: rownames = irisData.map((d,idx) => d[4]+idx),//d3.range(matrix.length),// irisData.map((d) => d[irisLabels[0]]),
     colnames: colnames = irisLabels.slice(0, -1),
-    height: height = 1200,
+    dt: height = 1200,
     width: width = 400,
   } =  options
   // console.log("heatmap rownames", rownames)   

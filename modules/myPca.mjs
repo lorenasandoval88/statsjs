@@ -15,14 +15,14 @@ import {
   textBox
 } from '../otherFunctions.js'
 import {
-  npm_pca, npm_pcajs, Plotly, d3, d3tip, dataset, localForage 
+  npm_pca, npm_pcajs, Plotly, d3, d3tip, ml_dataset_iris, localForage 
 } from '../imports.js'
 
 
 // Example iris dataset:
 const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
 const irisColumnNames = "sepal_length,sepal_width,petal_length,petal_width,species\n"
-const irisData = dataset.getDataset()
+const irisData = ml_dataset_iris.getDataset()
 
 const ir = irisData.map((row) =>
    row.reduce((acc, curr, index) => {
@@ -137,8 +137,8 @@ function selectGroup(ctx, group, maxOpacity) {
 
 
 
-pca.plot = async function ( options = {} ) {
-console.log("running pca.plot()-------------------------------")
+const pca_plot = async function ( options = {} ) {
+console.log("running pca_plot()-------------------------------")
   // const data = formatIrisData(irisData, irisLabels)
   // const scores = await pca.getScores(data)
   // const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
@@ -154,7 +154,7 @@ console.log("running pca.plot()-------------------------------")
 
   //TODO calcscores
 
-  // console.log(" data - pca.plot() (1st row):", data[0])
+  // console.log(" data - pca_plot() (1st row):", data[0])
   const scores = await pca.getScores(data)
   const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
   const color = d3.scaleOrdinal(colors).domain(groups)
@@ -327,22 +327,22 @@ console.log("running pca.plot()-------------------------------")
 
 
 // load file and plot PCA
-pca.loadUI = async (options = {}) => {
-  console.log("running pca.loadUI()-------------------------------");
-// console.log("pca.loadUI options", options)
+const pca_UI = async (options = {}) => {
+  console.log("running pca_UI()-------------------------------");
+// console.log("pca_UI options", options)
 
   const {
     divid: divid = "",
     //todo: add textbox opyions, height width color etc
   } = options
 
-  // console.log("pca.loadUI divid", divid)
-  // console.log("pca.loadUI div", document.getElementById(divid))
+  // console.log("pca_UI divid", divid)
+  // console.log("pca_UI div", document.getElementById(divid))
 
   let div = document.getElementById(divid);
   if (document.getElementById(divid) ) {
     // The div with the specified ID exists, updating...
-    console.log("div ID provided in pca.loadUI(), loading div");
+    console.log("div ID provided in pca_UI(), loading div");
     // div.id = 'loadUI'
 
   } else {
@@ -398,7 +398,7 @@ pca.loadUI = async (options = {}) => {
             // console.log("json", json)
 
             // plot function
-            pca.plot({data: json, divid: "plotDiv"})
+            pca_plot({data: json, divid: "plotDiv"})
 
             const matrix = (json.map(Object.values))
             console.log("main json", json)
@@ -443,7 +443,7 @@ pca.loadUI = async (options = {}) => {
     const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
 
     // plot function
-    pca.plot({ divid: "plotDiv"})
+    pca_plot({ divid: "plotDiv"})
 
     //convert iris data to csv
     // const irisCsv = irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n');
@@ -455,7 +455,9 @@ pca.loadUI = async (options = {}) => {
 }
 
 export {
-  pca
+  // pca
+  pca_plot, 
+  pca_UI
 }
 
 

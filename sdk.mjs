@@ -1,5 +1,7 @@
 import { 
-    pca,
+    // pca,
+    pca_plot, 
+    pca_UI
   } from './modules/myPca.mjs'
 
   import { 
@@ -12,7 +14,7 @@ import{
     Plotly, 
     d3, 
     d3tip, 
-    dataset, 
+    ml_dataset_iris, 
     localForage
   } from './imports.js'
 
@@ -34,14 +36,16 @@ import{
 
 export {
     heatmap,
-    pca,
+    // pca,
+    pca_plot, 
+    pca_UI,
 
     npm_pca, 
     npm_pcajs, 
     Plotly, 
     d3, 
     d3tip, 
-    dataset, 
+    ml_dataset_iris, 
     localForage,
 
     csvToJson,
