@@ -42,8 +42,11 @@ function getRandomSubset(array, subsetSize) {
   // Example iris dataset:
   const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
   const irisColumnNames = "sepal_length,sepal_width,petal_length,petal_width,species\n"
-  const irisData = getRandomSubset(ml_dataset_iris.getDataset(), 20)
-const irisDataNums = getRandomSubset(ml_dataset_iris.getNumbers(), 20)
+//   const irisData = getRandomSubset(ml_dataset_iris.getDataset(), 20)
+// const irisDataNums = getRandomSubset(ml_dataset_iris.getNumbers(), 20)
+const irisData = ml_dataset_iris.getDataset()
+const irisDataNums = ml_dataset_iris.getNumbers()
+
 
 const ir = irisData.map((row) =>
     row.reduce((acc, curr, index) => {
@@ -107,7 +110,7 @@ dendogram.plot = async function (options = {}) {
         // rownames: rownames = irisData.map((d, idx) =>  idx),
         colnames: colnames = irisLabels.slice(0, -1),
         width: width = 400,
-        height: height = 600,
+        height: height = 1200,
         // dendograms
         clusterCols: clusterCols = true,
         clusterRows: clusterRows = true,
@@ -115,12 +118,12 @@ dendogram.plot = async function (options = {}) {
         clusteringDistanceCols: clusteringDistanceCols = "euclidean",
         clusteringMethodCols: clusteringMethodCols = "complete",
         clusteringMethodRows: clusteringMethodRows = "complete",
-        marginTop: marginTop = clusterCols ? 160 : 10,
+        marginTop: marginTop = clusterCols ? 110 : 10,
         marginLeft: marginLeft = clusterRows ? 250 : 30,
-        colPadding: colPadding = clusterCols ? 42 : 0, 
-        rowPadding: rowPadding = clusterRows ? 90 : 0,
+        colPadding: colPadding = clusterCols ? 25 : 0, 
+        rowPadding: rowPadding = clusterRows ? 75 : 0,
 
-        innerHeight: innerHeight = height - colPadding,
+        // innerHeight: innerHeight = height - colPadding,
         // heatmap
         color: color = "green",
         colorScale: colorScale = [0, 8],
@@ -215,7 +218,7 @@ dendogram.plot = async function (options = {}) {
     //text x axis
     const xAxis = g.append('g')
         .call(d3.axisTop(x_scale))
-        .style("font-size", "13px");
+        .style("font-size", "10px");
 
     xAxis.selectAll('.tick').selectAll('line').remove()
     xAxis.selectAll("text")
@@ -228,7 +231,7 @@ dendogram.plot = async function (options = {}) {
     //text y axis
     let yAxis = g.append('g')
         .call(d3.axisLeft(y_scale))
-        .style("font-size", "13px")
+        .style("font-size", "10px")
         .attr("id", "ya")
 
     yAxis.selectAll('.tick').selectAll('line').remove()
@@ -314,7 +317,7 @@ if (clusterCols== true){
 
     // console.log(root.links()) 
     
-      const colMaxHeight = root.data.height-6; // col leaf height/length
+      const colMaxHeight = root.data.height-colPadding+5//-25; // col leaf height/length
     
       const allNodes = root.descendants().reverse()
       const leafs = allNodes.filter(d => !d.children)
@@ -432,7 +435,7 @@ if (clusterCols== true){
 }
 
 // dendogram.plot({divid:"myDendogram"})
-dendogram.plot()
+// dendogram.plot()
 
 export {
     dendogram,
