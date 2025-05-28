@@ -101,7 +101,7 @@ function trimText(idx, arr) {
 
 
 
-dendogram.plot = async function (options = {}) {
+const dendogram_plot = async function (options = {}) {
     const {
         divid: divid = "",
         matrix: matrix = irisDataNums, //numbers only, no species,
@@ -440,5 +440,5 @@ if (clusterCols== true){
 // dendogram.plot()
 
 export {
-    dendogram,
+    dendogram_plot,
 }

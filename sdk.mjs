@@ -5,8 +5,12 @@ import {
   } from './modules/myPca.mjs'
 
   import { 
-    heatmap,
+    heatmap_plot,
   } from './modules/myHeatmap.mjs'
+
+  import { 
+    dendogram_plot,
+  } from './modules/myDendogram.mjs'
 
 import{
     npm_pca, 
@@ -35,7 +39,8 @@ import{
 
 
 export {
-    heatmap,
+    dendogram_plot,
+    heatmap_plot,
     // pca,
     pca_plot, 
     pca_UI,

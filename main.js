@@ -1,6 +1,6 @@
 import {pca_UI} from './modules/myPca.mjs'
-import {dendogram} from './modules/myDendogram.mjs'
-import {heatmap} from './modules/myHeatmap.mjs'
+import {dendogram_plot} from './modules/myDendogram.mjs'
+import {heatmap_plot} from './modules/myHeatmap.mjs'
 
 
 
@@ -9,7 +9,7 @@ import {heatmap} from './modules/myHeatmap.mjs'
 pca_UI({divid:"myPCA"})
 
 
-dendogram.plot({divid:"myDendogram"})
+dendogram_plot({divid:"myDendogram"})
 
 
-heatmap.plot({divid: "myHeatmap"} )
+heatmap_plot({divid: "myHeatmap"} )

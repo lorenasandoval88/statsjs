@@ -74,7 +74,7 @@ const color_scale = d3.scaleLinear()
 
 
 
-heatmap.plot = async function (options = {}){
+const heatmap_plot = async function (options = {}){
   // console.log("heatmap options", options)
 
   const {
@@ -186,12 +186,12 @@ heatmap.plot = async function (options = {}){
     return svg.node()
   }
 
-  heatmap.plot({matrix: irisDataNums, divid: "myHeatmap"} )
+  // heatmap_plot({matrix: irisDataNums, divid: "myHeatmap"} )
 
 
   // heatmap.plot({matrix: irisDataNums} )
 
 
   export {
-    heatmap
+    heatmap_plot
   }
