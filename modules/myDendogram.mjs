@@ -1,5 +1,5 @@
 console.log("dendogram.mjs loaded")
-
+// TODO: automate row and column dendo padding based on labels length
 import {
     csvToJson,
     convertStrToNumber,
@@ -28,11 +28,21 @@ import {
 
 
 
-// Example iris dataset:
-const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
-const irisColumnNames = "sepal_length,sepal_width,petal_length,petal_width,species\n"
-const irisData = ml_dataset_iris.getDataset()
-const irisDataNums = ml_dataset_iris.getNumbers()
+function getRandomSubset(array, subsetSize) {
+    if(subsetSize > array.length){
+      return "Subset size cannot exceed array length";
+    }
+  
+    const shuffled = [...array].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, subsetSize);
+  }
+  
+  
+  // Example iris dataset:
+  const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
+  const irisColumnNames = "sepal_length,sepal_width,petal_length,petal_width,species\n"
+  const irisData = getRandomSubset(ml_dataset_iris.getDataset(), 20)
+const irisDataNums = getRandomSubset(ml_dataset_iris.getNumbers(), 20)
 
 const ir = irisData.map((row) =>
     row.reduce((acc, curr, index) => {
@@ -70,26 +80,6 @@ const buildData = async function (matrix) {
 
 const transpose = m => m[0].map((x, i) => m.map(x => x[i]))
 
-function colElbow(d, maxHeight, marginTop, colNames2Lengths) { // H = width, V = height
-    const height = marginTop - ((colNames2Lengths * 5.5) + 10)
-    const path = ("M" + d.source.x + "," +
-        (height - (d.source.data.height / maxHeight) * height) +
-        "H" + d.target.x +
-        "V" + (height - (d.target.data.height / maxHeight) * height))
-    // console.log("path", path)
-    return path
-}
-
-
-function rowElbow(d, maxHeight, marginLeft, rowNames2Lengths) { // H = width, V = height
-    const height = marginLeft - ((rowNames2Lengths * 5.5) + 10)
-    const path = ("M" + (height - (d.source.data.height / maxHeight) * height) + "," +
-        d.source.x +
-        "V" + d.target.x +
-        "H" + (height - (d.target.data.height / maxHeight) * height))
-    //   console.log("path",path)
-    return path
-}
 
 
 // trim label lengths if they are greater than 8 characters
@@ -116,7 +106,7 @@ dendogram.plot = async function (options = {}) {
         // rownames: rownames = irisData.map((d, idx) =>  idx),
         colnames: colnames = irisLabels.slice(0, -1),
         width: width = 400,
-        height: height = 1200,
+        height: height = 600,
         // dendograms
         clusterCols: clusterCols = true,
         clusterRows: clusterRows = true,
@@ -124,10 +114,12 @@ dendogram.plot = async function (options = {}) {
         clusteringDistanceCols: clusteringDistanceCols = "euclidean",
         clusteringMethodCols: clusteringMethodCols = "complete",
         clusteringMethodRows: clusteringMethodRows = "complete",
-        marginTop: marginTop = clusterCols ? 100 : 100,
-        marginLeft: marginLeft = clusterRows ? 180 : 30,
-        colPadding: colPadding = clusterCols ? 20 : 0,
-        rowPadding: rowPadding = clusterRows ? 20 : 0,
+        marginTop: marginTop = clusterCols ? 160 : 10,
+        marginLeft: marginLeft = clusterRows ? 250 : 30,
+        colPadding: colPadding = clusterCols ? 42 : 0, 
+        rowPadding: rowPadding = clusterRows ? 90 : 0,
+
+        innerHeight: innerHeight = height - colPadding,
         // heatmap
         color: color = "green",
         colorScale: colorScale = [0, 8],
@@ -222,7 +214,7 @@ dendogram.plot = async function (options = {}) {
     //text x axis
     const xAxis = g.append('g')
         .call(d3.axisTop(x_scale))
-        .style("font-size", "10px");
+        .style("font-size", "13px");
 
     xAxis.selectAll('.tick').selectAll('line').remove()
     xAxis.selectAll("text")
@@ -235,7 +227,7 @@ dendogram.plot = async function (options = {}) {
     //text y axis
     let yAxis = g.append('g')
         .call(d3.axisLeft(y_scale))
-        .style("font-size", "9px")
+        .style("font-size", "13px")
         .attr("id", "ya")
 
     yAxis.selectAll('.tick').selectAll('line').remove()
@@ -295,15 +287,37 @@ dendogram.plot = async function (options = {}) {
 
 if (clusterCols== true){
 
-
+    function transformY(data) {
+        console.log("height",height,colPadding)
+        const ht = colPadding//height-500//-innerHeight;
+        return ht - (data.data.height / colMaxHeight) * ht;
+      }
+    
+    function colElbow(d) { // H = width, V = height
+        const path = (
+            "M" + 
+            d.source.x + 
+            "," +
+            //(height - (d.source.data.height / colMaxHeight) * height) +
+            transformY(d.source) +
+            "H" + 
+            d.target.x +
+            "V" + 
+            // (height - (d.target.data.height / colMaxHeight) * height)
+            transformY(d.target)
+        )
+        // console.log("path", path)
+        return path
+    }
+    
 
     // console.log(root.links()) 
-      const colMaxHeight = root.data.height;
+      const colMaxHeight = root.data.height-9; // col leaf height/length
     
       const allNodes = root.descendants().reverse()
       const leafs = allNodes.filter(d => !d.children)
           leafs.sort((a,b) => a.x - b.x)
-      const leafHeight = (width-margin.left)/ leafs.length // spacing between leaves
+      const leafHeight = (width-margin.left)/ leafs.length// spacing between leaves
           leafs.forEach((d,i) => d.x = i*leafHeight + leafHeight/2)
       
       allNodes.forEach(node => {
@@ -314,15 +328,15 @@ if (clusterCols== true){
 
     // Apply tooltip to our SVG
       svg.call(dendoTooltip)
-
+    // dendo columns
       root.links().forEach((link,i) => {
       svg
           .append("path")
           .attr("class", "link")
           .attr("stroke", link.source.color || "blue")
-          .attr("stroke-width", `${2}px`)
+          .attr("stroke-width", `${3}px`)
           .attr("fill", 'none')
-          .attr("transform", `translate(${margin.left},7)`)
+          .attr("transform", `translate(${margin.left}, ${colPadding})`)
           .attr("d", colElbow(link,colMaxHeight,margin.top,colNames2Lengths))
           .on('mouseover', dendoTooltip.show)
           // Hide the tooltip when "mouseout"
@@ -334,16 +348,27 @@ if (clusterCols== true){
     // bottom/row dendogram----------------------
 
     if (clusterRows == true) {
-        // const dendoTooltip = d3tip()
-        //     .style('border', 'solid 3px black')
-        //     .style('background-color', 'white')
-        //     .style('border-radius', '9px')
-        //     .style('float', 'left')
-        //     .style('font-family', 'monospace')
-        //     .html((event, d) => `
-        // <div style='float: right'>
-        //    Height:${d.source.data.height.toFixed(3)} <br/>
-        // </div>`)
+
+        function rowElbow(d) { // H = width, V = height
+            const path = (
+                "M" + 
+                transformX(d.source)+ 
+                "," +
+                d.source.x +
+                "V" + 
+                d.target.x +
+                "H" + 
+                transformX(d.target)
+            )
+            //   console.log("path",path)
+            return path
+        }
+        
+        function transformX(data) { // row dendogram height
+            const height2 = margin.left - rowPadding;//padding = 60  
+            // const height2 = margin.left - (rowLen+10);
+            return height2 - (data.data.height / rowMaxHeight) * height2
+        }
 
         const rowMaxHeight = root2.data.height;
         const clusterLayout2 = d3.cluster()
@@ -371,9 +396,9 @@ if (clusterCols== true){
                 .append("path")
                 .attr("class", "link")
                 .attr("stroke", link.source.color || "red")
-                .attr("stroke-width", `${2}px`)
+                .attr("stroke-width", `${3}px`)
                 .attr("fill", 'none')
-                .attr("transform", `translate(${rowNames2Lengths},${margin.top})`)
+                .attr(`transform`, `translate(${rowNames2Lengths},${margin.top})`)
                 .attr("d", rowElbow(link, rowMaxHeight, margin.left, rowNames2Lengths))
                 .on('mouseover', dendoTooltip.show)
                 // Hide the tooltip when "mouseout"
@@ -405,7 +430,7 @@ if (clusterCols== true){
 }
 
 // dendogram.plot({divid:"myDendogram"})
-// dendogram.plot()
+dendogram.plot()
 
 export {
     dendogram,
