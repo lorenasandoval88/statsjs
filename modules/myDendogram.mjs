@@ -34,7 +34,7 @@ function getRandomSubset(array, subsetSize) {
     }
   
     const shuffled = [...array].sort(() => 0.5 - Math.random());
-    console.log("shuffled", shuffled.slice(0, subsetSize))
+   // console.log("shuffled", shuffled.slice(0, subsetSize))
     return shuffled.slice(0, subsetSize);
   }
   
@@ -122,17 +122,19 @@ dendogram.plot = async function (options = {}) {
         marginLeft: marginLeft = clusterRows ? 250 : 30,
         colPadding: colPadding = clusterCols ? 25 : 0, 
         rowPadding: rowPadding = clusterRows ? 75 : 0,
-
-        // innerHeight: innerHeight = height - colPadding,
-        // heatmap
-        color: color = "green",
-        colorScale: colorScale = [0, 8],
+        // topdendogram color
+        colDendoColor: colDendoColor = "blue",
+        // bottomdendogram color
+        rowDendoColor: rowDendoColor = "red",
+        // heatmap color
+        heatmapColor: heatmapColor = "green",
+        heatmapColorScale: heatmapColorScale = [0, 8],
         // hover tooltip
         decimal: decimal = 2,
         fontFamily: fontFamily = 'monospace'
     } = options;
 
-    console.log("dendogram options", options)
+   // console.log("dendogram options", options)
     const margin = ({
         top: marginTop,
         bottom: 0,
@@ -142,9 +144,9 @@ dendogram.plot = async function (options = {}) {
     const svg = d3.create("svg")
 
     const data = matrix //matrix.data ? matrix.data: matrix
-      console.log("dendo data ***", data)
-      console.log("dendo rownames ***", rownames)
-      console.log("dendo colnames ***", colnames)
+     // console.log("dendo data ***", data)
+     // console.log("dendo rownames ***", rownames)
+     // console.log("dendo colnames ***", colnames)
 
     // Heatmap--------------------
     const colHclustTree = new hclust.agnes(dist(transpose(data), distance[clusteringDistanceCols]), {
@@ -168,32 +170,32 @@ dendogram.plot = async function (options = {}) {
     clusterLayout2(root2)
 
     let colIdx = clusterCols ? root.leaves().map(x => x.data.index) : d3.range(data[0].length) //col clust
-    console.log("colIdx", colIdx)
+   // console.log("colIdx", colIdx)
     let rowIdx = clusterRows ? root2.leaves().map(x => x.data.index) : d3.range(data.length) //row clust
-    //   console.log("rowIdx",rowIdx)
+    //  // console.log("rowIdx",rowIdx)
     const newMatrix2 = transpose(colIdx.map(i => transpose(rowIdx.map(e => data[e]))[i]))
-    console.log("newMatrix2",newMatrix2)
-    console.log("buildData",buildData(newMatrix2))
+   // console.log("newMatrix2",newMatrix2)
+   // console.log("buildData",buildData(newMatrix2))
 
     // if labels (truncated length) are not provided, indices are used
     let colNames2 = colnames ? trimText(colIdx, colnames) : Array.from(new Array(data[0].length), (x, i) => i + 1)
-    console.log("colNames",colnames)
-    console.log("colNames2",colNames2)
+   // console.log("colNames",colnames)
+   // console.log("colNames2",colNames2)
 
     let rowNames2 = rownames ? trimText(rowIdx, rownames) : Array.from(new Array(data[0].length), (x, i) => i + 1) //rownames.map((x,i) => x + rowIdx[i])//
     // let rowNames2 = rowIdx//rownames ? trimText(rowIdx, rownames) : Array.from(new Array(data[0].length), (x, i) => i + 1) //rownames.map((x,i) => x + rowIdx[i])//
 
-    console.log("rowNames2",rowNames2)
+   // console.log("rowNames2",rowNames2)
 
     // max x and y label lengths to be used in dendogram heights
     const colNames2Lengths = d3.max(colNames2.map(e => e.length))
     const rowNames2Lengths = d3.max(rowNames2.map(e => String(e).length))
-    console.log("rowNames2Lengths",rowNames2Lengths)
+   // console.log("rowNames2Lengths",rowNames2Lengths)
 
 
     const color_scale = d3.scaleLinear()
-        .domain(colorScale)
-        .range(['#fff', `${color}`])
+        .domain(heatmapColorScale)
+        .range(['#fff', `${heatmapColor}`])
 
     let x_scale = d3.scaleBand()
         .domain(colNames2)
@@ -204,7 +206,7 @@ dendogram.plot = async function (options = {}) {
         // .domain(rownames)
         .range([0, height - margin.top])
 
-    console.log("y_scale",y_scale)
+   // console.log("y_scale",y_scale)
 
 
     const g = svg
@@ -213,7 +215,7 @@ dendogram.plot = async function (options = {}) {
         .append('g')
         // move the entire graph down and right to accomodate labels
         .attr('transform', `translate(${margin.left+margin.right}, ${margin.top+margin.bottom})`)
-    console.log("rowNames3-----------------------------")
+   // console.log("rowNames3-----------------------------")
 
     //text x axis
     const xAxis = g.append('g')
@@ -253,7 +255,7 @@ dendogram.plot = async function (options = {}) {
            value:${d.value.toFixed(decimal)} <br/>
            row:${rowNames2[d.n]}, col:${colNames2[d.t] } 
         </div>`)
-    console.log("rowNames4-----------------------------")
+   // console.log("rowNames4-----------------------------")
 
 
     const heatMapData = await buildData(newMatrix2)
@@ -272,7 +274,7 @@ dendogram.plot = async function (options = {}) {
         .on('mouseout', tooltip.hide)
 
 
-    console.log("rowNames5-----------------------------")
+   // console.log("rowNames5-----------------------------")
 
     // Top dendogram---------------------------------
 
@@ -292,7 +294,7 @@ dendogram.plot = async function (options = {}) {
 if (clusterCols== true){
 
     function transformY(data) {
-        console.log("height",height,colPadding)
+       // console.log("height",height,colPadding)
         const ht = colPadding//height-500//-innerHeight;
         return ht - (data.data.height / colMaxHeight) * ht;
       }
@@ -310,12 +312,12 @@ if (clusterCols== true){
             // (height - (d.target.data.height / colMaxHeight) * height)
             transformY(d.target)
         )
-        // console.log("path", path)
+        //// console.log("path", path)
         return path
     }
     
 
-    // console.log(root.links()) 
+    //// console.log(root.links()) 
     
       const colMaxHeight = root.data.height-colPadding+5//-25; // col leaf height/length
     
@@ -338,7 +340,7 @@ if (clusterCols== true){
       svg
           .append("path")
           .attr("class", "link")
-          .attr("stroke", link.source.color || "blue")
+          .attr("stroke", link.source.color || `${colDendoColor}`)
           .attr("stroke-width", `${3}px`)
           .attr("fill", 'none')
           .attr("transform", `translate(${margin.left}, ${colPadding})`)
@@ -365,7 +367,7 @@ if (clusterCols== true){
                 "H" + 
                 transformX(d.target)
             )
-            //   console.log("path",path)
+            //  // console.log("path",path)
             return path
         }
         
@@ -395,12 +397,12 @@ if (clusterCols== true){
         svg.call(dendoTooltip)
 
 
-        //   console.log(root2.links()) 
+        //  // console.log(root2.links()) 
         root2.links().forEach((link, i) => {
             svg
                 .append("path")
                 .attr("class", "link")
-                .attr("stroke", link.source.color || "red")
+                .attr("stroke", link.source.color || `${rowDendoColor}`)
                 .attr("stroke-width", `${3}px`)
                 .attr("fill", 'none')
                 .attr(`transform`, `translate(${rowNames2Lengths},${margin.top})`)
@@ -413,23 +415,23 @@ if (clusterCols== true){
             .data(root2.links())
     }
 
-    console.log("rowNames6-----------------------------")
+   // console.log("rowNames6-----------------------------")
 
     // Here we add the svg to the plot div
     // Check if the div was provided in the function call
     if (document.getElementById(divid)) {
-        console.log(`pcaPlot div provided in function parameters.`);
+       // console.log(`pcaPlot div provided in function parameters.`);
         const div = document.getElementById(divid)
         div.innerHTML = ""
         div.appendChild(svg.node())
 
     } else if (!document.getElementById("childDiv")) {
-        console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
+       // console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
         const div = document.createElement("div")
         document.body.appendChild(div)
         div.appendChild(svg.node());
     }
-    console.log("svg", svg.node())
+   // console.log("svg", svg.node())
 
     return svg.node()
 }

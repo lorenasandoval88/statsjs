@@ -136,10 +136,11 @@ const scale = async function (Objects) {
 }
 
 const createTableFromCSV = async function (csvData, tableId) {
+  // console.log("csvData:", csvData);
   const table = document.getElementById(tableId);
   table.innerHTML = ""; // Clear existing table content
   const rows = csvData.split("\n");
-
+// console.log("rows", rows)
   for (const row of rows) {
     const cells = row.split(",");
     const tr = document.createElement("tr");
@@ -183,7 +184,7 @@ const textBox = async function ( options = {}) {
     div.appendChild(document.createElement('br'));
     div.appendChild(document.createElement('br'));
 
-     console.log("div",div);
+    //  console.log("div",div);
 
     createTableFromCSV(text, divid)
 

@@ -165,18 +165,18 @@ heatmap.plot = async function (options = {}){
         // Hide the tooltip when "mouseout"
         .on('mouseout', tooltip.hide) 
      
-        console.log("svg", svg.node())
+      // console.log("svg", svg.node())
 
     // Here we add the svg to the plot div
   // Check if the div was provided in the function call
   if (document.getElementById(divid)) {
-    console.log(`pcaPlot div provided in function parameters.`);
+  // console.log(`pcaPlot div provided in function parameters.`);
     const div = document.getElementById(divid)
     div.innerHTML = ""
     div.appendChild(svg.node())
 
   } else if (!document.getElementById("childDiv")) {
-    console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
+  // console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
     const div = document.createElement("div")
     document.body.appendChild(div)
     div.appendChild(svg.node());

@@ -62,15 +62,15 @@ function formatIrisData(data, headers) {
 }
 
 pca.getScores = async function (data) {
-  console.log("running pca.getScores()-------------------------------")
+// console.log("running pca.getScores()-------------------------------")
 
   const numbersOnlyObjs = removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs[0])
   const numbersOnlyArrs = (numbersOnlyObjs.map(Object.values))
-  //  console.log('numbersOnlyArrs',numbersOnlyArrs[0])  
+  //// console.log('numbersOnlyArrs',numbersOnlyArrs[0])  
 
   const categories = (removeNumberValues(data)).map(x => Object.values(x)).flat()
-  //  console.log('categories',categories)  
+  //// console.log('categories',categories)  
 
   // const headers = Object.keys(data[0]).filter(key => !isNaN(data[0][key]))
   // // console.log('headers',headers)
@@ -107,7 +107,7 @@ pca.getScores = async function (data) {
       group,
       name
     }))
-  console.log("PCA1 and PC2 - getScores() (1st row):", scores[0])
+// console.log("PCA1 and PC2 - getScores() (1st row):", scores[0])
 
   return scores
 }
@@ -303,13 +303,13 @@ console.log("running pca_plot()-------------------------------")
   // Here we add the svg to the plot div
   // Check if the div was provided in the function call
     if (document.getElementById(divid)) {
-    console.log(`pcaPlot div provided in function parameters.`);
+  // console.log(`pcaPlot div provided in function parameters.`);
     const div = document.getElementById(divid)
     div.innerHTML = ""
     div.appendChild(svg.node())
 
   } else if (!document.getElementById("childDiv")) {
-    console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
+  // console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
     const div = document.createElement("div")
     document.body.appendChild(div)
     div.appendChild(svg.node());
@@ -328,7 +328,7 @@ console.log("running pca_plot()-------------------------------")
 
 // load file and plot PCA
 const pca_UI = async (options = {}) => {
-  console.log("running pca_UI()-------------------------------");
+// console.log("running pca_UI()-------------------------------");
 // console.log("pca_UI options", options)
 
   const {
@@ -342,11 +342,11 @@ const pca_UI = async (options = {}) => {
   let div = document.getElementById(divid);
   if (document.getElementById(divid) ) {
     // The div with the specified ID exists, updating...
-    console.log("div ID provided in pca_UI(), loading div");
+  // console.log("div ID provided in pca_UI(), loading div");
     // div.id = 'loadUI'
 
   } else {
-    console.log(" div NOT found in parameters. creating div...");
+  // console.log(" div NOT found in parameters. creating div...");
     // create the div element here
     div = document.createElement("div")
     div.id = 'loadUI'
@@ -382,7 +382,7 @@ const pca_UI = async (options = {}) => {
 
   // event listener for load file data buttons
   fileInput.addEventListener('change', (event) => {
-    console.log("fileInput button clicked!")
+  // console.log("fileInput button clicked!")
     const files = event.target.files;
     for (const file of files) {
       const reader = new FileReader();
@@ -407,7 +407,7 @@ const pca_UI = async (options = {}) => {
             pca.data.file.json = json
             pca.data.file.csv = csv
 
-            console.log("pca.data", pca)
+          // console.log("pca.data", pca)
             textBox( {text: pca.data.file.csv, divid: "textBoxDiv"})
             // //console.log('main load PCA csv', csv)
             // const scores = await pca.getScores(json)
@@ -434,7 +434,7 @@ const pca_UI = async (options = {}) => {
   // event listener for load iris data button
   document.getElementById('irisDataButton').addEventListener('click', async function () {
 
-    console.log(" button clicked!")
+  // console.log(" button clicked!")
 
     const data = formatIrisData(irisData, irisLabels)
     const scores = await pca.getScores(data)
