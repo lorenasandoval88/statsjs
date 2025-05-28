@@ -59,18 +59,6 @@ const buildData = async function(matrix)  {
   return array
 }
 
-const color_scale = d3.scaleLinear()
-  .domain([0, 8])
-  .range(['#fff', 'green'])
-
-
-
- const margin = ({ 
-    top: 53,
-    bottom: 10,
-    left: 45,
-    right: 10
-  });
 
 
 
@@ -85,10 +73,20 @@ const heatmap_plot = async function (options = {}){
     colnames: colnames = irisLabels.slice(0, -1),
     dt: height = 1200,
     width: width = 400,
+    color: color = "red", //"#d62728",
   } =  options
-  // console.log("heatmap rownames", rownames)   
-  // console.log("heatmap colnames", colnames)
-  // console.log("heatmap matrix", matrix)
+
+  const color_scale = d3.scaleLinear()
+  .domain([0, 8])
+  .range(['#fff', `${color}`])
+
+ const margin = ({ 
+    top: 53,
+    bottom: 10,
+    left: 45,
+    right: 10
+  });
+
 
     // index of the rows based on cluster hierarchy
     const svg = d3
