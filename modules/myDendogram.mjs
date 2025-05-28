@@ -34,6 +34,7 @@ function getRandomSubset(array, subsetSize) {
     }
   
     const shuffled = [...array].sort(() => 0.5 - Math.random());
+    console.log("shuffled", shuffled.slice(0, subsetSize))
     return shuffled.slice(0, subsetSize);
   }
   
@@ -312,7 +313,8 @@ if (clusterCols== true){
     
 
     // console.log(root.links()) 
-      const colMaxHeight = root.data.height-9; // col leaf height/length
+    
+      const colMaxHeight = root.data.height-6; // col leaf height/length
     
       const allNodes = root.descendants().reverse()
       const leafs = allNodes.filter(d => !d.children)
@@ -370,7 +372,7 @@ if (clusterCols== true){
             return height2 - (data.data.height / rowMaxHeight) * height2
         }
 
-        const rowMaxHeight = root2.data.height;
+        const rowMaxHeight = root2.data.height+2;
         const clusterLayout2 = d3.cluster()
         clusterLayout2(root2)
 
