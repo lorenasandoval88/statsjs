@@ -101,7 +101,7 @@ function trimText(idx, arr) {
 
 
 
-const dendogram_plot = async function (options = {}) {
+const hclust_plot = async function (options = {}) {
     const {
         divid: divid = "",
         matrix: matrix = irisDataNums, //numbers only, no species,
@@ -156,7 +156,7 @@ const dendogram_plot = async function (options = {}) {
     const root = d3.hierarchy(colHclustTree)
     const clusterLayout = d3.cluster()
     clusterLayout(root)
-
+console.log("colHclustTree", colHclustTree)
 
 
     const rowHclustTree2 = new hclust.agnes(dist(data, distance[clusteringDistanceRows]), {
@@ -440,5 +440,5 @@ if (clusterCols== true){
 // dendogram.plot()
 
 export {
-    dendogram_plot,
+    hclust_plot,
 }

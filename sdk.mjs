@@ -9,7 +9,7 @@ import {
   } from './modules/myHeatmap.mjs'
 
   import { 
-    dendogram_plot,
+    hclust_plot,
   } from './modules/myDendogram.mjs'
 
 import{
@@ -39,7 +39,7 @@ import{
 
 
 export {
-    dendogram_plot,
+  hclust_plot,
     heatmap_plot,
     // pca,
     pca_plot, 

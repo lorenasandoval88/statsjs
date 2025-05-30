@@ -9,7 +9,7 @@ import {heatmap_plot} from './modules/myHeatmap.mjs'
 pca_UI({divid:"myPCA"})
 
 
-dendogram_plot({divid:"myDendogram"})
+hclust_plot({divid:"myDendogram"})
 
 
 heatmap_plot({divid: "myHeatmap"} )
