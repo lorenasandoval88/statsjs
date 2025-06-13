@@ -1,7 +1,7 @@
 import {pca_UI} from './modules/myPca.mjs'
 import {hclust_plot} from './modules/myDendogram.mjs'
 import {heatmap_plot} from './modules/myHeatmap.mjs'
-import {csvToJson} from '../otherFunctions.js'
+import {csvToJson} from './otherFunctions.js'
 
 // retreive built-in iris dataset
 fetch('/sampleData/iris.csv')
