@@ -1,11 +1,9 @@
-import {
-  d3
-} from './imports.js'
+// import {  d3 } from './imports.js'
 
 
 
-const csvToJson = async function (csv) {
-
+const csvToJson =  async function (csv) {
+// console.log("function info:", csv)
   const lines = csv.split(/\r?\n/);
   // //console.log("lines", lines)
   const headers = lines[0].split(',');
@@ -119,6 +117,10 @@ const scale = async function (Objects) {
   //Standardization (Z-score transformation)
   //Subtract the mean (μ) from each data point (x)
   //divide each result by the standard deviation (σ)
+
+  const d3 = await import("https://cdn.skypack.dev/d3@7")//await import ('./imports.js').d3
+  console.log("d3",d3)
+  // console.log("Objects", Objects)
   const clone = JSON.parse(JSON.stringify(Objects));
   const df = asDataFrame(clone);
   df.columns.forEach((column) => {
@@ -220,8 +222,29 @@ return document.getElementById("textboxDiv")
 }
 
 
+// let irisJSON 
+// // retreive built-in iris dataset
+//  await fetch('./sampleData/iris.csv')
+//     .then(response => response.text())
+//     .then(async response =>  {irisJSON =  await csvToJson(response)
+//         // console.log("response", response)
+//     })
+
+// let irisCSV
+// // retreive built-in iris dataset
+//  await fetch('./sampleData/iris.csv')
+//     .then(response => response.text())
+//     .then(async response =>  {irisCSV =  response
+//         // console.log("response", response)
+//     })
+
+
+
+
 
 export {
+  // irisJSON,
+  // irisCSV,
   csvToJson,
   convertStrToNumber,
   removeNonNumbers,

@@ -19,7 +19,7 @@ import{
     d3, 
     d3tip, 
     ml_dataset_iris, 
-    localForage
+    localforage
   } from './imports.js'
 
 
@@ -51,7 +51,7 @@ export {
     d3, 
     d3tip, 
     ml_dataset_iris, 
-    localForage,
+    localforage,
 
     csvToJson,
     convertStrToNumber,

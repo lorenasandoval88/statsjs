@@ -19,7 +19,7 @@ import {
     d3,
     d3tip,
     ml_dataset_iris,
-    localForage,
+    localforage,
     hclust,
     dist,
     distance
@@ -65,7 +65,7 @@ dendogram.data.iris = {}
 dendogram.data.iris.json = ir
 dendogram.data.iris.csv = csv // irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n')
 dendogram.data.file = "none loaded"
-console.log("heatmap object:", dendogram)
+// console.log("heatmap object:", dendogram)
 
 
 // heatmap auxiliary functions, convert a matrix to a data array

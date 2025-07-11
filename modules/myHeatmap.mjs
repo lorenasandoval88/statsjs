@@ -16,7 +16,7 @@ import {
     textBox
   } from '../otherFunctions.js'
   import {
-    npm_pca, npm_pcajs, Plotly, d3, d3tip, ml_dataset_iris, localForage 
+    npm_pca, npm_pcajs, Plotly, d3, d3tip, ml_dataset_iris, localforage 
   } from '../imports.js'
 
   // Example iris dataset:
