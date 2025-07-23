@@ -20,10 +20,10 @@ heatmap_plot({divid: "myHeatmap"} )
 //PCA plots
 pca_UI({divid:"myPCA"})
 
-pca_plot()
-pca_plot()
-pca_UI()
-pca_UI()
+// pca_plot()
+// pca_plot()
+// pca_UI()
+// pca_UI()
 
 // heatmap_plot()
 

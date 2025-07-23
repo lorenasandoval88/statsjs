@@ -280,13 +280,11 @@ const pca_plot = async function (options = {}) {
   } else if (!document.getElementById(divid)) {
     console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
     const div = document.createElement("div")
-    // const divId = 'plotDiv' + (pca.data.divNum)
 
     div.appendChild(svg.node());
     document.body.appendChild(div);
-    console.log("pca() div:", div)
-    // console.log("pca() divId:", divId)
-    console.log("pca() divId:", div.id)
+    console.log("pca() div without assigned id:", div)
+
 
 
   }
