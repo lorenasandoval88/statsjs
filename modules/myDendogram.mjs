@@ -1,4 +1,4 @@
-console.log("dendogram.mjs loaded")
+// console.log("dendogram.mjs loaded")
 // TODO: automate row and column dendo padding based on labels length
 import {
     csvToJson,
