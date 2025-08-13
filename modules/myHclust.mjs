@@ -25,8 +25,22 @@ import {
     distance
 } from '../imports.js'
 
+// Declare global data variable for dendogram including iris data
+const hclustDt = { data: {}}
+const divNum = 1
+hclustDt.data.divNum = divNum
 
 
+//Get iris data from localforage or from built-in file
+hclustDt.data.iris = {}
+hclustDt.data.iris.json = await localforage.getItem("irisJSON")
+hclustDt.data.iris.csv = await localforage.getItem("irisCSV") //csv// irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n')
+hclustDt.data.file = "none loaded"
+hclustDt.data.iris.values = hclustDt.data.iris.json.map(obj => Object.values(obj));
+hclustDt.data.iris.numbers = hclustDt.data.iris.values.map(row => row.slice(0, -1)) // remove species column
+hclustDt.data.iris.features = Object.keys(hclustDt.data.iris.json[0]).slice(0, -1)
+console.log("hclustDt hclustDt.data.divNum:", hclustDt.data.divNum)
+console.log("hclustDt object:", hclustDt)
 
 function getRandomSubset(array, subsetSize) {
     if(subsetSize > array.length){
@@ -37,35 +51,6 @@ function getRandomSubset(array, subsetSize) {
    // console.log("shuffled", shuffled.slice(0, subsetSize))
     return shuffled.slice(0, subsetSize);
   }
-  
-  
-  // Example iris dataset:
-  const irisLabels = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
-  const irisColumnNames = "sepal_length,sepal_width,petal_length,petal_width,species\n"
-//   const irisData = getRandomSubset(ml_dataset_iris.getDataset(), 20)
-// const irisDataNums = getRandomSubset(ml_dataset_iris.getNumbers(), 20)
-const irisData = ml_dataset_iris.getDataset()
-const irisDataNums = ml_dataset_iris.getNumbers()
-
-
-const ir = irisData.map((row) =>
-    row.reduce((acc, curr, index) => {
-        acc[irisLabels[index]] = curr;
-        return acc;
-    }, {})
-)
-
-const csv = irisColumnNames + irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"` : String(item)).join(',')).join('\n')
-
-// Declare global data variable for myheatmap
-const dendogram = {
-    data: {}
-}
-dendogram.data.iris = {}
-dendogram.data.iris.json = ir
-dendogram.data.iris.csv = csv // irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n')
-dendogram.data.file = "none loaded"
-// console.log("heatmap object:", dendogram)
 
 
 // heatmap auxiliary functions, convert a matrix to a data array
@@ -84,8 +69,6 @@ const buildData = async function (matrix) {
 
 const transpose = m => m[0].map((x, i) => m.map(x => x[i]))
 
-
-
 // trim label lengths if they are greater than 8 characters
 function trimText(idx, arr) {
     return idx.map(e => {
@@ -98,17 +81,189 @@ function trimText(idx, arr) {
 }
 
 //-----------------------------------------------------------------------------------
+const hclust_UI = async function (options = {}) {
+    console.log("RUNNING hclust_UI()-------------------------------");
+    console.log("hclust UI div num", hclustDt.data.divNum)
 
+  const {
+    divid: divid = "",
+    //todo: add textbox opyions, height width color etc
+  } = options
+
+  let div = document.getElementById(divid);
+    if (document.getElementById(divid)) {
+    // The div with the specified ID exists, updating...
+    console.log("hclust_UI() div ID provided, loading div:", div);
+    // div.id = 'loadUI'
+
+  } else {
+    console.log("hclust_UI() div NOT provided. creating div...", div);
+    // create the div element here
+    div = document.createElement("div")
+    div.id = 'loadUI' + (hclustDt.data.divNum)
+    div.style.alignContent = "center"
+    document.body.appendChild(div);
+    console.log("hclust_UI() div NOT provided. creating div...", div);
+  }
+
+  // iris data button 
+  const irisDataButton = document.createElement('button')
+  irisDataButton.id = 'irisDataButton'+(hclustDt.data.divNum)
+  irisDataButton.textContent = 'Load Iris Data'
+  div.appendChild(irisDataButton);
+  console.log("hclustUI: irisDataButton:", document.getElementById(irisDataButton.id))
+
+  // file input Button
+  const fileInput = document.createElement('input')
+  fileInput.id = 'fileInput'+(hclustDt.data.divNum)
+  fileInput.setAttribute('type', 'file')
+  div.appendChild(fileInput);
+  div.append(document.createElement('br'));
+  div.append(document.createElement('br'));
+
+
+
+  // create plot div
+  const plotDiv = document.createElement("div")
+  plotDiv.id = 'hcplotDiv'+(hclustDt.data.divNum)//'hcplotDiv'
+  div.appendChild(plotDiv);
+  console.log("hclustUI: plotDiv:", document.getElementById(plotDiv.id))
+
+  // create textbox div
+  const textBoxDiv = document.createElement("div")
+  textBoxDiv.id = 'textBoxDiv'+(hclustDt.data.divNum)
+  textBoxDiv.style.alignContent = "center"
+  div.appendChild(textBoxDiv);
+  console.log("hclustUI: textBoxDiv:", document.getElementById(textBoxDiv.id))
+
+  // event listener for load file data buttons
+  fileInput.addEventListener('change', (event) => {
+  
+      console.log(hclustDt.data.divNum,"fileInput button clicked!")
+  
+      const files = event.target.files;
+      for (const file of files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const file = event.target.files[0]
+          if (file) {
+            const reader = new FileReader();
+  
+            reader.onload = async function (e) {
+              const csv = e.target.result;
+              const json = await csvToJson(csv)
+  
+              console.log("hclustDt.data.divNum", hclustDt.data.divNum)
+  
+              const matrix = (json.map(Object.values))
+              matrix['headers'] = json['headers']
+  
+              hclustDt.data.file = []
+              hclustDt.data.file.json = json
+              hclustDt.data.file.csv = csv
+  
+              // hclust plot and text box
+            hclust_plot({
+            matrix:  hclustDt.data.file.json.map(obj => Object.values(obj)).map(row => row.slice(0, -1)),//numbers only, no species,
+            rownames:  hclustDt.data.file.json.map(obj => Object.values(obj)).map((d, idx) => d[4] + idx),
+            colnames:   Object.keys(hclustDt.data.file.json[0]).slice(0, -1),
+            divid: plotDiv.id,
+            clusterCols: false,
+            clusterRows: false
+        })              
+            // textBox({text: csv, divid: textBoxDiv.id})
+       
+            };
+            reader.onerror = function () {
+              displayError('Error reading the file.');
+            };
+            reader.readAsText(file);
+          }
+  
+  
+        };
+        reader.readAsText(file); // Read as text, other options are readAsArrayBuffer, readAsDataURL
+      }
+  
+    });
+     // event listener for load iris data button
+      document.getElementById(irisDataButton.id).addEventListener('click', async function () {
+       // cluster row button 
+        const rowClusterButton = document.createElement('button')
+        rowClusterButton.id = 'rowCluster'+(hclustDt.data.divNum)
+        rowClusterButton.textContent = 'Cluster by Rows'
+        div.appendChild(rowClusterButton);
+        console.log("hclustUI: rowCluster:", document.getElementById(rowClusterButton.id))
+
+        // cluster col Button
+        const colClusterButton = document.createElement('button')
+        colClusterButton.id = 'colCluster'+(hclustDt.data.divNum)
+        colClusterButton.textContent = 'Cluster by Columns'
+        div.appendChild(colClusterButton);
+        div.append(document.createElement('br'));
+        div.append(document.createElement('br'));
+
+        console.log(hclustDt.data.divNum,plotDiv,plotDiv.id,"load iris data button clicked!")
+    
+         // hclust plot and text box
+        hclust_plot({
+            matrix:  hclustDt.data.iris.json.map(obj => Object.values(obj)).map(row => row.slice(0, -1)),//numbers only, no species,
+            rownames:  hclustDt.data.iris.json.map(obj => Object.values(obj)).map((d, idx) => d[4] + idx),
+            colnames:   Object.keys(hclustDt.data.iris.json[0]).slice(0, -1),
+            divid: plotDiv.id, 
+            clusterCols: false,
+            clusterRows: false
+
+        })
+        // textBox({ text: hclustDt.data.iris.csv, divid: textBoxDiv.id})
+
+        document.getElementById(rowClusterButton.id).addEventListener('click', async function () {
+        console.log(document.getElementById('rowCluster'+(hclustDt.data.divNum)))
+ 
+        hclust_plot({
+                    matrix:  hclustDt.data.iris.json.map(obj => Object.values(obj)).map(row => row.slice(0, -1)),//numbers only, no species,
+                    rownames:  hclustDt.data.iris.json.map(obj => Object.values(obj)).map((d, idx) => d[4] + idx),
+                    colnames:   Object.keys(hclustDt.data.iris.json[0]).slice(0, -1),
+                    divid: plotDiv.id, 
+                    clusterCols: false,
+                    clusterRows: true
+                })
+      })
+
+        document.getElementById(colClusterButton.id).addEventListener('click', async function () {
+        console.log(document.getElementById('colCluster'+(hclustDt.data.divNum)))
+ 
+        hclust_plot({
+                    matrix:  hclustDt.data.iris.json.map(obj => Object.values(obj)).map(row => row.slice(0, -1)),//numbers only, no species,
+                    rownames:  hclustDt.data.iris.json.map(obj => Object.values(obj)).map((d, idx) => d[4] + idx),
+                    colnames:   Object.keys(hclustDt.data.iris.json[0]).slice(0, -1),
+                    divid: plotDiv.id, 
+                    clusterCols: true,
+                    clusterRows: false
+                })
+      })
+    
+      });
+
+      console.log(`rowCluster${(hclustDt.data.divNum)}`)
+
+      console.log(document.getElementById(`rowCluster${(hclustDt.data.divNum)}`))
+
+
+        hclustDt.data.divNum += 1
+
+}
+//-----------------------------------------------------------------------------------
 
 
 const hclust_plot = async function (options = {}) {
+      console.log("RUNNING hclust_plot()-------------------------------")
+
     const {
         divid: divid = "",
-        matrix: matrix = irisDataNums, //numbers only, no species,
-        // rownames: rownames = irisData.map((d, idx) => d[4] + idx), //d3.range(matrix.length),// irisData.map((d) => d[irisLabels[0]]),
-        rownames: rownames = irisData.map((d, idx) => d[4] + idx),
-        // rownames: rownames = irisData.map((d, idx) =>  idx),
-        colnames: colnames = irisLabels.slice(0, -1),
+        matrix: matrix = hclustDt.data.iris.numbers,//numbers only, no species,
+        rownames: rownames = hclustDt.data.iris.values.map((d, idx) => d[4] + idx),
+        colnames: colnames = hclustDt.data.iris.features,
         width: width = 400,
         height: height = 1200,
         // dendograms
@@ -118,10 +273,11 @@ const hclust_plot = async function (options = {}) {
         clusteringDistanceCols: clusteringDistanceCols = "euclidean",
         clusteringMethodCols: clusteringMethodCols = "complete",
         clusteringMethodRows: clusteringMethodRows = "complete",
-        marginTop: marginTop = clusterCols ? 110 : 10,
-        marginLeft: marginLeft = clusterRows ? 250 : 30,
-        colPadding: colPadding = clusterCols ? 25 : 0, 
+        marginTop: marginTop = clusterCols ? 85 : 70,
+        marginLeft: marginLeft = clusterRows ? 250 : 70,
+        colPadding: colPadding = clusterCols ? 12 : 0, 
         rowPadding: rowPadding = clusterRows ? 75 : 0,
+        dendogram_font: dendogram_font = "10px",
         // topdendogram color
         colDendoColor: colDendoColor = "blue",
         // bottomdendogram color
@@ -130,9 +286,12 @@ const hclust_plot = async function (options = {}) {
         heatmapColor: heatmapColor = "green",
         heatmapColorScale: heatmapColorScale = [0, 8],
         // hover tooltip
-        decimal: decimal = 2,
-        fontFamily: fontFamily = 'monospace'
+        tooltip_decimal: tooltip_decimal = 2,
+        tooltip_fontFamily: tooltip_fontFamily = 'monospace',
+        tooltip_fontSize: tooltip_fontSize = '12px',
     } = options;
+
+          console.log(divid,"RUNNING hclust_plot()-------------------------------")
 
    // console.log("dendogram options", options)
     const margin = ({
@@ -156,7 +315,7 @@ const hclust_plot = async function (options = {}) {
     const root = d3.hierarchy(colHclustTree)
     const clusterLayout = d3.cluster()
     clusterLayout(root)
-console.log("colHclustTree", colHclustTree)
+// console.log("colHclustTree", colHclustTree)
 
 
     const rowHclustTree2 = new hclust.agnes(dist(data, distance[clusteringDistanceRows]), {
@@ -220,7 +379,7 @@ console.log("colHclustTree", colHclustTree)
     //text x axis
     const xAxis = g.append('g')
         .call(d3.axisTop(x_scale))
-        .style("font-size", "10px");
+        .style("font-size", dendogram_font);
 
     xAxis.selectAll('.tick').selectAll('line').remove()
     xAxis.selectAll("text")
@@ -233,7 +392,7 @@ console.log("colHclustTree", colHclustTree)
     //text y axis
     let yAxis = g.append('g')
         .call(d3.axisLeft(y_scale))
-        .style("font-size", "10px")
+        .style("font-size", dendogram_font)
         .attr("id", "ya")
 
     yAxis.selectAll('.tick').selectAll('line').remove()
@@ -249,10 +408,10 @@ console.log("colHclustTree", colHclustTree)
         .style('background-color', 'white')
         .style('border-radius', '10px')
         .style('float', 'left')
-        .style('font-family', fontFamily)
+        .style('font-family', tooltip_fontFamily)
         .html((event, d) => `
         <div style='float: right'>
-           value:${d.value.toFixed(decimal)} <br/>
+           value:${d.value.toFixed(tooltip_decimal)} <br/>
            row:${rowNames2[d.n]}, col:${colNames2[d.t] } 
         </div>`)
    // console.log("rowNames4-----------------------------")
@@ -283,7 +442,8 @@ console.log("colHclustTree", colHclustTree)
     .style('background-color', 'white')
     .style('border-radius', '9px')
     .style('float', 'left')
-    .style('font-family', 'monospace')
+    .style('font-family', tooltip_fontFamily)
+    .style('font-size', tooltip_fontSize)
     .html((event, d) => `
 <div style='float: right'>
    Height:${d.source.data.height.toFixed(3)} <br/>
@@ -417,19 +577,23 @@ if (clusterCols== true){
 
    // console.log("rowNames6-----------------------------")
 
-    // Here we add the svg to the plot div
+   // Here we add the svg to the plot div
     // Check if the div was provided in the function call
     if (document.getElementById(divid)) {
-       // console.log(`pcaPlot div provided in function parameters.`);
         const div = document.getElementById(divid)
+        // document.body.appendChild(div)
         div.innerHTML = ""
         div.appendChild(svg.node())
+        console.log(`hclust div provided in function parameters.`,div,divid);
+
 
     } else if (!document.getElementById("childDiv")) {
-       // console.log(`pcaPlot div  NOT provided in function parameters or doesn't exist, creating div....`);
-        const div = document.createElement("div")
+       console.log(`hclust div  NOT provided in function parameters or doesn't exist, creating div....`);
+       const div = document.createElement("div")
         document.body.appendChild(div)
         div.appendChild(svg.node());
+        console.log("hclust div", div.id, div) 
+    
     }
    // console.log("svg", svg.node())
 
@@ -441,4 +605,5 @@ if (clusterCols== true){
 
 export {
     hclust_plot,
+    hclust_UI,
 }

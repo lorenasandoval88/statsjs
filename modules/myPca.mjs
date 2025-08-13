@@ -1,4 +1,4 @@
-console.log("mypca.mjs loaded")
+console.log("mypcaDt.mjs loaded")
 
 
 
@@ -15,26 +15,26 @@ import {  npm_pca,  npm_pcajs,  Plotly,  d3,  d3tip,  ml_dataset_iris,
   localforage} from '../imports.js'
 
 
-const pca = { data: {}}
+const pcaDt = { data: {}}
 
 // create button when UI function is called?, name divs by number
 
 
 const divNum = 1
-pca.data.divNum = divNum
-console.log("pca pca.data.divNum:", pca.data.divNum)
-console.log("pca object:", pca)
+pcaDt.data.divNum = divNum
+console.log("pca pcaDt.data.divNum:", pcaDt.data.divNum)
+console.log("pcaDt object:", pcaDt)
 
 //Get iris data from localforage or from built-in file
-pca.data.iris = {}
-pca.data.iris.json = await localforage.getItem("irisJSON")
-pca.data.iris.csv = await localforage.getItem("irisCSV") //csv// irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n')
-pca.data.file = "none loaded"
+pcaDt.data.iris = {}
+pcaDt.data.iris.json = await localforage.getItem("irisJSON")
+pcaDt.data.iris.csv = await localforage.getItem("irisCSV") //csv// irisData.map(row => row.map(item => (typeof item === 'string' && item.indexOf(',') >= 0) ? `"${item}"`: String(item)).join(',')).join('\n')
+pcaDt.data.file = "none loaded"
 
 
 
-pca.getScores = async function (data) {
-  // console.log("RUNNING pca.getScores()-------------------------------")
+pcaDt.getScores = async function (data) {
+  // console.log("RUNNING pcaDt.getScores()-------------------------------")
 
   const numbersOnlyObjs = removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs)
@@ -114,7 +114,7 @@ const pca_plot = async function (options = {}) {
 
   const {
     divid: divid = undefined,
-    data: data = pca.data.iris.json , //formatIrisData(irisData, irisLabels),
+    data: data = pcaDt.data.iris.json , //formatIrisData(irisData, irisLabels),
     width: width = 400,
     height: height = 200,
     colors: colors = ["red", "blue", "green", "orange", "purple", "pink", "yellow"],
@@ -123,7 +123,7 @@ const pca_plot = async function (options = {}) {
   //TODO calcscores
 
   // console.log(" data - pca_plot() (1st row):", data[0])
-  const scores = await pca.getScores(data)
+  const scores = await pcaDt.getScores(data)
   const groups = [...new Set(scores.map(d => d.group))] //.values()//.sort())
   const color = d3.scaleOrdinal(colors).domain(groups)
 
@@ -301,7 +301,7 @@ const pca_plot = async function (options = {}) {
 const pca_UI = async (options = {}) => {
 
   console.log("RUNNING pca_UI()-------------------------------");
-  console.log("pca UI div num", pca.data.divNum)
+  console.log("pca UI div num", pcaDt.data.divNum)
 
   const {
     divid: divid = "",
@@ -320,24 +320,22 @@ const pca_UI = async (options = {}) => {
     console.log("pca_UI() div NOT provided. creating div...", div);
     // create the div element here
     div = document.createElement("div")
-    div.id = 'loadUI' + (pca.data.divNum)
+    div.id = 'loadUI' + (pcaDt.data.divNum)
     div.style.alignContent = "center"
     document.body.appendChild(div);
     console.log("pca_UI() div NOT provided. creating div...", div);
-
-
   }
 
   // iris data button 
   const irisDataButton = document.createElement('button')
-  irisDataButton.id = 'irisDataButton'+(pca.data.divNum)
+  irisDataButton.id = 'irisDataButton'+(pcaDt.data.divNum)
   irisDataButton.textContent = 'Load Iris Data'
   div.appendChild(irisDataButton);
   console.log("pcaUI: irisDataButton:", document.getElementById(irisDataButton.id))
 
   // file input Button
   const fileInput = document.createElement('input')
-  fileInput.id = 'fileInput'+(pca.data.divNum)
+  fileInput.id = 'fileInput'+(pcaDt.data.divNum)
   fileInput.setAttribute('type', 'file')
   div.appendChild(fileInput);
   div.append(document.createElement('br'));
@@ -345,23 +343,23 @@ const pca_UI = async (options = {}) => {
 
   // create plot div
   const plotDiv = document.createElement("div")
-  plotDiv.id = 'plotDiv'+(pca.data.divNum)//'plotDiv'
+  plotDiv.id = 'pcaplotDiv'+(pcaDt.data.divNum)
   div.appendChild(plotDiv);
   console.log("PCAUI: plotDiv:", document.getElementById(plotDiv.id))
 
   // create textbox div
   const textBoxDiv = document.createElement("div")
-  textBoxDiv.id = 'textBoxDiv'+(pca.data.divNum)
+  textBoxDiv.id = 'textBoxDiv'+(pcaDt.data.divNum)
   textBoxDiv.style.alignContent = "center"
   div.appendChild(textBoxDiv);
   console.log("PCAUI: textBoxDiv:", document.getElementById(textBoxDiv.id))
 
 
-
+// draft agenda with professor. 
   // event listener for load file data buttons
   fileInput.addEventListener('change', (event) => {
 
-    console.log(pca.data.divNum,"fileInput button clicked!")
+    console.log(pcaDt.data.divNum,"fileInput button clicked!")
 
     const files = event.target.files;
     for (const file of files) {
@@ -375,14 +373,14 @@ const pca_UI = async (options = {}) => {
             const csv = e.target.result;
             const json = await csvToJson(csv)
 
-            console.log("pca.data.divNum", pca.data.divNum)
+            console.log("pcaDt.data.divNum", pcaDt.data.divNum)
 
             const matrix = (json.map(Object.values))
             matrix['headers'] = json['headers']
 
-            pca.data.file = []
-            pca.data.file.json = json
-            pca.data.file.csv = csv
+            pcaDt.data.file = []
+            pcaDt.data.file.json = json
+            pcaDt.data.file.csv = csv
 
             // PCA plot and text box
             pca_plot({data: json, divid: plotDiv.id})
@@ -405,16 +403,15 @@ const pca_UI = async (options = {}) => {
   // event listener for load iris data button
   document.getElementById(irisDataButton.id).addEventListener('click', async function () {
 
-    console.log(pca.data.divNum,"load iris data button clicked!")
+    console.log(pcaDt.data.divNum,"load iris data button clicked!")
 
      // PCA plot and text box
-    pca_plot({data: pca.data.iris.json,divid: plotDiv.id })
-    textBox({ text: pca.data.iris.csv, divid: textBoxDiv.id})
+    pca_plot({data: pcaDt.data.iris.json,divid: plotDiv.id })
+    textBox({ text: pcaDt.data.iris.csv, divid: textBoxDiv.id})
 
   });
 
-    pca.data.divNum += 1
-
+    pcaDt.data.divNum += 1
 
 }
 

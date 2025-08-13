@@ -10,7 +10,7 @@ import {
 
   import { 
     hclust_plot,
-  } from './modules/myDendogram.mjs'
+  } from './modules/myHclust.mjs'
 
 import{
     npm_pca, 

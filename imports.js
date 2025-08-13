@@ -1,4 +1,4 @@
-console.log("imports.js loaded")
+// console.log("imports.js loaded")
 
 import { PCA as npm_pca } from "https://esm.sh/ml-pca"
 const ml_dataset_iris = (await import("https://esm.sh/ml-dataset-iris"))

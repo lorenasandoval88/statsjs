@@ -40,7 +40,7 @@
     
     <script src="modules/myPca.mjs" type="module"></script>
     <script src="modules/myHeatmap.mjs" type="module"></script>
-    <script src="modules/myDendogram.mjs" type="module"></script>
+    <script src="modules/myHclust.mjs" type="module"></script>
     <script src="main.js" type="module"></script>
     <script src="sdk.mjs" type="module"></script>
 
@@ -209,13 +209,14 @@
                                     <!-- Portfolio Modal - Image-->
                                     <!-- <img class="img-fluid rounded mb-5" src="img/pca2.PNG" alt="..." /> -->
                                     <!-- Portfolio Modal - Text-->
-                                     <div id="myPCA"  style="width: 100%; height: 500px; background-color: #f8f9fa; border-radius: 0.5rem; padding: 1rem;">
-                                     </div>
-                                    <p class="mb-4">Type the following in the console or web application:<br>
-                                        await import("https://lorenasandoval88.github.io/statsjs/sdk.mjs").pca.loadUI()<br>
+                                    <div id="myPCA"  style="width: 100%; height: 500px; background-color: #f8f9fa; border-radius: 0.5rem; padding: 1rem;">
+                                    </div>
+                                    <div style="width:90%; text-align:left">Type the following in the console or web application:<br>
+                                        await import("https://lorenasandoval88.github.io/statsjs/sdk.mjs").pca_UI()<br>
                                         
-                                        <br>parameters:<br>
-                                        pca.loadUI({divid = "myDiv"})                                   </p>
+                                        <br>Optional parameters inlcude:<br><br>
+                                        pca.loadUI({divid = "myDiv"})                                   
+                                    </div>
                                     <button class="btn btn-primary" data-bs-dismiss="modal">
                                         <i class="fas fa-xmark fa-fw"></i>
                                         Close Window
@@ -235,9 +236,9 @@
                     <div class="modal-body text-center pb-5">
                         <div class="container">
                             <div class="row justify-content-center">
-                                <div class="col-lg-8">
+                                <div class="col-lg-8" >
                                     <!-- Portfolio Modal - Title-->
-                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">Dendogram</h2>
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">Hierarchical Clustering</h2>
                                     <!-- Icon Divider-->
                                     <div class="divider-custom">
                                         <div class="divider-custom-line"></div>
@@ -247,14 +248,40 @@
                                     <!-- Portfolio Modal - Image-->
                                     <!-- <img class="img-fluid rounded mb-5" src="assets/img/portfolio/cake.png" alt="..." /> -->
                                     <!-- Portfolio Modal - Text-->
-                                    <div id="myDendogram"  style="width: 100%; height: 1280px;  border-radius: 0.5rem; padding: 1rem;">
+                                    <div id="myHclust"  style="width: 100%;  height: 1309px;  border-radius: 0.5rem; padding: 1rem;">
                                     </div>
-                                    <p class="mb-4">Type the following in the console or web application:<br>
-                                         await import("https://lorenasandoval88.github.io/statsjs/sdk.mjs").dendogram.plot()<br>
+                                    <div style="width:90%; text-align:left">Type the following in the console or web application:<br>
+                                         await import("https://lorenasandoval88.github.io/statsjs/sdk.mjs").hclust_plot.plot()<br>
                                         
-                                        <br>parameters:<br>
-                                        dendogram.plot({divid: "myDiv",width:400, height: 800, heatmapColor: "orange"})                                 
-                                    </p>
+                                        <br>Optional parameters inlcude:<br><br>
+
+                                        plot({<br>
+                                                divid: "", (if not provided, it will append a div to the body)<br>
+                                                width:400, 
+                                                height: 800, <br>
+                                                matrix: matrix, (numbers only, no text columns)<br>
+                                                rownames: rownames,
+                                                colnames: colnames,<br>
+                                                clusterCols:  true,<br>
+                                                clusterRows:  true,<br>
+                                                clusteringDistanceRows:  "euclidean",<br>
+                                                clusteringDistanceCols:  "euclidean",<br>
+                                                clusteringMethodCols: "complete",<br>
+                                                clusteringMethodRows:  "complete",<br>
+                                                marginTop: marginTop ,
+                                                marginLeft: marginLeft,<br>
+                                                colPadding: colPadding , 
+                                                rowPadding: rowPadding,<br>
+                                                colDendoColor: "blue",
+                                                rowDendoColor: "red",<br>
+                                                dendogram_font: "10px",<br>
+                                                heatmapColor: "green",<br>
+                                                heatmapColorScale: [0, 8],<br>
+                                                tooltip_decimal: 2,<br>
+                                                tooltip_fontFamily: 'monospace',<br>
+                                                tooltip_fontSize: '12px'<br>
+                                            })                                 
+                                        </div>
                                     <!-- <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia neque assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.</p> -->
                                     <button class="btn btn-primary" data-bs-dismiss="modal">
                                         <i class="fas fa-xmark fa-fw"></i>
@@ -289,12 +316,12 @@
                                     <!-- Portfolio Modal - Text-->
                                     <div id="myHeatmap"  style="width: 100%; height: 1280px; background-color: #f8f9fa; border-radius: 0.5rem; padding: 1rem;"></div>
 
-                                    <p class="mb-4">Type the following in the console or web application:<br>
+                                    <div style="width:90%; text-align:left">Type the following in the console or web application:<br>
                                         const sdk = await import("https://lorenasandoval88.github.io/statsjs/sdk.mjs").heatmap.plot()<br>
                                         
-                                        <br>parameters:<br>
+                                        <br>Optional parameters inlcude:<br><br>
                                         sdk.heatmap.plot({divid = "myDiv"})                                   
-                                    </p>                                    <button class="btn btn-primary" data-bs-dismiss="modal">
+                                    </div>                                    <button class="btn btn-primary" data-bs-dismiss="modal">
                                         <i class="fas fa-xmark fa-fw"></i>
                                         Close Window
                                     </button>
