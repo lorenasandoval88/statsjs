@@ -189,6 +189,8 @@ const hclust_UI = async function (options = {}) {
      // event listener for load iris data button
       document.getElementById(irisDataButton.id).addEventListener('click', async function () {
        // cluster row button 
+       if (!document.getElementById('rowCluster'+(hclustDt.data.divNum))) {
+        console.log("*********",!document.getElementById('rowCluster'+(hclustDt.data.divNum)))
         const rowClusterButton = document.createElement('button')
         rowClusterButton.id = 'rowCluster'+(hclustDt.data.divNum)
         rowClusterButton.textContent = 'Cluster by Rows'
@@ -202,9 +204,11 @@ const hclust_UI = async function (options = {}) {
         div.appendChild(colClusterButton);
         div.append(document.createElement('br'));
         div.append(document.createElement('br'));
+       }
 
-        console.log(hclustDt.data.divNum,plotDiv,plotDiv.id,"load iris data button clicked!")
+        console.log("load iris data button for Hclust clicked!")
     
+
          // hclust plot and text box
         hclust_plot({
             matrix:  hclustDt.data.iris.json.map(obj => Object.values(obj)).map(row => row.slice(0, -1)),//numbers only, no species,
@@ -217,7 +221,7 @@ const hclust_UI = async function (options = {}) {
         })
         // textBox({ text: hclustDt.data.iris.csv, divid: textBoxDiv.id})
 
-        document.getElementById(rowClusterButton.id).addEventListener('click', async function () {
+        document.getElementById('rowCluster'+(hclustDt.data.divNum)).addEventListener('click', async function () {
         console.log(document.getElementById('rowCluster'+(hclustDt.data.divNum)))
  
         hclust_plot({
@@ -230,7 +234,7 @@ const hclust_UI = async function (options = {}) {
                 })
       })
 
-        document.getElementById(colClusterButton.id).addEventListener('click', async function () {
+        document.getElementById('colCluster'+(hclustDt.data.divNum)).addEventListener('click', async function () {
         console.log(document.getElementById('colCluster'+(hclustDt.data.divNum)))
  
         hclust_plot({
