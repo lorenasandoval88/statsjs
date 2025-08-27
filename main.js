@@ -14,8 +14,8 @@ import {d3} from './imports.js'
 
 // hclust_plot({divid:"myHclust"})
 // hclust_plot({})
-hclust_UI({divid:"myHclust"})
-// hclust_UI()
+// hclust_UI({divid:"myHclust"})
+hclust_UI()
 
 heatmap_plot({divid: "myHeatmap"} )
 
