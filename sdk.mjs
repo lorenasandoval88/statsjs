@@ -10,6 +10,7 @@ import {
 
   import { 
     hclust_plot,
+      hclust_UI,
   } from './modules/myHclust.mjs'
 
 import{
@@ -40,6 +41,7 @@ import{
 
 export {
   hclust_plot,
+  hclust_UI,
     heatmap_plot,
     // pca,
     pca_plot, 
