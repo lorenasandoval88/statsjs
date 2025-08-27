@@ -366,6 +366,7 @@ const hclust_plot = async function (options = {}) {
         .range([0, height - margin.top])
 
    // console.log("y_scale",y_scale)
+// observable plot d3 to do
 
 
     const g = svg
