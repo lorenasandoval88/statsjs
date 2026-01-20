@@ -301,7 +301,7 @@ const pca_plot = async function (options = {}) {
 const pca_UI = async (options = {}) => {
 
   console.log("RUNNING pca_UI()-------------------------------");
-  console.log("pca UI div num", pcaDt.data.divNum)
+  console.log("pca UI div num", pcaDt.data.divNum,pcaDt.data.divNum)
 
   const {
     divid: divid = "",
@@ -315,12 +315,10 @@ const pca_UI = async (options = {}) => {
     // The div with the specified ID exists, updating...
     console.log("pca_UI() div ID provided, loading div:", div);
     // div.id = 'loadUI'
-
   } else {
-    console.log("pca_UI() div NOT provided. creating div...", div);
     // create the div element here
     div = document.createElement("div")
-    div.id = 'loadUI' + (pcaDt.data.divNum)
+    div.id = 'loadUI_' + (pcaDt.data.divNum)
     div.style.alignContent = "center"
     document.body.appendChild(div);
     console.log("pca_UI() div NOT provided. creating div...", div);

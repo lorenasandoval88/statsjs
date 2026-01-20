@@ -162,7 +162,33 @@ const hclust_UI = async function (options = {}) {
               hclustDt.data.file.json = json
               hclustDt.data.file.csv = csv
   
-              // hclust plot and text box
+        // hclust plot and cluster by row/col buttons 
+            
+        let clusterRows = false
+        let clusterCols = false
+
+        // cluster row button 
+        if (!document.getElementById('rowCluster'+(hclustDt.data.divNum))) {
+            let clusterRows = true
+
+            console.log("*********",!document.getElementById('rowCluster'+(hclustDt.data.divNum)))
+            const rowClusterButton = document.createElement('button')
+            rowClusterButton.id = 'rowCluster'+(hclustDt.data.divNum)
+            rowClusterButton.textContent = 'Cluster by Rows'
+            div.appendChild(rowClusterButton);
+            console.log("hclustUI: rowCluster:", document.getElementById(rowClusterButton.id))
+
+            // cluster col Button
+            const colClusterButton = document.createElement('button')
+            colClusterButton.id = 'colCluster'+(hclustDt.data.divNum)
+            colClusterButton.textContent = 'Cluster by Columns'
+            div.appendChild(colClusterButton);
+            div.append(document.createElement('br'));
+            div.append(document.createElement('br'));
+        }
+
+        console.log("load iris data button for Hclust clicked!")
+
             hclust_plot({
             matrix:  hclustDt.data.file.json.map(obj => Object.values(obj)).map(row => row.slice(0, -1)),//numbers only, no species,
             rownames:  hclustDt.data.file.json.map(obj => Object.values(obj)).map((d, idx) => d[4] + idx),
@@ -213,7 +239,7 @@ const hclust_UI = async function (options = {}) {
 
         console.log("load iris data button for Hclust clicked!")
     
-
+        //TO DO: fix add file button. The cluster button revert to the load iris data
          // hclust plot and text box
         hclust_plot({
             matrix:  hclustDt.data.iris.json.map(obj => Object.values(obj)).map(row => row.slice(0, -1)),//numbers only, no species,
@@ -221,7 +247,7 @@ const hclust_UI = async function (options = {}) {
             colnames:   Object.keys(hclustDt.data.iris.json[0]).slice(0, -1),
             divid: plotDiv.id, 
             clusterCols: clusterCols,
-            clusterRows: false
+            clusterRows: clusterRows
 
         })
         // textBox({ text: hclustDt.data.iris.csv, divid: textBoxDiv.id})
