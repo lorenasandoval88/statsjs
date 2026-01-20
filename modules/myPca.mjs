@@ -34,7 +34,7 @@ pcaDt.data.file = "none loaded"
 
 
 pcaDt.getScores = async function (data) {
-  // console.log("RUNNING pcaDt.getScores()-------------------------------")
+  console.log("RUNNING pcaDt.getScores()-------------------------------",data)
 
   const numbersOnlyObjs = removeNonNumberValues(data)
   // console.log("numbersOnlyObjs", numbersOnlyObjs)
