@@ -429,22 +429,6 @@ export {  // pca
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 async function pcaPlotlyPlot4(data) {
   //console.log("data", data)
   const deviationMatrix = npm_pcajs.computeDeviationMatrix(data);
