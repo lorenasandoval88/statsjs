@@ -39,7 +39,7 @@ const clustjs_DB = localforage.createInstance({
           // const JSON = await csvToJson(irisCSV)
 
           if (await localforage.getItem("irisJSON") === null) {
-
+            console.log("irisJSON not found in localStorage. loading iris data...")
               await fetch('./sampleData/iris.csv')
                   .then(response => response.text())
                   .then(async response => {
